@@ -1,0 +1,977 @@
+@font-face {
+  font-family: "Paideia Caption";
+  src: url("/fonts/Liberation_Sans/LiberationSans-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.placeholder {
+  display: grid;
+  width: min(100%, 780px);
+  margin: 10px auto 0;
+  min-height: 480px;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+   margin: 10px auto 0;
+  padding: 34px;
+  border: 2px solid rgba(18, 58, 122, 1);
+  border-radius: 28px;
+  background: rgba(244, 246, 250, 1);
+  color: var(--muted);
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.placeholder strong {
+  color: var(--text-dark);
+  font-size: 1.25rem;
+}
+
+.placeholderIcon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 52px;
+  border: 3px solid var(--accent);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 9px 9px rgba(18, 58, 122, 0.25);
+}
+
+.placeholderIcon::after {
+  margin-left: 4px;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-left: 17px solid var(--accent);
+  content: "";
+}
+
+.playerFrame {
+  position: relative;
+  margin: 10px 0 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.video {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 540px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  object-fit: contain;
+}
+
+.playerFrame :global(.plyr) {
+  position: relative;
+  z-index: 0;
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  outline: 0;
+  background: #000;
+  box-shadow: none;
+}
+
+.playerFrame :global(.plyr__video-wrapper),
+.playerFrame :global(.plyr video) {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+.playerFrame :global(.plyr video) {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  background: #000;
+  object-fit: contain;
+}
+
+.playerFrame :global(.plyr__captions) {
+  bottom: var(--video-caption-safe-bottom, 16px);
+  left: 0;
+  right: 0;
+  z-index: 2;
+  width: max-content;
+  max-width: calc(100% - 36px);
+  margin-inline: auto;
+  padding: 0.2em 0.5em;
+  background: var(--video-caption-background, rgba(0, 0, 0, 0.8));
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* Plyr keeps the container, and sometimes an empty span, between cues. */
+.playerFrame :global(.plyr__captions:empty),
+.playerFrame :global(.plyr__captions:has(> .plyr__caption:empty)) {
+  display: none;
+}
+
+.playerFrame :global(.plyr__caption) {
+  display: block;
+  max-width: 100%;
+  background: transparent;
+  border-radius: 0;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
+  color: var(--video-caption-color, #fff);
+  font-family: "Paideia Caption", "Liberation Sans", Arial, sans-serif;
+  font-size: clamp(16px, 2.2cqw, 30px);
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  padding: 0;
+  white-space: pre-wrap;
+  -webkit-text-stroke: var(--video-caption-outline-width, 0) var(--video-caption-outline-color, #000);
+  paint-order: stroke fill;
+}
+
+.video::cue {
+  font-family: "Paideia Caption", "Liberation Sans", Arial, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.playerFrame :global(.plyr__controls) {
+  z-index: 3;
+}
+
+.fullscreenDisabled :global(.plyr__control[data-plyr="fullscreen"]) {
+  display: none !important;
+}
+
+.playerFrame :global(.plyr:fullscreen),
+.playerFrame :global(.plyr:-webkit-full-screen),
+.playerFrame :global(.plyr.plyr--fullscreen-active) {
+  position: fixed !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  overflow: hidden;
+  background: #000;
+}
+
+.playerFrame :global(.plyr:fullscreen .plyr__video-wrapper),
+.playerFrame :global(.plyr:-webkit-full-screen .plyr__video-wrapper),
+.playerFrame :global(.plyr.plyr--fullscreen-active .plyr__video-wrapper) {
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  overflow: hidden;
+  background: #000 !important;
+}
+
+.playerFrame :global(.plyr:fullscreen video),
+.playerFrame :global(.plyr:-webkit-full-screen video),
+.playerFrame :global(.plyr.plyr--fullscreen-active video) {
+  min-width: 0;
+  min-height: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  background: #000 !important;
+  object-fit: contain !important;
+}
+
+.playerFrame :global(.plyr:fullscreen .plyr__controls),
+.playerFrame :global(.plyr:-webkit-full-screen .plyr__controls),
+.playerFrame :global(.plyr.plyr--fullscreen-active .plyr__controls) {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.88)) !important;
+}
+
+.playerFrame :global(.plyr:fullscreen .plyr__captions),
+.playerFrame :global(.plyr:-webkit-full-screen .plyr__captions),
+.playerFrame :global(.plyr.plyr--fullscreen-active .plyr__captions) {
+  max-width: calc(100% - 48px);
+}
+
+.videoEditorLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(420px, 520px);
+  gap: 34px;
+  align-items: start;
+}
+
+.previewColumn {
+  min-width: 0;
+}
+
+.previewSticky {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 18px;
+  align-self: start;
+}
+
+.controlsColumn {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.controlsColumn button:not(:disabled) {
+  cursor: pointer;
+}
+
+.editorSection {
+  display: grid;
+  gap: 10px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.editorSection + .editorSection {
+  padding-top: 16px;
+}
+
+.editorSection:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.fileChoice {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.fileChoice :global(.media-picker-button) {
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.assetRemoveButton {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(141, 39, 28, 0.92);
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.assetRemoveButton:hover,
+.assetRemoveButton:focus-visible {
+  background: rgba(141, 39, 28, 1);
+  outline: none;
+}
+
+.videoRemoveAction {
+  border-radius: 16px !important;
+  border-color: #a33d2d !important;
+  background: #fff !important;
+  color: #a33d2d !important;
+}
+
+.fileChoice strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-dark);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subtitleGenerateAction {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  justify-content: center;
+  text-align: center;
+}
+
+.optimizerEntry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.optimizerButton {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 40px;
+  border: 1px solid currentColor;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--accent);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.optimizerButton::before {
+  display: grid;
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  place-items: center;
+  border-radius: 50%;
+  background: currentColor;
+  color: #fff;
+  content: "i";
+  font-size: 12px;
+}
+
+.optimizerButton.recommended { color: #a33d2d; }
+.optimizerButton.adapted { color: #257047; }
+.optimizerButton.optimized { color: #257047; }
+.optimizerButton.neutral { color: var(--accent); }
+
+.optimizerButton.recommended::before { content: "!"; }
+.optimizerButton.adapted::before { display: none; }
+.optimizerButton.optimized::before { display: none; }
+
+.optimizerInlineError {
+  flex: 1 1 100%;
+  margin: 0;
+  color: #9a3d2c;
+  font-size: 12px;
+}
+
+.optimizerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(12, 25, 48, 0.48);
+}
+
+.optimizerDialog {
+  display: grid;
+  gap: 18px;
+  width: min(860px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  padding: 26px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 30px 80px rgba(12, 25, 48, 0.25);
+}
+
+.optimizerHeader,
+.optimizerActions,
+.optimizerProgress > div,
+.optimizerComparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.optimizerHeader h2 {
+  margin: 4px 0 0;
+  color: var(--text-dark);
+}
+
+.optimizerClose {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 24px;
+}
+
+.optimizerDiagnostic {
+  display: grid;
+  gap: 6px;
+  padding: 15px 17px;
+  border: 1px solid currentColor;
+  border-radius: 16px;
+}
+
+.optimizerDiagnostic p,
+.optimizerError {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.optimizerDiagnostic.recommended { color: #8e3628; background: #fff5f2; }
+.optimizerDiagnostic.adapted { color: #246944; background: #f0faf4; }
+.optimizerDiagnostic.neutral { color: #405a82; background: #f2f6fc; }
+
+.optimizerMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.optimizerMetrics > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel-soft, #f6f8fc);
+}
+
+.optimizerMetrics dt {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.optimizerMetrics dd {
+  margin: 5px 0 0;
+  overflow: hidden;
+  color: var(--text-dark);
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optimizerForm,
+.optimizerCustomGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.optimizerForm label,
+.optimizerCustomGrid label {
+  display: grid;
+  gap: 6px;
+}
+
+.optimizerForm label > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.optimizerCrfHint {
+  grid-area: hint;
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.optimizerForm select,
+.optimizerForm input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--text-dark);
+  font: inherit;
+}
+
+.optimizerProfileSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.optimizerProfileSummary li {
+  padding: 7px 10px;
+  border: 1px solid rgba(18, 58, 122, 0.16);
+  border-radius: 10px;
+  background: rgba(237, 244, 255, 0.62);
+  color: var(--text-dark);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.optimizerCustomGrid {
+  grid-template-areas:
+    "dimensions mode"
+    "video audio"
+    "hint hint"
+    "fps .";
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+  row-gap: 12px;
+  align-items: start;
+}
+
+.optimizerCustomGrid label {
+  grid-template-rows: 20px 52px;
+  align-content: start;
+}
+
+.optimizerCustomGrid select,
+.optimizerCustomGrid input {
+  height: 52px;
+  min-height: 52px;
+}
+
+.optimizerDimensionsField { grid-area: dimensions; }
+.optimizerCompressionModeField { grid-area: mode; }
+.optimizerVideoSettingField { grid-area: video; }
+.optimizerAudioField { grid-area: audio; }
+.optimizerFpsField { grid-area: fps; }
+
+.optimizerFpsField small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.optimizerProgress {
+  display: grid;
+  gap: 8px;
+}
+
+.optimizerProgress progress {
+  width: 100%;
+  height: 12px;
+  accent-color: var(--accent);
+}
+
+.optimizerComparison {
+  justify-content: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--text-dark);
+}
+
+.optimizerResult {
+  display: grid;
+  gap: 8px;
+}
+
+.optimizerOutputCharacteristics,
+.optimizerEncodingSummary {
+  margin: 0;
+  text-align: center;
+}
+
+.optimizerOutputCharacteristics {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.optimizerEncodingSummary {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.optimizerOriginalAction {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.optimizerOriginalAction small {
+  max-width: 240px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.optimizerError {
+  padding: 12px 14px;
+  border: 1px solid #d7a69d;
+  border-radius: 12px;
+  background: #fff3f0;
+  color: #8e3628;
+}
+
+.optimizerActions {
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .optimizerMetrics,
+  .optimizerCustomGrid { grid-template-columns: 1fr; }
+  .optimizerCustomGrid {
+    grid-template-areas:
+      "dimensions"
+      "mode"
+      "video"
+      "hint"
+      "audio"
+      "fps";
+  }
+  .optimizerDialog { padding: 20px; }
+}
+
+.colorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  --caption-appearance-control-height: 48px;
+  align-items: start;
+}
+
+.colorRow select {
+  width: 180px;
+  height: var(--caption-appearance-control-height);
+  min-height: var(--caption-appearance-control-height);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 34px 0 12px;
+}
+
+.colorRow :global(.paideia-color-trigger) {
+  width: var(--caption-appearance-control-height) !important;
+  height: var(--caption-appearance-control-height) !important;
+}
+
+.captionBackgroundField {
+  padding-top: 30px;
+}
+
+.captionBackgroundToggle {
+  display: flex !important;
+  align-items: center;
+  height: var(--caption-appearance-control-height);
+  min-height: var(--caption-appearance-control-height) !important;
+  padding: 0 12px !important;
+  gap: 10px !important;
+}
+
+.captionBackgroundToggle input {
+  width: 20px;
+  height: 20px;
+}
+
+.colorRow > label {
+  display: grid;
+  gap: 8px;
+}
+
+.assetRemoveButton svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.fullscreenRow {
+  display: flex;
+  align-items: center;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+  gap: 14px;
+  align-items: end;
+}
+
+.settingsGrid > label {
+  display: grid;
+  gap: 8px;
+}
+
+.fullscreenToggle {
+  grid-column: 1 / -1;
+  display: flex !important;
+  align-items: center;
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border-radius: 12px !important;
+  gap: 10px !important;
+}
+
+.fullscreenToggle input {
+  width: 20px;
+  height: 20px;
+}
+
+.settingsPreview {
+  display: grid;
+  gap: 8px;
+}
+
+@media (max-width: 1180px) {
+  .videoEditorLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .previewSticky {
+    position: static;
+  }
+}
+
+.subtitleEditorDialog {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "video"
+    "body"
+    "footer";
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  width: min(1280px, calc(100vw - 64px));
+  max-width: none;
+  height: min(920px, calc(100vh - 48px));
+  max-height: calc(100vh - 48px);
+  box-sizing: border-box;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.subtitleGenerationDialog {
+  display: grid;
+  width: min(640px, calc(100vw - 48px));
+  max-width: none;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 24px;
+}
+
+.subtitleGenerationHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.subtitleGenerationHeader h2 {
+  margin: 4px 0 0;
+}
+
+.subtitleGenerationHeader > button {
+  flex: 0 0 auto;
+}
+
+.subtitleGenerationNotice {
+  padding: 12px 14px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 12px;
+  background: rgba(237, 244, 255, 0.48);
+  color: var(--muted) !important;
+  font-size: 13px;
+  line-height: 1.5 !important;
+}
+
+.subtitleGenerationFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.subtitleGenerationFields label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.subtitleGenerationFields select {
+  width: 100%;
+  min-height: 44px;
+  padding-block: 8px;
+}
+
+.subtitleGenerationLanguageSupportNote {
+  margin: -6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.subtitleGenerationActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.subtitleGenerationPrimaryAction {
+  min-height: 38px;
+  padding: 8px 18px;
+  border-radius: 12px;
+}
+
+.subtitleGenerationProgress {
+  display: grid;
+  gap: 7px;
+}
+
+.subtitleGenerationProgress progress {
+  width: 100%;
+}
+
+.subtitleGenerationProgress div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.subtitleEditorHeader,
+.subtitleCueHeader,
+.subtitleCueActions,
+.subtitleTimingRow {
+  display: flex;
+  align-items: center;
+}
+
+.subtitleEditorHeader,
+.subtitleCueHeader {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.subtitleEditorHeader {
+  grid-area: header;
+}
+
+.subtitleEditorHeader h2 {
+  margin: 4px 0 0;
+}
+
+.subtitleEditorVideo {
+  grid-area: video;
+  width: min(720px, 100%);
+  max-height: 320px;
+  margin-inline: auto;
+  background: #000;
+}
+
+.subtitleEditorBody {
+  grid-area: body;
+  display: grid;
+  min-height: 0;
+  gap: 14px;
+  padding-right: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.subtitleCueList {
+  display: grid;
+  gap: 14px;
+}
+
+.subtitleCueCard {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(18, 58, 122, 0.16);
+  border-radius: 18px;
+  background: rgba(237, 244, 255, 0.38);
+}
+
+.subtitleCueActions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.subtitleTimingRow {
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.subtitleTimingRow label,
+.subtitleTextField {
+  display: grid;
+  gap: 6px;
+}
+
+.subtitleTimingRow input {
+  width: 190px;
+  min-width: 0;
+  font-family: "Liberation Mono", Consolas, monospace;
+}
+
+.subtitleTextField textarea {
+  width: 100%;
+  min-height: 86px;
+  resize: vertical;
+  font-family: "Paideia Caption", "Liberation Sans", Arial, sans-serif;
+}
+
+.subtitleEditorError {
+  margin: 0;
+  color: #a43b2c;
+  font-weight: 700;
+}
+
+.subtitleEditorWarning {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fff6dd;
+  color: #735512;
+}
+
+.subtitleEditorFooter {
+  grid-area: footer;
+  margin-top: 0;
+  padding-top: 12px;
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .subtitleEditorDialog {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+  }
+
+  .subtitleCueHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .subtitleGenerationFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .subtitleGenerationDialog {
+    width: calc(100vw - 24px);
+    padding: 20px;
+  }
+
+  .subtitleGenerationActions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .subtitleGenerationActions > button {
+    width: 100%;
+  }
+
+}

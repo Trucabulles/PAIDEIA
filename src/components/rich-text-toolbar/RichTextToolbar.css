@@ -1,0 +1,1459 @@
+@font-face { font-family: "PaideiaUiPreview-cormorant-garamond"; src: url("/fonts/Cormorant_Garamond/CormorantGaramond-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "PaideiaUiPreview-permanent-marker"; src: url("/fonts/Permanent_Marker/PermanentMarker-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "PaideiaUiPreview-spectral"; src: url("/fonts/Spectral/Spectral-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face {
+  font-family: "PaideiaUiPreview-annie-use-your-telescope";
+  src: url("/fonts/Annie_Use_Your_Telescope/AnnieUseYourTelescope-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.rich-font-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; cursor: pointer; }
+.rich-select-chevron {
+  display: block;
+  flex: 0 0 auto;
+  width: 12px;
+  height: 8px;
+}
+.rich-font-popup { position: fixed; z-index: 10000; overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 6px; border: 1px solid #aab8cd; border-radius: 11px; background: white; color: #182d54; font: 16px Inter, sans-serif; box-shadow: 0 8px 24px #182d5433; }
+.rich-font-group { padding: 8px 10px 4px; font-weight: 700; }
+.rich-font-option { display: block; width: 100%; min-height: 34px; padding: 6px 12px; border: 0; border-radius: 6px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rich-font-option.is-active { background: #e8eef7; }
+.rich-paragraph-picker { position: relative; }
+.rich-toolbar .rich-paragraph-picker > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 34px;
+  cursor: pointer;
+  list-style: none;
+}
+.rich-toolbar .rich-paragraph-picker > summary::-webkit-details-marker { display: none; }
+.rich-toolbar .rich-paragraph-picker > summary .rich-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.rich-paragraph-options { position: absolute; top: 100%; left: 0; z-index: 10; min-width: 100%; padding: 4px; background: white; border: 1px solid #aab8cd; border-radius: 10px; box-shadow: 0 4px 12px #182d5426; }
+.rich-paragraph-options button { display: block; width: 100%; padding: 8px 12px; border: 0; background: transparent; color: #182d54; text-align: start; cursor: pointer; }
+.rich-paragraph-options button:hover, .rich-paragraph-options button[aria-pressed="true"] { background: #e8eef7; }
+.rich-paragraph-options button[data-block-format="P"] { font-size: 14px; font-weight: 400; }
+.rich-paragraph-options button[data-block-format="H1"] { font-size: 24px; font-weight: 700; }
+.rich-paragraph-options button[data-block-format="H2"] { font-size: 21px; font-weight: 700; }
+.rich-paragraph-options button[data-block-format="H3"] { font-size: 18px; font-weight: 700; }
+.rich-paragraph-options button[data-block-format="H4"] { font-size: 16px; font-weight: 700; }
+.rich-paragraph-options button[data-block-format="H5"] { font-size: 14px; font-weight: 700; }
+.rich-paragraph-options-separator { display: block; height: 1px; margin: 4px 8px; background: #d9e1ef; }
+.rich-paragraph-options button.rich-drop-cap-option { font-size: 14px; font-weight: 400; }
+.rich-paragraph-options button:disabled { opacity: .45; cursor: default; }
+.rich-paragraph-options { min-width: max-content; max-width: calc(100vw - 32px); }
+.rich-toolbar {
+  --toolbar-control-height: 38px;
+  --toolbar-button-width: 40px;
+  --toolbar-radius: 11px;
+  --rich-toolbar-surface: #e8eef7;
+  --rich-toolbar-border: #aab8cd;
+
+  position: relative;
+  z-index: 120;
+  width: fit-content;
+  max-width: calc(100vw - 48px);
+  box-sizing: border-box;
+  padding: 10px 42px 10px 10px;
+  border: 1px solid var(--rich-toolbar-border);
+  border-radius: 14px;
+  background: var(--rich-toolbar-surface);
+  box-shadow: 0 14px 34px rgba(23, 40, 77, 0.18), 0 3px 10px rgba(23, 40, 77, 0.1);
+}
+
+/* Inline RichBars float above/below their editor and must never expand an activity.
+   Keep this more specific than .rich-toolbar regardless of stylesheet load order. */
+.rich-toolbar.inline-rich-toolbar {
+  position: absolute;
+}
+
+.rich-toolbar-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.rich-toolbar-content--compact {
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+/* The complete RichBar uses three explicit rows so groups never jump between
+   lines when the toolbar width changes. Reduced/title/restricted modes keep
+   the original wrapping behavior above. */
+.rich-toolbar-content--full {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.rich-toolbar-row {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  max-width: 100%;
+}
+
+.rich-toolbar-group {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Full RichBar only: reserve a real 25px empty slot between logical groups.
+   The separator is centered inside that slot. */
+.rich-toolbar-content--full .rich-toolbar-row > .rich-toolbar-group + .rich-toolbar-group {
+  position: relative;
+  margin-left: 30px;
+  padding-left: 0px;
+  border-left: 0;
+}
+
+.rich-toolbar-content--full .rich-toolbar-row > .rich-toolbar-group + .rich-toolbar-group::before {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: -15px;
+  width: 2px;
+  border-radius: 1px;
+  background: rgba(18, 58, 122, 0.14);
+  content: "";
+  pointer-events: none;
+}
+
+/* Reduced/title/restricted modes keep the historical adjacent-group separator. */
+.rich-toolbar-content:not(.rich-toolbar-content--full) .rich-toolbar-group + .rich-toolbar-group {
+  padding-left: 6px;
+  border-left: 2px solid rgba(18, 58, 122, 0.14);
+}
+
+/* Full RichBar groups are arranged in TSX as: top typography/insert/utilities; middle paragraph/case; bottom styles/colors. */
+.rich-toolbar-typography-group,
+.rich-toolbar-colors-group,
+.rich-toolbar-style-group,
+.rich-toolbar-paragraph-group,
+.rich-toolbar-case-group,
+.rich-toolbar-insert-group,
+.rich-toolbar-utility-group {
+  min-width: 0;
+}
+
+/* Subtle visual separator between logical RichBar tool groups. */
+.rich-toolbar-separator {
+  display: inline-block;
+  flex: 0 0 1px;
+  width: 1px;
+  height: 34px;
+  margin: 0 4px;
+  align-self: center;
+  background: #c9d0db;
+  pointer-events: none;
+}
+
+.rich-toolbar-typography-group,
+.rich-toolbar-colors-group,
+.rich-toolbar-style-group,
+.rich-toolbar-paragraph-group,
+.rich-toolbar-font-metrics-group,
+.rich-toolbar-case-group,
+.rich-toolbar-insert-group,
+.rich-toolbar-utility-group {
+  gap: 6px;
+}
+
+.toolbar-clear-format-button {
+  color: #17284d;
+}
+
+.toolbar-clear-format-button:hover,
+.toolbar-clear-format-button:focus-visible {
+  border-color: rgba(51, 78, 130, 0.34);
+  background: #edf2fb;
+  color: #17284d;
+}
+
+.toolbar-clear-format-icon {
+  display: block;
+  width: calc(216px / 7);
+  height: calc(216px / 7);
+  stroke: none;
+}
+
+/* Base commune */
+.toolbar-button,
+.toolbar-select,
+.toolbar-file-button {
+  box-sizing: border-box;
+  height: var(--toolbar-control-height);
+  min-height: var(--toolbar-control-height);
+  border: 1px solid #b8c4d5;
+  border-radius: var(--toolbar-radius);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(23, 40, 77, 0.1);
+  color: var(--text-dark);
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 650;
+  line-height: 1;
+}
+
+/* Boutons */
+.toolbar-button,
+.toolbar-file-button {
+  min-width: var(--toolbar-button-width);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Boutons icônes */
+.toolbar-button.icon-only,
+.toolbar-file-button.icon-only {
+  width: var(--toolbar-button-width);
+  min-width: var(--toolbar-button-width);
+  padding: 0;
+}
+
+/* Boutons texte courts */
+.toolbar-button.compact-text {
+  font-size: 14px;
+}
+
+/* Selects */
+.toolbar-select {
+  min-width: 92px;
+  padding: 0 34px 0 14px;
+  appearance: auto;
+  cursor: pointer;
+}
+
+select.toolbar-select {
+  appearance: none;
+  background-image: url("./rich-select-chevron.svg");
+  background-repeat: no-repeat;
+  background-size: 12px 8px;
+  background-position: right 12px center;
+}
+
+.toolbar-select.compact {
+  min-width: 104px;
+}
+
+.toolbar-font-family-select {
+  min-width: 176px;
+  max-width: 220px;
+}
+
+.toolbar-line-height .toolbar-select {
+  min-width: 118px;
+  max-width: 118px;
+}
+
+/* Hover / actif */
+.toolbar-button:hover,
+.toolbar-select:hover,
+.toolbar-file-button:hover {
+  border-color: #8597b4;
+  background-color: #f8fafc;
+  color: var(--accent);
+  box-shadow: 0 2px 5px rgba(23, 40, 77, 0.14);
+}
+
+.toolbar-button.active {
+  border-color: #7189b2;
+  background: #d4e1f5;
+  color: #17366e;
+  box-shadow: inset 0 0 0 1px rgba(36, 69, 133, 0.1), 0 1px 3px rgba(23, 40, 77, 0.12);
+}
+
+.toolbar-button:focus-visible,
+.toolbar-select:focus-visible,
+.toolbar-file-button:focus-visible {
+  outline: 3px solid rgba(36, 69, 133, 0.28);
+  outline-offset: 2px;
+}
+
+.toolbar-button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  border-color: #d4dae4;
+  background: #f4f6f9;
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.toolbar-button:disabled:hover {
+  border-color: #d4dae4;
+  background: #f4f6f9;
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.rich-bookmark-icon,
+.rich-reference-icon,
+.rich-fill-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rich-color-trigger-icon {
+  position: relative;
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  color: #102752;
+  font-weight: 850;
+}
+
+.rich-color-trigger-icon::after {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  left: 4px;
+  height: 4px;
+  border-radius: 3px;
+  background: var(--rich-trigger-color, #123a7a);
+  content: "";
+}
+
+.rich-color-trigger-icon.highlight {
+  font-size: 13px;
+  font-style: italic;
+}
+
+.rich-color-trigger-icon.highlight::before {
+  position: absolute;
+  inset: 9px 4px 5px;
+  z-index: 0;
+  background: color-mix(in srgb, var(--rich-trigger-color, #fff19c) 78%, transparent);
+  content: "";
+  transform: rotate(-3deg);
+}
+
+.rich-color-trigger-icon > span { z-index: 1; }
+
+
+/* RichText selection keeps the authored text color visible instead of forcing white. */
+[contenteditable="true"]::selection,
+[contenteditable="true"] *::selection {
+  background: rgba(37, 107, 220, 0.22);
+  color: inherit;
+}
+
+/* WebView2 does not repaint text stroke reliably while a contentEditable owns
+   the caret. Keep the persisted format as a real text stroke and mirror only
+   its live authoring appearance while the editor is focused. */
+[contenteditable="true"]:focus [data-paideia-outline="auto"],
+[contenteditable="true"]:focus [data-paideia-outline="auto"] * {
+  --paideia-rich-outline-live-width: clamp(0.75px, 0.05em, 2px);
+  text-shadow:
+    var(--paideia-rich-outline-live-width) 0 0 var(--paideia-rich-outline-color),
+    calc(0px - var(--paideia-rich-outline-live-width)) 0 0 var(--paideia-rich-outline-color),
+    0 var(--paideia-rich-outline-live-width) 0 var(--paideia-rich-outline-color),
+    0 calc(0px - var(--paideia-rich-outline-live-width)) 0 var(--paideia-rich-outline-color),
+    var(--paideia-rich-outline-live-width) var(--paideia-rich-outline-live-width) 0 var(--paideia-rich-outline-color),
+    var(--paideia-rich-outline-live-width) calc(0px - var(--paideia-rich-outline-live-width)) 0 var(--paideia-rich-outline-color),
+    calc(0px - var(--paideia-rich-outline-live-width)) var(--paideia-rich-outline-live-width) 0 var(--paideia-rich-outline-color),
+    calc(0px - var(--paideia-rich-outline-live-width)) calc(0px - var(--paideia-rich-outline-live-width)) 0 var(--paideia-rich-outline-color) !important;
+}
+
+[contenteditable="true"]:focus [data-paideia-outline="none"],
+[contenteditable="true"]:focus [data-paideia-outline="none"] * {
+  text-shadow: none !important;
+}
+
+[contenteditable="true"] [data-paideia-bookmark-id] {
+  border-bottom: 2px dotted #7b61b8;
+}
+
+.paideia-rich-reference {
+  border-bottom: 2px dashed currentColor;
+  color: #123a7a;
+  cursor: help;
+  text-underline-offset: 0.16em;
+}
+
+.paideia-rich-reference:focus-visible {
+  border-radius: 3px;
+  outline: 3px solid rgba(37, 107, 220, 0.34);
+  outline-offset: 2px;
+}
+
+.paideia-rich-field-fill,
+[data-paideia-rich-field-fill] {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.paideia-rich-reference-tooltip {
+  --activity-content-text: #102752;
+  --content-text: #102752;
+  --text-dark: #102752;
+  --muted: #60708d;
+  position: fixed;
+  z-index: 720;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(16, 39, 82, 0.22);
+  color: #102752;
+}
+
+.paideia-rich-reference-tooltip .rich-content {
+  color: #102752;
+}
+
+.rich-text-bookmark-dialog { width: min(560px, calc(100vw - 48px)); }
+.rich-text-bookmark-dialog small { color: var(--muted); line-height: 1.45; }
+.rich-reference-select { position: relative; min-width: 0; letter-spacing: normal; text-transform: none; }
+.rich-reference-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text-dark);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.rich-reference-select-trigger:focus-visible { outline: 2px solid rgba(35, 68, 134, 0.18); border-color: rgba(35, 68, 134, 0.42); }
+.rich-reference-select-chevron { flex: 0 0 auto; color: #244585; font-size: 1.15rem; }
+.rich-reference-select-options {
+  position: absolute;
+  z-index: 4;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  /* One group heading plus ten 42 px entries before the list scrolls. */
+  max-height: min(462px, calc(100vh - 320px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  border: 1px solid #cbd6e8;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 38px rgba(16, 39, 82, 0.22);
+  scrollbar-gutter: stable;
+}
+.rich-reference-select-group { display: grid; gap: 2px; }
+.rich-reference-select-group + .rich-reference-select-group { margin-top: 6px; }
+.rich-reference-select-group-label {
+  position: sticky;
+  top: -6px;
+  z-index: 1;
+  padding: 7px 10px 5px;
+  background: #fff;
+  color: #60708d;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.rich-reference-select-option {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #102752;
+  font: inherit;
+  font-size: 0.98rem;
+  text-align: left;
+  cursor: pointer;
+}
+.rich-reference-select-option:hover,
+.rich-reference-select-option:focus-visible { outline: none; background: #edf3fc; }
+.rich-reference-select-option[aria-selected="true"] { background: #dfe9f8; font-weight: 800; }
+
+/* Souligné / barré */
+.toolbar-underlined {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.toolbar-bolded {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.toolbar-italicized {
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1;
+  text-transform: none;
+}
+
+.toolbar-struck {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+/* Icônes alignement */
+.align-icon {
+  display: grid;
+  gap: 3px;
+  width: 18px;
+  height: 18px;
+  align-content: center;
+}
+
+.align-icon span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.align-icon.left span:nth-child(1),
+.align-icon.left span:nth-child(3) {
+  width: 18px;
+}
+
+.align-icon.left span:nth-child(2),
+.align-icon.left span:nth-child(4) {
+  width: 11px;
+}
+
+.align-icon.center span:nth-child(1),
+.align-icon.center span:nth-child(3) {
+  width: 18px;
+  margin: 0 auto;
+}
+
+.align-icon.center span:nth-child(2),
+.align-icon.center span:nth-child(4) {
+  width: 11px;
+  margin: 0 auto;
+}
+
+.align-icon.right span:nth-child(1),
+.align-icon.right span:nth-child(3) {
+  width: 18px;
+  margin-left: auto;
+}
+
+.align-icon.right span:nth-child(2),
+.align-icon.right span:nth-child(4) {
+  width: 11px;
+  margin-left: auto;
+}
+
+.align-icon.justify span {
+  width: 18px;
+}
+
+/* Icônes listes */
+.list-icon {
+  display: grid;
+  gap: 4px;
+  width: 18px;
+  height: 18px;
+  align-content: center;
+}
+
+.list-icon span {
+  position: relative;
+  display: block;
+  height: 2px;
+  margin-left: 7px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.list-icon.bullets span::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.list-icon.numbered span {
+  margin-left: 9px;
+}
+
+.list-icon.numbered span::before {
+  content: attr(data-number);
+  position: absolute;
+  left: -12px;
+  top: -6px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.rich-list-control {
+  position: relative;
+  display: grid;
+  width: var(--toolbar-button-width);
+  min-width: var(--toolbar-button-width);
+  height: var(--toolbar-control-height);
+  grid-template-columns: minmax(0, 1fr) 11px;
+  box-sizing: border-box;
+  overflow: visible;
+  border: 1px solid #b8c4d5;
+  border-radius: var(--toolbar-radius);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(23, 40, 77, 0.1);
+}
+
+.rich-list-control:hover {
+  border-color: #8597b4;
+  background: #f8fafc;
+  color: var(--accent);
+  box-shadow: 0 2px 5px rgba(23, 40, 77, 0.14);
+}
+
+.rich-list-control.active {
+  border-color: #7189b2;
+  background: #d4e1f5;
+  color: #17366e;
+  box-shadow: inset 0 0 0 1px rgba(36, 69, 133, 0.1), 0 1px 3px rgba(23, 40, 77, 0.12);
+}
+
+.rich-list-control__main {
+  display: flex;
+  min-width: 0;
+  padding: 0 0 0 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.rich-list-control__picker {
+  position: static;
+}
+
+.rich-toolbar .rich-list-control__picker > summary {
+  position: relative;
+  display: block;
+  width: 11px;
+  height: 100%;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rich-toolbar .rich-list-control__picker > summary::-webkit-details-marker {
+  display: none;
+}
+
+.rich-toolbar .rich-list-control__picker > summary::after {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: "";
+  transform: translateY(-70%) rotate(45deg);
+}
+
+.rich-list-control__main:focus-visible,
+.rich-toolbar .rich-list-control__picker > summary:focus-visible {
+  outline: 3px solid rgba(36, 69, 133, 0.28);
+  outline-offset: 2px;
+}
+
+.rich-list-marker-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 40;
+  display: grid;
+  width: max-content;
+  grid-auto-flow: column;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid var(--rich-toolbar-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(23, 40, 77, 0.2);
+  color: var(--text-dark);
+  transform: translateX(-50%);
+}
+
+.rich-list-marker-options button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #b8c4d5;
+  border-radius: 9px;
+  background: #fff;
+  color: #17366e;
+  cursor: pointer;
+  font: 700 16px/1 inherit;
+}
+
+.rich-list-marker-options--ordered button {
+  width: 42px;
+  font-size: 14px;
+}
+
+.rich-list-marker-options button:hover,
+.rich-list-marker-options button:focus-visible,
+.rich-list-marker-options button[aria-pressed="true"] {
+  border-color: #7189b2;
+  background: #d4e1f5;
+}
+
+/* Retraits / interligne */
+.indent-icon,
+.line-height-icon {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  width: 20px;
+  height: 16px;
+  padding-left: 6px;
+  align-content: center;
+}
+
+.indent-icon span:not(.indent-icon__arrow),
+.line-height-icon span:not(.line-height-icon__arrow) {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.indent-icon span:nth-of-type(2),
+.indent-icon span:nth-of-type(4),
+.line-height-icon span:nth-of-type(2),
+.line-height-icon span:nth-of-type(4) {
+  width: 14px;
+}
+
+.indent-icon span:nth-of-type(3),
+.line-height-icon span:nth-of-type(3) {
+  width: 10px;
+}
+
+.indent-icon__arrow,
+.line-height-icon__arrow {
+  position: absolute;
+  left: -3px;
+  top: 2px;
+  color: #256bdc;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+
+
+.toolbar-file-button input {
+  display: none;
+}
+
+/* Interligne : icône + select */
+.toolbar-line-height {
+  height: var(--toolbar-control-height);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Couleur : groupe RichBar indivisible. Le libellé et tous les déclencheurs
+   couleur appartiennent au même groupe ; aucun <label> englobant ne doit
+   pouvoir sortir le bouton de couleur de police de ce flux. */
+.rich-toolbar .rich-toolbar-colors-group {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.rich-toolbar .toolbar-color-label {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+
+/* ColorPickerField adds a semantic wrapper span. Inside the RichBar color
+   group that wrapper must not reserve a second 34px flex slot: its trigger is
+   the actual group control. Keeping the wrapper in the DOM preserves picker
+   events/data attributes while display:contents keeps the visual grouping
+   Couleur | [text] [highlight] [field] intact. */
+.rich-toolbar .rich-toolbar-colors-group > .paideia-color-field:not(.paideia-color-field--split) {
+  display: contents;
+}
+
+.rich-toolbar .rich-toolbar-colors-group > .paideia-color-field--split {
+  display: grid;
+  width: 45px;
+  min-width: 45px;
+  height: 34px;
+  grid-template-columns: minmax(0, 1fr) 11px;
+  overflow: hidden;
+  border: 1px solid #b8c4d5;
+  border-radius: var(--toolbar-radius);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(23, 40, 77, 0.1);
+}
+
+.rich-toolbar .rich-toolbar-colors-group > .paideia-color-field--split:hover {
+  border-color: #8597b4;
+  box-shadow: 0 2px 5px rgba(23, 40, 77, 0.14);
+}
+
+.rich-toolbar .paideia-color-field--split > .paideia-color-trigger--apply {
+  position: relative;
+  inset: auto;
+  width: 34px;
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  margin: -1px 0 -1px -1px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.rich-toolbar .paideia-color-trigger-picker {
+  position: relative;
+  width: 11px;
+  min-width: 11px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.rich-toolbar .paideia-color-trigger-picker::after {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: "";
+  transform: translateY(-70%) rotate(45deg);
+}
+
+.rich-toolbar .paideia-color-trigger--apply:focus-visible,
+.rich-toolbar .paideia-color-trigger-picker:focus-visible {
+  z-index: 1;
+  outline: 3px solid rgba(36, 69, 133, 0.28);
+  outline-offset: -2px;
+}
+
+.rich-toolbar .rich-toolbar-colors-group > .paideia-color-field > .paideia-color-trigger {
+  position: relative;
+  inset: auto;
+  display: inline-grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  margin: 0;
+  transform: none;
+}
+
+.rich-toolbar-colors-group input {
+  box-sizing: border-box;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border-radius: var(--toolbar-radius);
+}
+
+.rich-toolbar-colors-group .toolbar-field-fill-controls {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+}
+
+.toolbar-field-fill-opacity {
+  display: inline-flex;
+  height: 34px;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--toolbar-radius);
+  background: #fff;
+  color: var(--text-dark);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.toolbar-field-fill-opacity input {
+  width: 38px;
+  min-width: 38px;
+  height: 30px;
+  min-height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+}
+
+/* Images inline dans le contenu */
+.rich-inline-image {
+  max-width: min(100%, 300px);
+  max-height: 300px;
+  height: auto;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.rich-inline-image[data-paideia-inline-rounded="true"] {
+  border-radius: 12px;
+}
+
+img.rich-inline-image[data-paideia-inline-zoom="true"]:not([contenteditable="true"] *) {
+  cursor: zoom-in;
+}
+
+[contenteditable="true"] .rich-inline-image {
+  cursor: pointer;
+}
+
+.paideia-rich-image-float[data-paideia-rich-image-wrap="left"],
+.paideia-rich-image-float[data-paideia-rich-image-wrap="right"] {
+  display: block;
+  max-width: 100%;
+  margin-block: 0;
+}
+
+.paideia-rich-image-float[data-paideia-rich-image-wrap="left"] {
+  float: left;
+  margin-inline: 0 1em;
+}
+
+.paideia-rich-image-float[data-paideia-rich-image-wrap="right"] {
+  float: right;
+  margin-inline: 1em 0;
+}
+
+.paideia-rich-image-float .rich-inline-image {
+  display: block;
+}
+
+:is(.rich-editor, .inline-rich-text-field, .rich-content) {
+  display: flow-root;
+}
+
+p[data-paideia-drop-cap="true"] {
+  display: flow-root;
+}
+
+@supports (initial-letter: 3) {
+  p[data-paideia-drop-cap="true"]::first-letter {
+    initial-letter: 3;
+    margin-inline-end: .12em;
+  }
+
+  .paideia-rich-drop-cap {
+    float: none;
+    font-size: inherit !important;
+    line-height: inherit;
+  }
+}
+
+@supports not (initial-letter: 3) {
+  .paideia-rich-drop-cap {
+    float: left;
+    font-size: 3lh !important;
+    line-height: 1;
+    margin-inline-end: .12em;
+    margin-block-start: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .paideia-rich-image-float[data-paideia-rich-image-wrap="left"],
+  .paideia-rich-image-float[data-paideia-rich-image-wrap="right"] {
+    float: none;
+    width: fit-content;
+    margin-inline: auto;
+  }
+}
+
+.rich-inline-image-dialog {
+  width: min(480px, calc(100vw - 48px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  gap: 9px;
+  padding: 26px;
+}
+
+.rich-inline-image-dialog h2 {
+  line-height: 1.2;
+}
+
+.rich-inline-image-dialog h3 {
+  margin: 5px 0 0;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.rich-inline-image-dialog .modal-field {
+  gap: 5px;
+}
+
+.rich-inline-image-dialog .modal-field textarea {
+  min-height: 72px;
+}
+
+.rich-inline-image-dialog .modal-actions {
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.paideia-modal-backdrop.rich-text-dialog-backdrop {
+  z-index: 500 !important;
+}
+
+body.rich-text-dialog-open [data-rich-text-toolbar="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.rich-text-link-dialog {
+  width: min(520px, calc(100vw - 48px));
+}
+
+.rich-text-link-error {
+  color: #a32828 !important;
+  font-weight: 750;
+}
+
+.rich-content a,
+.inline-rich-text-field a,
+.rich-editor a {
+  color: #123a7a;
+  text-decoration-color: rgba(18, 58, 122, 0.55);
+  text-underline-offset: 0.16em;
+}
+
+.rich-content a:hover,
+.inline-rich-text-field a:hover,
+.rich-editor a:hover {
+  color: #0d2d64;
+  text-decoration-color: currentColor;
+}
+
+.rich-inline-image-size-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.rich-inline-image-size-summary {
+  font-size: 0.9rem;
+}
+
+.rich-inline-image-wrap-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rich-inline-image-wrap-options button {
+  border: 1px solid #c9d5eb;
+  border-radius: 10px;
+  background: #fff;
+  color: #233d68;
+  padding: 9px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rich-inline-image-wrap-options button.is-selected {
+  border-color: #234477;
+  background: #eaf1ff;
+  font-weight: 700;
+}
+
+.rich-inline-image-remove {
+  margin-right: auto;
+  border: 1px solid #e8cbc6;
+  border-radius: 11px;
+  padding: 8px 11px;
+  background: #fffafa;
+  color: #9a3a2c;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rich-inline-image-remove:hover {
+  background: #fff1ee;
+  border-color: #c9887e;
+}
+
+.rich-inline-image-remove:focus-visible {
+  outline: 2px solid #a94b3c;
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .rich-inline-image-dialog {
+    padding: 20px;
+  }
+
+  .rich-inline-image-size-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rich-inline-image-dialog .modal-actions {
+    flex-wrap: wrap;
+  }
+}
+.rich-toolbar .toolbar-select {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  padding-left: 8px;
+  padding-right: 22px; /* flèche */
+}
+
+.rich-toolbar .rich-font-trigger {
+  padding-right: 12px;
+}
+
+.rich-toolbar > .toolbar-select.compact:first-child {
+  width: 110px;
+  min-width: 110px;
+}
+
+.rich-toolbar > .toolbar-select:not(.compact) {
+  width: 100px;
+  min-width: 100px;
+}
+
+.rich-toolbar .toolbar-line-height .toolbar-select {
+  width: 110px;
+  min-width: 110px;
+  max-width: 110px;
+}
+/* Link / select-all / clear-format utility icons. */
+.toolbar-link-button {
+  color: var(--accent);
+}
+
+.toolbar-link-icon {
+  display: block;
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toolbar-reference-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toolbar-reference-bookmark-shape {
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.toolbar-reference-arrow-shape {
+  fill: none;
+  stroke-width: 1.35;
+}
+
+/* =======================================================
+   Bouton sélectionner tout (remplace Sel.)
+   ======================================================= */
+
+.toolbar-selectall-button {
+  color: var(--accent);
+}
+
+.toolbar-selectall-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+.toolbar-expand-toggle {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 2;
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+}
+
+.toolbar-expand-toggle-inline {
+  display: none;
+}
+
+.toolbar-expand-toggle:hover,
+.toolbar-expand-toggle:focus-visible {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  color: var(--accent);
+}
+
+.toolbar-chevron-icon {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rich-color-trigger {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  background: #fff;
+  color: #172b52;
+}
+
+.rich-color-trigger::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
+  left: 3px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--rich-trigger-color);
+}
+
+.rich-toolbar-colors-group .rich-color-trigger-glyph {
+  margin-bottom: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.rich-toolbar-colors-group .rich-color-trigger-glyph.highlight-glyph {
+  padding: 1px 2px 2px;
+  background: color-mix(in srgb, var(--rich-trigger-color) 72%, white);
+  font-size: 14px;
+  font-weight: 700;
+  transform: rotate(-7deg);
+}
+
+.rich-fill-trigger-glyph {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rich-fill-trigger-drop {
+  fill: var(--rich-trigger-color);
+  stroke: none;
+}
+
+.toolbar-bookmark-button svg {
+  width: 20px;
+  height: 20px;
+  fill: color-mix(in srgb, currentColor 12%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The reference icon has its own size/style above. Do not override it here. */
+
+
+/* Rich text outline toggle. The button state is carried by .toolbar-button.active;
+   the glyph itself is intentionally constant to match the other RichBar controls. */
+.toolbar-outline-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #FDEEB0;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  -webkit-text-stroke: 2.5px #374151;
+  paint-order: stroke fill;
+}
+.rich-toolbar-empty-group-case-group {
+  flex: 0 0 60px;
+  width: 61px;
+  min-width: 61px;
+  height: var(--toolbar-control-height);
+  pointer-events: none;
+  user-select: none;
+}
+
+.rich-toolbar-empty-group-action-block {
+  flex: 1 0 135px;
+  width: auto;
+  min-width: 135px;
+  height: var(--toolbar-control-height);
+  pointer-events: none;
+  user-select: none;
+  align: left;
+}
+
+/* Grow the reserved space after the color separator; utilities keep their right edge. */
+.rich-toolbar-content--full .rich-toolbar-row-bottom {
+  align-self: stretch;
+  width: auto;
+}
+
+.rich-toolbar-action-end {
+  position: relative;
+  display: inline-flex;
+  flex: 1 0 auto;
+  align-items: center;
+  margin-left: 0;
+  padding-left: 30px;
+}
+
+.rich-toolbar-action-end::before {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 15px;
+  width: 2px;
+  border-radius: 1px;
+  background: rgba(18, 58, 122, 0.14);
+  content: "";
+  pointer-events: none;
+}
+
+.rich-toolbar-action-end > .rich-toolbar-utility-group {
+  position: relative;
+  margin-left: 30px;
+}
+
+.rich-toolbar-action-end > .rich-toolbar-utility-group::before {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: -15px;
+  width: 2px;
+  border-radius: 1px;
+  background: rgba(18, 58, 122, 0.14);
+  content: "";
+  pointer-events: none;
+}
+
+.rich-toolbar-colors-group .toolbar-field-fill-controls { display: grid; grid-template-columns: minmax(0, 1fr) 11px; gap: 0; width: 45px; min-width: 45px; height: 34px; overflow: hidden; border: 1px solid #b8c4d5; border-radius: var(--toolbar-radius); background: #fff; box-shadow: 0 1px 3px rgba(23, 40, 77, 0.1); }
+.rich-toolbar-colors-group .toolbar-field-fill-controls:hover { border-color: #8597b4; box-shadow: 0 2px 5px rgba(23, 40, 77, 0.14); }
+.toolbar-field-fill-controls > .paideia-color-field { overflow: hidden; }
+.rich-toolbar .toolbar-field-fill-controls .paideia-color-trigger { width: 34px; min-width: 0; height: 34px; min-height: 34px; margin: -1px 0 -1px -1px; border: 0; border-radius: 0; box-shadow: none; }
+.rich-toolbar .toolbar-field-fill-controls .toolbar-field-fill-opacity-toggle { position: relative; width: 11px; min-width: 11px; height: 34px; min-height: 34px; background: transparent; }
+.toolbar-field-fill-controls .toolbar-field-fill-opacity-toggle svg { display: none; }
+.toolbar-field-fill-controls .toolbar-field-fill-opacity-toggle::after { position: absolute; top: 50%; right: 3px; width: 4px; height: 4px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; content: ""; transform: translateY(-70%) rotate(45deg); }
+.toolbar-field-fill-opacity-toggle { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: var(--toolbar-control-height); padding: 0; border: 0; background: transparent; color: #182d54; cursor: pointer; }
+.toolbar-field-fill-opacity-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.toolbar-field-fill-opacity-toggle:hover { background: #dce6f7; border-radius: 6px; }
+.toolbar-field-fill-opacity-panel { position: fixed; z-index: 10000; width: 150px; padding: 10px; box-sizing: border-box; border: 1px solid #aab8cd; border-radius: 10px; background: white; color: #182d54; font: 14px Inter, sans-serif; box-shadow: 0 8px 24px #182d5433; }
+.toolbar-field-fill-opacity-panel label { display: flex; flex-direction: column; gap: 6px; }
+.toolbar-field-fill-opacity-panel .toolbar-field-fill-opacity { justify-content: center; font-size: 14px; border-color: #aab8cd; border-radius: 8px; }
+.toolbar-field-fill-opacity-panel input:focus,
+.toolbar-field-fill-opacity-panel input:focus-visible { outline: none; box-shadow: none; }
+.rich-toolbar .paideia-color-trigger-picker::before,
+.rich-toolbar .toolbar-field-fill-opacity-toggle::before {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 0;
+  width: 1px;
+  background: rgba(51, 78, 130, 0.18);
+  content: "";
+  pointer-events: none;
+}

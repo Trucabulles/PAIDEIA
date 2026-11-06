@@ -1,0 +1,32 @@
+.card {
+  min-width: 0;
+}
+
+.itemWithInsertionPoint {
+  display: contents;
+}
+
+.addSequenceAction {
+  display: flex;
+  justify-content: center;
+}
+
+.addSequenceButton.addSequenceButton {
+  min-height: 40px;
+  padding: 0 10px;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: #f5f7fb;
+  color: #6f7d9d;
+  font-size: 0.96rem;
+  font-weight: 400;
+}
+
+.addSequenceButton.addSequenceButton:hover,
+.addSequenceButton.addSequenceButton:focus-visible {
+  background: #fff;
+  border-color: var(--line);
+  color: #6f7d9d;
+  font-weight: 400;
+  outline: none;
+}

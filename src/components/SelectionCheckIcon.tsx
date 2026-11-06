@@ -1,0 +1,23 @@
+type SelectionCheckIconProps = {
+  className?: string;
+};
+
+export function SelectionCheckIcon({ className = "" }: SelectionCheckIconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.5 8.4 6.45 11.2 12.5 4.9"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}

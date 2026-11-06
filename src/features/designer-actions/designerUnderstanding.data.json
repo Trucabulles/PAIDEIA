@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "synonyms": [{ "canonical": "espacement", "forms": ["écartement", "écart entre les activités"] }],
+  "rules": [
+    { "id": "espacement", "capabilityId": "activity-spacing", "phrases": ["les activités sont trop serrées", "aérer les activités"], "patterns": [], "positive": ["LES ACTIVITÉS SONT TROP SERRÉES"], "negative": ["aérer la pièce"] }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "intents": [
+    {
+      "id": "how-to",
+      "patterns": [
+        "\\b(comment|comment faire|quelle procedure|quelles etapes)\\b"
+      ],
+      "examples": [
+        "Comment faire ?",
+        "Quelle procédure faut-il suivre ?"
+      ]
+    },
+    {
+      "id": "recommend",
+      "patterns": [
+        "\\b(quelle activite|quel type d activite|que choisir|me conseilles|recommande)\\b"
+      ],
+      "examples": [
+        "Quelle activité me conseillez-vous ?",
+        "Quel type d’activité choisir ?"
+      ]
+    },
+    {
+      "id": "compare",
+      "patterns": [
+        "\\b(compare|difference|plutot)\\b",
+        "\\b(?:accordeon|onglets|points d interet|chercher dans l image)\\s+ou\\s+"
+      ],
+      "examples": [
+        "Compare Accordéon et Onglets",
+        "Accordéon ou Onglets ?"
+      ]
+    },
+    {
+      "id": "purpose",
+      "phrases": [
+        "À quoi sert",
+        "Quel est le rôle",
+        "Quelle utilité",
+        "Pourquoi utiliser"
+      ],
+      "patterns": [],
+      "examples": [
+        "À quoi sert l’activité Texte ?",
+        "Quel est le rôle de l’activité Vidéo ?"
+      ]
+    },
+    {
+      "id": "details",
+      "patterns": [
+        "\\b(dis m en plus|explique|parle(?:z)? moi|informations? sur)\\b"
+      ],
+      "examples": [
+        "Dis-m’en plus sur l’activité Image",
+        "Parlez-moi de l’activité Audio"
+      ]
+    },
+    {
+      "id": "limitation",
+      "patterns": [
+        "\\b(pourquoi|limite|limitations|n est pas|ne peut pas|exclu)\\b"
+      ],
+      "examples": [
+        "Quelles sont les limitations du HTML personnalisé ?",
+        "Pourquoi utiliser cette activité ?"
+      ]
+    }
+  ],
+  "textTemplates": [
+    {
+      "id": "undocumented",
+      "key": "designerActions.helpUndocumented",
+      "fallback": "Je ne dispose pas encore d’une aide documentée sur ce point."
+    },
+    {
+      "id": "undocumentedProcedure",
+      "key": "designerActions.helpUndocumentedProcedure",
+      "fallback": "Je ne dispose pas encore d’une procédure documentée suffisamment précise pour cette activité."
+    },
+    {
+      "id": "recommendationConclusion",
+      "key": "designerActions.helpRecommendationConclusion",
+      "fallback": "Le choix dépend de l’action attendue de l’apprenant, pas seulement du volume de texte."
+    },
+    {
+      "id": "purpose",
+      "key": "designerActions.helpPurposeTemplate",
+      "fallback": "{name} sert à {purpose}"
+    },
+    {
+      "id": "functioningLabel",
+      "key": "designerActions.helpFunctioningLabel",
+      "fallback": "Fonctionnement"
+    },
+    {
+      "id": "suitableUsesLabel",
+      "key": "designerActions.helpSuitableUsesLabel",
+      "fallback": "Usages adaptés"
+    },
+    {
+      "id": "cautionsLabel",
+      "key": "designerActions.helpCautionsLabel",
+      "fallback": "Points de vigilance"
+    }
+  ],
+  "suggestionTemplates": [
+    {
+      "id": "purpose",
+      "command": {
+        "key": "designerActions.helpPurposeSuggestion",
+        "fallback": "À quoi sert l’activité {name} ?"
+      },
+      "searchTerms": "{name} {aliases} {purpose} {uses}"
+    },
+    {
+      "id": "details",
+      "command": {
+        "key": "designerActions.helpDetailsSuggestion",
+        "fallback": "Dis-m’en plus sur l’activité {name}"
+      },
+      "searchTerms": "{name} {aliases} détails fonctionnement usages"
+    }
+  ]
+}

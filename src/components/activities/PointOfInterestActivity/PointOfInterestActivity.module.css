@@ -1,0 +1,476 @@
+.activity {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.editor {
+  /* Editor layout stays on existing global PAIDEIA classes to avoid visual drift. */
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.imageHeaderControls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.removeImageButton {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #9f3a2b;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.removeImageButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2.5;
+}
+
+.removeImageButton:focus-visible {
+  outline: 3px solid rgba(159, 58, 43, 0.25);
+  outline-offset: 3px;
+}
+
+.imagePlaceholder {
+  cursor: default;
+}
+
+.addImageButton {
+  position: relative;
+  z-index: 1;
+}
+
+.panelSettingsGrid {
+  grid-template-columns: max-content max-content minmax(0, 1fr) !important;
+  align-items: end;
+  column-gap: 30px !important;
+  row-gap: 14px !important;
+}
+
+.panelSettingsGrid > button {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.panelSettingsGrid input {
+  min-width: 0;
+}
+
+.panelSettingsGrid label {
+  min-width: 0;
+}
+
+.markerColorField,
+.sharedMarkerLabelField {
+  display: grid;
+  gap: 8px;
+  align-self: end;
+}
+
+.markerColorField > span {
+  display: flex;
+  align-items: flex-end;
+  width: 78px;
+  min-height: 2.4em;
+  line-height: 1.2;
+}
+
+.sharedMarkerLabelField > span {
+  display: block;
+  min-height: 0;
+  line-height: 1.2;
+}
+
+.sharedMarkerLabelField input {
+  width: 72px;
+  max-width: 72px;
+  height: 50px;
+  min-height: 50px;
+  text-align: center;
+}
+
+.markerToggle {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+}
+
+.markerToggle span {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--accent);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.markerToggle strong {
+  white-space: nowrap;
+}
+
+.markerToggle em {
+  min-width: 0;
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markerToggle:focus-visible {
+  outline: 3px solid rgba(36, 68, 132, 0.24);
+  outline-offset: 4px;
+}
+
+.markerFields {
+  display: grid;
+  gap: 14px;
+}
+
+.markerLabelInput {
+  width: 72px;
+  max-width: 72px;
+  text-align: center;
+}
+
+.content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 auto;
+  color: var(--activity-content-text, var(--content-text, #222222));
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Desktop and tablet: keep the source ratio inside the visible viewport. */
+@media (min-width: 681px) {
+  .activity :global(.point-of-interest-stage) {
+    display: inline-grid;
+    width: fit-content;
+    max-width: 100%;
+    max-height: min(700px, calc(100dvh - 190px));
+    margin-inline: auto;
+  }
+
+  .activity :global(.point-of-interest-stage .preview-media) {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: min(700px, calc(100dvh - 190px));
+    object-fit: contain;
+  }
+}
+
+.activity :global(.point-of-interest-stage.has-image) {
+  border: 0;
+  background: transparent;
+}
+
+/* Point d'intérêt: les panneaux restent toujours blancs avec un texte sombre,
+   indépendamment du fond ou de l'auto-contraste de la leçon. */
+:global(.point-of-interest-marker-card) {
+  --activity-content-text: #102752;
+  --content-text: #102752;
+  z-index: 100;
+  box-sizing: border-box;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  background: #ffffff;
+  color: #102752;
+}
+
+:global(.point-of-interest-marker-card:has(.plyr--fullscreen-active)) {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+:global(.point-of-interest-marker-card:has(.plyr--fullscreen-active)) .markerCardScroll {
+  overflow: visible;
+}
+
+.markerCardScroll {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 22px 16px 22px 22px;
+  overflow: visible;
+}
+
+:global(.point-of-interest-marker-card)::-webkit-scrollbar {
+  width: 10px;
+}
+
+:global(.point-of-interest-marker-card)::-webkit-scrollbar-track {
+  margin-block: 14px;
+  background: transparent;
+}
+
+:global(.point-of-interest-marker-card)::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: #9aa9c4;
+  background-clip: padding-box;
+}
+
+:global(.point-of-interest-marker-card strong),
+:global(.point-of-interest-marker-card .rich-content),
+:global(.point-of-interest-marker-card .rich-content *),
+:global(.point-of-interest-marker-card p),
+:global(.point-of-interest-marker-card span) {
+  color: #102752 !important;
+}
+
+.markerPanelRichText {
+  --activity-content-text: #102752;
+  --content-text: #102752;
+  color: #102752 !important;
+}
+
+.markerPanelRichText :global(.rich-content),
+.markerPanelRichText :global(.rich-content *),
+.markerPanelRichText :global([contenteditable="true"]),
+.markerPanelRichText :global([contenteditable="true"] *) {
+  color: #102752 !important;
+}
+
+.markerMediaEditor {
+  margin-top: 14px;
+}
+
+.markerMediaSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(239, 244, 253, 0.62);
+}
+
+.markerMediaSummary > div:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.markerMediaSummary span,
+.markerMediaSummary small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.markerMediaActions,
+.markerMediaChoices,
+.markerVideoTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.markerMediaDialogBackdrop {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(16, 39, 82, 0.34);
+}
+
+.markerMediaDialog {
+  position: relative;
+  display: grid;
+  box-sizing: border-box;
+  width: min(760px, 100%);
+  max-height: calc(100dvh - 48px);
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel, #ffffff);
+  box-shadow: 0 24px 70px rgba(16, 39, 82, 0.25);
+  overflow-y: auto;
+}
+
+.markerMediaDialogEmpty {
+  width: max-content;
+  max-width: 100%;
+}
+
+.markerMediaDialogWithMedia {
+  width: min(760px, 100%);
+}
+
+.markerMediaDialog > header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.markerMediaDialog > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.markerMediaDialog > header span {
+  color: var(--muted);
+}
+
+.markerMediaDialog > header button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #9f3a2b;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.markerMediaDialog > header .markerMediaCancelIcon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: inherit;
+}
+
+.markerMediaCancelIcon::before,
+.markerMediaCancelIcon::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+}
+
+.markerMediaCancelIcon::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.markerMediaCancelIcon::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.markerMediaPreview {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #eef3fb;
+}
+
+.markerMediaPreview img,
+.markerMediaPreview video {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 42dvh;
+}
+
+.markerMediaPreview audio {
+  width: min(100%, 520px);
+}
+
+.markerMediaAccessibility {
+  display: grid;
+  gap: 12px;
+}
+
+.markerMediaAccessibility > label:first-child {
+  display: grid;
+  gap: 7px;
+}
+
+.markerImageButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.markerImageButton img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(42dvh, 380px);
+  margin-inline: auto;
+  object-fit: contain;
+}
+
+.markerVideo {
+  width: 100%;
+  min-width: 0;
+}
+
+.markerAudioWithTranscript {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.markerVideo :global(.plyr) {
+  width: 100%;
+}
+
+@media (max-width: 680px) {
+  .imageHeaderControls {
+    gap: 8px;
+  }
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "id": "Arion",
+    "name": "Arion",
+    "role": "Assistant de conception",
+    "description": "Personnage PAIDEIA proposé par défaut lors du dépôt d’une nouvelle mise en situation.",
+    "poses": [
+      {
+        "state": "introduction",
+        "label": "Introduction",
+        "assetRef": "default-characters/Arion/introduction/1_intro.png"
+      },
+      {
+        "state": "question",
+        "label": "Question / situation",
+        "assetRef": "default-characters/Arion/question/1_question.png"
+      },
+      {
+        "state": "neutral",
+        "label": "Neutre",
+        "assetRef": "default-characters/Arion/neutral/2_neutral.png"
+      },
+      {
+        "state": "positive",
+        "label": "Réponse positive",
+        "assetRef": "default-characters/Arion/positive/1-positive.png"
+      },
+      {
+        "state": "negative",
+        "label": "Réponse négative",
+        "assetRef": "default-characters/Arion/negative/1_negative.png"
+      },
+      {
+        "state": "conclusion",
+        "label": "Conclusion",
+        "assetRef": "default-characters/Arion/conclusion/1_conclusion.png"
+      }
+    ]
+  },
+  {
+    "id": "axel",
+    "name": "Axel",
+    "role": "Analyste cybersécurité",
+    "description": "Personnage par défaut PAIDEIA pour les mises en situation.",
+    "poses": [
+	 {
+        "state": "introduction",
+        "label": "introduction",
+        "assetRef": "default-characters/axel/introduction/introduction.png"
+      },
+      {
+        "state": "question",
+        "label": "Question / situation",
+        "assetRef": "default-characters/axel/question/question.png"
+      },
+      {
+        "state": "neutral",
+        "label": "Neutre",
+        "assetRef": "default-characters/axel/neutral/neutral.png"
+      },
+      {
+        "state": "positive",
+        "label": "Réponse positive",
+        "assetRef": "default-characters/axel/positive/positive.png"
+      },
+      {
+        "state": "negative",
+        "label": "Réponse négative",
+        "assetRef": "default-characters/axel/negative/negative.png"
+      }
+    ]
+  }
+]

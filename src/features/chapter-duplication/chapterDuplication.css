@@ -1,0 +1,187 @@
+.chapter-duplicate-button {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  box-shadow: 0 12px 26px rgba(18, 58, 122, 0.12);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, opacity 160ms ease;
+}
+
+.chapter-duplicate-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+.chapter-duplicate-button:hover {
+  border-color: rgba(18, 58, 122, 0.38);
+  box-shadow: 0 14px 30px rgba(18, 58, 122, 0.14);
+  transform: translateY(-1px);
+}
+
+.chapter-duplicate-button:disabled {
+  cursor: wait;
+  opacity: 0.45;
+  transform: none;
+}
+
+.lesson-outline.chapter-paste-active .chapter-drop-zone {
+  height: 58px;
+  min-height: 58px;
+  overflow: visible;
+}
+
+.chapter-paste-target {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 15px;
+  border: 1px solid rgba(18, 58, 122, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--accent);
+  box-shadow: 0 10px 24px rgba(18, 58, 122, 0.16);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+
+.chapter-paste-target svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chapter-paste-target:hover,
+.chapter-paste-target:focus-visible {
+  border-color: rgba(18, 58, 122, 0.54);
+  background: #edf4ff;
+  outline: none;
+}
+
+.chapter-paste-target:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.chapter-paste-pending {
+  position: fixed;
+  z-index: 42;
+  right: 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 10px 8px 16px;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--text-dark);
+  box-shadow: 0 18px 42px rgba(18, 58, 122, 0.2);
+}
+
+.chapter-paste-pending button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(18, 58, 122, 0.2);
+  border-radius: 12px;
+  background: #f4f7fc;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.chapter-paste-pending button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.chapter-operation-backdrop {
+  cursor: wait;
+}
+
+.chapter-operation-dialog {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  width: min(440px, calc(100vw - 40px));
+  text-align: center;
+}
+
+.chapter-operation-dialog h2 {
+  margin: 0;
+}
+
+.chapter-assets-dialog {
+  width: min(680px, calc(100vw - 40px));
+}
+
+.chapter-assets-select-all,
+.chapter-assets-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chapter-assets-select-all {
+  align-items: center;
+  margin: 6px 0 0;
+  padding: 12px;
+  border: 1px solid transparent;
+  font-weight: 800;
+}
+
+.chapter-assets-select-all input[type="checkbox"],
+.chapter-assets-item input[type="checkbox"] {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+.chapter-assets-selection-count {
+  color: var(--muted);
+  font-size: 0.9em;
+  font-weight: 700;
+}
+
+.chapter-assets-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(42vh, 420px);
+  overflow: auto;
+}
+
+.chapter-assets-item {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f7f9fd;
+}
+
+.chapter-assets-item > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.chapter-assets-item strong,
+.chapter-assets-item small {
+  overflow-wrap: anywhere;
+}
+
+.chapter-assets-item small {
+  color: var(--muted);
+}

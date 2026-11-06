@@ -1,0 +1,1 @@
+export { AssistantResourceManager } from "./AssistantResourceManager";

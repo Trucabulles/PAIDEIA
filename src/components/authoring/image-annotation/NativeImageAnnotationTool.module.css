@@ -1,0 +1,675 @@
+.editorBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 650;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(7, 20, 45, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.editorDialog {
+  box-sizing: border-box;
+  width: min(1460px, calc(100% - 140px));
+  min-width: 0;
+  max-height: calc(100dvh - 24px);
+  padding: 8px;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 28px 70px rgba(7, 20, 45, 0.28);
+}
+
+.shell {
+  box-sizing: border-box;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  max-height: calc(100dvh - 42px);
+  gap: 10px;
+  padding: 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background: #fff;
+}
+
+.headerActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.headerResetButton {
+  margin-left: auto;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.toolbarShell {
+  display: grid;
+  position: relative;
+  z-index: 8;
+  min-width: 0;
+  overflow: visible;
+  border: 0;
+  border-top: 1px solid rgba(18, 58, 122, 0.16);
+  border-radius: 0;
+  background: #f4f7fc;
+}
+
+.toolbarTopRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 88px;
+  padding: 12px 18px 10px;
+}
+
+.familyRow,
+.toolsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.familyRow {
+  min-height: 54px;
+  padding: 8px 18px 10px;
+  border-top: 1px solid rgba(18, 58, 122, 0.16);
+}
+
+.familyButton {
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+  gap: 4px;
+  min-width: 52px;
+  min-height: 42px;
+  padding: 5px 8px;
+}
+
+.toolButton {
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  min-width: 62px;
+  min-height: 58px;
+  padding: 7px 10px 6px;
+  border-radius: 16px;
+}
+
+.toolButtonIcon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+}
+
+.toolButtonIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.toolButtonLabel {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
+.iconOptionButton {
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  min-width: 70px;
+  min-height: 58px;
+  padding: 7px 9px 6px;
+  border-radius: 16px;
+}
+
+.iconOptionGlyph {
+  display: inline-flex;
+  width: 25px;
+  height: 25px;
+}
+
+.iconOptionGlyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.iconOptionLabel {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
+.toolButton:global(.active) .toolButtonIcon,
+.toolButton:global(.active) .toolButtonLabel,
+.familyButton:global(.active) .toolButtonIcon,
+.familyButton:global(.active) .toolButtonLabel,
+.iconOptionButton:global(.active) .iconOptionGlyph,
+.iconOptionButton:global(.active) .iconOptionLabel {
+  color: #fff;
+}
+
+.contextGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.shapeContextGrid {
+  flex: 1 0 100%;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 7px;
+}
+
+.colorField,
+.sliderField,
+.toggleField {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.colorLabel,
+.sliderLabel {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
+.sliderField input {
+  width: 108px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  touch-action: none;
+}
+
+.sliderFieldCompact input {
+  width: 76px;
+}
+
+.shapeContextGrid .colorField,
+.shapeContextGrid .sliderField,
+.shapeContextGrid .toggleField {
+  gap: 5px;
+  flex: 0 1 auto;
+}
+
+.shapeContextGrid .colorLabel,
+.shapeContextGrid .sliderLabel {
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.shapeContextGrid .sliderField input {
+  width: 72px;
+}
+
+.shapeContextGrid .sliderFieldCompact input {
+  width: 54px;
+}
+
+.shapeContextGrid .sliderField strong {
+  min-width: 2ch;
+  font-size: 0.68rem;
+}
+
+.sliderField strong {
+  color: var(--accent);
+  min-width: 3ch;
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.sliderField input::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0,
+    var(--accent) var(--slider-progress),
+    #d7e0ef var(--slider-progress),
+    #d7e0ef 100%
+  );
+}
+
+.sliderField input::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.sliderField input::-moz-range-track {
+  height: 2px;
+  border-radius: 999px;
+  background: #d7e0ef;
+}
+
+.sliderField input::-moz-range-progress {
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.sliderField input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.sliderField input:focus-visible {
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(18, 58, 122, 0.18);
+}
+
+.toggleField {
+  padding: 0;
+}
+
+.toggleField input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.utilityBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-top: 1px solid rgba(18, 58, 122, 0.12);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.utilityBarLeft,
+.utilityBarRight {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.utilityBarRight {
+  margin-left: auto;
+}
+
+.editorStage {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  justify-self: center;
+  overflow: hidden;
+  border: 1px solid rgba(16, 39, 82, 0.18);
+  border-radius: 24px;
+  background: #f4f7fc;
+}
+
+.resolutionBackdrop {
+  z-index: 2147483100;
+}
+
+.imageWrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.colorField {
+  position: relative;
+  z-index: 12;
+}
+
+.colorField:focus-within {
+  z-index: 30;
+}
+
+.colorField :global(.paideia-color-popover) {
+  z-index: 60;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.overlay.isSelecting {
+  cursor: default;
+}
+
+.overlay.drawCursor {
+  cursor: crosshair;
+}
+
+.overlay.shapeCursor {
+  cursor: crosshair;
+}
+
+.overlay.textCursor {
+  cursor: text;
+}
+
+.annotationObject {
+  cursor: default;
+}
+
+.annotationObjectSelected {
+  cursor: move;
+}
+
+.annotationHitShape {
+  pointer-events: stroke;
+}
+
+.lineEndpointHandle {
+  cursor: move;
+  pointer-events: all;
+}
+
+.textEditorFrame {
+  position: absolute;
+  z-index: 4;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: move;
+}
+
+.textEditorFrameSelected {
+  border-color: rgba(29, 125, 220, 0.75);
+  border-style: dashed;
+}
+
+.textEditor {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0.35rem 0.5rem;
+  resize: none;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+  outline: none;
+  font: 600 16px/1.35 inherit;
+}
+
+.textDisplay {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0.35rem 0.5rem;
+  overflow: hidden;
+  border-radius: 4px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.textEditorHandle {
+  position: absolute;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid #1d7ddc;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(6, 18, 43, 0.18);
+}
+
+.textEditorHandleN {
+  top: -4px;
+  left: 50%;
+  cursor: ns-resize;
+  transform: translateX(-50%);
+}
+
+.textEditorHandleS {
+  bottom: -4px;
+  left: 50%;
+  cursor: ns-resize;
+  transform: translateX(-50%);
+}
+
+.textEditorHandleE {
+  top: 50%;
+  right: -4px;
+  cursor: ew-resize;
+  transform: translateY(-50%);
+}
+
+.textEditorHandleW {
+  top: 50%;
+  left: -4px;
+  cursor: ew-resize;
+  transform: translateY(-50%);
+}
+
+.textEditorHandleNW {
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.textEditorHandleNE {
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.textEditorHandleSW {
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+.textEditorHandleSE {
+  right: -4px;
+  bottom: -4px;
+  cursor: nwse-resize;
+}
+
+.selectionBox {
+  fill: transparent;
+  stroke: #1d7ddc;
+  stroke-width: 0.45;
+  stroke-dasharray: 1.5 1.2;
+  pointer-events: none;
+}
+
+.selectionHandle {
+  pointer-events: all;
+}
+
+.selectionHandleHitArea {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.selectionHandleDot {
+  fill: #ffffff;
+  stroke: #1d7ddc;
+  stroke-width: 0.28;
+  filter: drop-shadow(0 1px 2px rgba(6, 18, 43, 0.18));
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.rotationHandle {
+  pointer-events: all;
+}
+
+.rotationHandleHitArea {
+  cursor: url("../../../assets/annotation-rotate-cursor-28.svg") 14 14, crosshair;
+  pointer-events: all;
+}
+
+.rotationHandleHitArea:active {
+  cursor: url("../../../assets/annotation-rotate-cursor-28.svg") 14 14, crosshair;
+}
+
+.rotationHandleStem {
+  stroke: rgba(29, 125, 220, 0.88);
+  stroke-width: 0.28;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.rotationHandleDot {
+  fill: #ffffff;
+  stroke: #1d7ddc;
+  stroke-width: 0.28;
+  filter: drop-shadow(0 1px 2px rgba(6, 18, 43, 0.18));
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.rotationHandleIcon {
+  fill: none;
+  stroke: #1d7ddc;
+  stroke-linecap: round;
+  stroke-width: 0.22;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.selectionHandleN,
+.selectionHandleS {
+  cursor: ns-resize;
+}
+
+.selectionHandleE,
+.selectionHandleW {
+  cursor: ew-resize;
+}
+
+.selectionHandleNW,
+.selectionHandleSE {
+  cursor: nwse-resize;
+}
+
+.selectionHandleNE,
+.selectionHandleSW {
+  cursor: nesw-resize;
+}
+
+.placeholder {
+  padding: 42px 24px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.footerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footerActionButton {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.footerActionApply {
+  background: rgba(66, 165, 91, 0.95);
+}
+
+.footerActionCancel {
+  background: rgba(141, 39, 28, 0.92);
+}
+
+.utilityActionButton {
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--accent);
+}
+
+.utilityActionButton:disabled {
+  color: rgba(113, 128, 159, 0.55);
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.utilityActionButton .footerActionIcon {
+  width: 19px;
+  height: 19px;
+}
+
+.footerActionIcon {
+  width: 16px;
+  height: 16px;
+}

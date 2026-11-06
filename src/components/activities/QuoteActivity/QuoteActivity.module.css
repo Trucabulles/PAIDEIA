@@ -1,0 +1,190 @@
+.quote {
+  --quote-accent: #123a7a;
+  --quote-image-width: 22%;
+  --quote-open-mark-height: clamp(64px, 6vw, 76px);
+  --quote-open-mark-gap: clamp(2px, 1vw, 12px);
+  display: grid;
+  grid-template-columns: minmax(150px, var(--quote-image-width)) minmax(0, 1fr);
+  gap: clamp(28px, 2vw, 64px);
+  align-items: center;
+  width: min(100%, 750px);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 88px) clamp(64px, 7vw, 50px) clamp(12px, 1vw, 44px) clamp(20px, 2vw, 42px);
+  border: 1px solid rgba(16, 39, 82, 0.18);
+  background: #ffffff;
+  color: #102752;
+  box-shadow: none;
+}
+
+.quoteWithShadow {
+  box-shadow: 0 22px 56px rgba(16, 39, 82, 0.12);
+}
+
+.quoteWithoutAuthor .closeMark {
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+.quoteWithoutImage {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.quoteImageRight {
+  grid-template-columns: minmax(0, 1fr) minmax(150px, var(--quote-image-width));
+}
+
+.quoteImageRight .image {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.quoteImageRight .copy {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.quoteImageLeft .image,
+.quoteImageRight .image {
+  margin-top: calc(var(--quote-open-mark-height) + var(--quote-open-mark-gap));
+}
+
+.quoteWithoutMarks.quoteImageLeft .image,
+.quoteWithoutMarks.quoteImageRight .image {
+  margin-top: 0;
+}
+
+.quoteImageCenter {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.quoteImageCenter .image {
+  width: clamp(150px, var(--quote-image-width), 360px);
+  max-width: 100%;
+  justify-self: center;
+  margin-top: 0;
+}
+
+.quoteImageRight.quoteWithoutImage {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 0;
+  align-self: start;
+  margin-top: 0;
+ }
+
+.imageRounded {
+  border-radius: 18px;
+}
+
+.copy {
+  position: relative;
+  min-width: 0;
+}
+
+.openMark,
+.closeMark {
+  display: block;
+  height: var(--quote-open-mark-height);
+  color: var(--quote-accent);
+  font-family: "PaideiaQuoteMarkFont", Bellefair, serif;
+  font-size: clamp(9rem, 14vw, 11.25rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.openMark {
+  margin-bottom: var(--quote-open-mark-gap);
+}
+
+.closeMark {
+  margin-top: clamp(2px,1vw, 12px);
+  text-align: right;
+}
+
+/* Quote typography applies only to the rendered/editable quote text.
+   RichBar controls are siblings of .inline-rich-text-field and must keep
+   PAIDEIA interface typography instead of inheriting the activity style. */
+.quote .copy .body :global(.rich-content),
+.quote .copy .body :global(.inline-rich-text-field) {
+  color: inherit;
+  font-family: "PaideiaQuoteFont", Spectral, Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.quote .copy .body :global(.rich-content) *,
+.quote .copy .body :global(.inline-rich-text-field) * {
+  color: inherit;
+  font-family: inherit;
+  font-style: inherit;
+  line-height: inherit;
+}
+
+.body :global(p) {
+  margin: 0 0 1.05em;
+}
+
+.body :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.author {
+  margin-top: clamp(28px, 3.6vw, 52px);
+  color: #263b61;
+  font-size: 0.85rem;
+  font-family: "PaideiaQuoteFont", Spectral, Georgia, "Times New Roman", serif;
+  line-height: 1.45;
+}
+
+.author::before {
+  content: "";
+  display: block;
+  width: 118px;
+  height: 3px;
+  margin-bottom: 24px;
+  background: var(--quote-accent);
+}
+
+.author :global(p) {
+  margin: 0 0 6px;
+}
+
+.author :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.author :global(p:first-child),
+.author :global(strong:first-child) {
+  display: block;
+  color: var(--quote-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+@media (max-width: 820px) {
+  .quote {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 32px;
+  }
+
+  .image {
+    max-width: 320px;
+    justify-self: center;
+    margin-top: 0;
+  }
+
+  .quoteImageRight .image,
+  .quoteImageRight .copy {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

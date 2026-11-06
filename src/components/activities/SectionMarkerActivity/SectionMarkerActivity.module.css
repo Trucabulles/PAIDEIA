@@ -1,0 +1,6 @@
+.marker { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:12px; width:100%; min-height:0px; }
+.line { width:100%; border-top-color:var(--section-marker-divider-color,#123a7a); border-top-width:var(--section-marker-divider-width,2px); border-top-style:var(--section-marker-divider-style,solid); }
+.badge { display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; width:64px; height:64px; border:var(--section-marker-divider-width,2px) var(--section-marker-divider-style,solid) var(--section-marker-divider-color,#123a7a); border-radius:50%; color:var(--section-marker-text-color,#123a7a); font-size:var(--section-marker-font-size,1.5rem); font-weight:650; line-height:1; white-space:nowrap; }
+.outline { background:#fff; }
+.filled { background:var(--section-marker-divider-color,#123a7a); }
+.none { border-color:transparent; background:transparent; }

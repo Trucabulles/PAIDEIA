@@ -1,0 +1,54 @@
+.paideia-window-controls {
+  display: flex;
+  flex: 0 0 auto;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid #d6deeb;
+  border-radius: 14px;
+  background: #ffffffe8;
+}
+
+.paideia-window-controls button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #244585;
+  cursor: pointer;
+}
+
+.paideia-window-controls button:hover { background: #eaf0ff; }
+.paideia-window-controls button:focus-visible { outline: 2px solid #6082ee; outline-offset: -3px; }
+
+.paideia-window-controls svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.paideia-window-resize { position: fixed; z-index: 1300; }
+.paideia-window-resize-North,
+.paideia-window-resize-South { left: 8px; right: 8px; height: 4px; cursor: ns-resize; }
+.paideia-window-resize-North { top: 0; }
+.paideia-window-resize-South { bottom: 0; }
+.paideia-window-resize-East,
+.paideia-window-resize-West { top: 8px; bottom: 8px; width: 4px; cursor: ew-resize; }
+.paideia-window-resize-East { right: 0; }
+.paideia-window-resize-West { left: 0; }
+.paideia-window-resize-NorthEast,
+.paideia-window-resize-NorthWest,
+.paideia-window-resize-SouthEast,
+.paideia-window-resize-SouthWest { width: 8px; height: 8px; }
+.paideia-window-resize-NorthEast { top: 0; right: 0; cursor: nesw-resize; }
+.paideia-window-resize-NorthWest { top: 0; left: 0; cursor: nwse-resize; }
+.paideia-window-resize-SouthEast { right: 0; bottom: 0; cursor: nwse-resize; }
+.paideia-window-resize-SouthWest { bottom: 0; left: 0; cursor: nesw-resize; }

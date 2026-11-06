@@ -1,0 +1,85 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "PAIDEIA",
+  "version": "1.1.26310",
+  "identifier": "com.paideia.app",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "node ./scripts/build.mjs"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "PAIDEIA",
+        "width": 1366,
+        "height": 768,
+		"minWidth": 1366,
+        "minHeight": 768,
+        "resizable": true,
+		"decorations": false,
+		"maximized": true,
+        "fullscreen": false,
+        "dragDropEnabled": false
+		}
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$RESOURCE/**"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "licenseFile": "../legal/Licence-PAIDEIA.txt",
+    "targets": "all",
+    "resources": [
+      "../public/default-characters",
+      "../THIRD_PARTY_NOTICES.md",
+      "../legal/third-party-notices.json",
+      "../legal/Licence-PAIDEIA.txt",
+      "../legal/License-PAIDEIA-International-EN.txt",
+      "../legal/License-PAIDEIA-International-EN.rtf",
+      "../legal/pdfmake-LICENSE.txt",
+      "../legal/webview2-com-LICENSE.txt",
+      "../legal/read-write-excel-file-LICENSE.txt",
+      "../docs/Guide_Utilisateur/PAIDEIA_Guide_utilisateur.pdf"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "paideia"
+        ],
+        "name": "Projet PAIDEIA",
+        "description": "Projet PAIDEIA",
+        "role": "Editor",
+        "mimeType": "application/zip"
+      }
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "fixedRuntime",
+        "path": "./webview2-fixed-runtime/"
+      },
+      "wix": {
+        "language": "fr-FR"
+      },
+      "nsis": {
+        "languages": [
+          "French"
+        ]
+      }
+    }
+  }
+}

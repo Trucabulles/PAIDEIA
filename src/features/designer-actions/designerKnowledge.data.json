@@ -1,0 +1,599 @@
+{
+  "activities": [
+    {
+      "id": "activity.rich-text",
+      "blockType": "rich-text",
+      "name": "Texte",
+      "aliases": [
+        "activité texte",
+        "bloc texte"
+      ],
+      "purpose": "Présenter un contenu pédagogique structuré et accessible, avec mise en forme riche et tableaux.",
+      "whenToUse": [
+        "expliquer",
+        "développer une notion",
+        "structurer une lecture"
+      ],
+      "howItWorks": "L’apprenant lit un contenu continu qui reste adaptable aux différentes tailles d’écran."
+    },
+    {
+      "id": "activity.header",
+      "blockType": "header",
+      "name": "En-tête",
+      "aliases": [
+        "header",
+        "bannière"
+      ],
+      "purpose": "Introduire visuellement une partie de la leçon et hiérarchiser le parcours.",
+      "whenToUse": [
+        "annoncer une section",
+        "poser un contexte"
+      ],
+      "howItWorks": "Un titre et un texte court sont présentés sur un fond configurable."
+    },
+    {
+      "id": "activity.quote",
+      "blockType": "quote",
+      "name": "Citation",
+      "aliases": [
+        "activité citation"
+      ],
+      "purpose": "Mettre en valeur une parole, une règle ou une idée forte.",
+      "whenToUse": [
+        "mémoriser une formule",
+        "attribuer une citation"
+      ],
+      "howItWorks": "Le texte cité est isolé visuellement et peut être accompagné de son auteur."
+    },
+    {
+      "id": "activity.note",
+      "blockType": "note",
+      "name": "Note",
+      "aliases": [
+        "encadré",
+        "activité note"
+      ],
+      "purpose": "Faire ressortir une information importante sans interrompre le fil principal.",
+      "whenToUse": [
+        "conseil",
+        "vigilance",
+        "rappel"
+      ],
+      "howItWorks": "Un encadré distinct attire l’attention sur un contenu bref."
+    },
+    {
+      "id": "activity.list",
+      "blockType": "list",
+      "name": "Liste",
+      "aliases": [
+        "activité liste"
+      ],
+      "purpose": "Présenter des éléments courts dans un ordre ou un regroupement explicite.",
+      "whenToUse": [
+        "étapes",
+        "critères",
+        "inventaire"
+      ],
+      "howItWorks": "Les éléments sont affichés sous forme de liste ordonnée ou non ordonnée."
+    },
+    {
+      "id": "activity.image",
+      "blockType": "image",
+      "name": "Image",
+      "aliases": [
+        "activité image",
+        "illustration"
+      ],
+      "purpose": "Illustrer un contenu avec une alternative textuelle accessible.",
+      "whenToUse": [
+        "montrer",
+        "illustrer",
+        "documenter visuellement"
+      ],
+      "howItWorks": "L’image est rendue avec ses réglages de taille et son information d’accessibilité."
+    },
+    {
+      "id": "activity.image-text",
+      "blockType": "image-text",
+      "name": "Image et texte",
+      "aliases": [
+        "texte et image"
+      ],
+      "purpose": "Associer étroitement une explication à une illustration.",
+      "whenToUse": [
+        "commenter une image",
+        "mettre en regard texte et visuel"
+      ],
+      "howItWorks": "Le texte et le média sont disposés ensemble selon une mise en page configurable."
+    },
+    {
+      "id": "activity.image-grid",
+      "blockType": "image-grid",
+      "name": "Images multiples",
+      "aliases": [
+        "galerie",
+        "grille d’images"
+      ],
+      "purpose": "Comparer ou parcourir plusieurs visuels dans une même activité.",
+      "whenToUse": [
+        "galerie",
+        "comparaison visuelle",
+        "série d’exemples"
+      ],
+      "howItWorks": "Plusieurs images sont organisées dans une grille responsive."
+    },
+    {
+      "id": "activity.media",
+      "blockType": "media",
+      "name": "Vidéo",
+      "aliases": [
+        "vidéos",
+        "média vidéo"
+      ],
+      "purpose": "Présenter une démonstration, une explication animée ou une prise de parole sous-titrée.",
+      "whenToUse": [
+        "démonstration",
+        "procédure filmée",
+        "explication audiovisuelle"
+      ],
+      "howItWorks": "Le lecteur intègre la vidéo, les sous-titres et les options de lecture configurées.",
+      "howTo": [
+        "Ajouter ou sélectionner le fichier vidéo.",
+        "Ajouter un fichier VTT ou générer les sous-titres avec Whisper.",
+        "Vérifier l’apparence des sous-titres et le plein écran dans l’aperçu."
+      ]
+    },
+    {
+      "id": "activity.audio",
+      "blockType": "audio",
+      "name": "Audio",
+      "aliases": [
+        "activité audio",
+        "son"
+      ],
+      "purpose": "Faire écouter un commentaire, un témoignage ou un contenu sonore.",
+      "whenToUse": [
+        "témoignage",
+        "prononciation",
+        "écoute"
+      ],
+      "howItWorks": "Un lecteur audio fournit les commandes de lecture et les options autorisées."
+    },
+    {
+      "id": "activity.image-360",
+      "blockType": "image-360",
+      "name": "Image 360",
+      "aliases": [
+        "panorama 360",
+        "vue 360"
+      ],
+      "purpose": "Permettre l’exploration immersive d’un environnement panoramique.",
+      "whenToUse": [
+        "visite",
+        "repérage spatial",
+        "immersion"
+      ],
+      "howItWorks": "L’apprenant déplace le point de vue dans une image panoramique et peut consulter des repères."
+    },
+    {
+      "id": "activity.slides",
+      "blockType": "slides",
+      "name": "Présentation",
+      "aliases": [
+        "diaporama",
+        "slides"
+      ],
+      "purpose": "Découper un contenu en écrans successifs sans allonger excessivement la page.",
+      "whenToUse": [
+        "séquence",
+        "progression étape par étape",
+        "comparaison de vues"
+      ],
+      "howItWorks": "L’apprenant navigue entre plusieurs diapositives contenant du texte et des médias."
+    },
+    {
+      "id": "activity.html-custom",
+      "blockType": "html-custom",
+      "name": "HTML personnalisé",
+      "aliases": [
+        "contenu html",
+        "activité html"
+      ],
+      "purpose": "Intégrer un contenu autonome lorsque les activités natives ne couvrent pas le besoin.",
+      "whenToUse": [
+        "contenu spécifique maîtrisé"
+      ],
+      "howItWorks": "PAIDEIA embarque et affiche le paquet HTML fourni.",
+      "cautions": [
+        "Sa structure et ses interactions sont arbitraires ; elles ne sont pas automatiquement comprises par les outils d’accessibilité, d’estimation ou de modification en masse."
+      ]
+    },
+    {
+      "id": "activity.accordion",
+      "blockType": "accordion",
+      "name": "Accordéon",
+      "aliases": [
+        "accordéons"
+      ],
+      "purpose": "Réduire la densité visuelle en laissant l’apprenant ouvrir les rubriques qui l’intéressent.",
+      "whenToUse": [
+        "foire aux questions",
+        "définitions",
+        "contenus secondaires"
+      ],
+      "howItWorks": "Chaque titre ouvre ou ferme un panneau de contenu."
+    },
+    {
+      "id": "activity.tabs",
+      "blockType": "tabs",
+      "name": "Onglets",
+      "aliases": [
+        "activité onglets"
+      ],
+      "purpose": "Mettre plusieurs contenus de même niveau en regard dans un espace compact.",
+      "whenToUse": [
+        "comparer des catégories",
+        "présenter des variantes"
+      ],
+      "howItWorks": "Un seul panneau est visible à la fois ; l’apprenant choisit l’onglet à consulter."
+    },
+    {
+      "id": "activity.flip-cards",
+      "blockType": "flip-cards",
+      "name": "Cartes à retourner",
+      "aliases": [
+        "cartes",
+        "flashcards"
+      ],
+      "purpose": "Favoriser le rappel actif par une information répartie entre recto et verso.",
+      "whenToUse": [
+        "question-réponse",
+        "terme-définition",
+        "mémorisation"
+      ],
+      "howItWorks": "L’apprenant retourne chaque carte pour révéler son verso."
+    },
+    {
+      "id": "activity.timeline",
+      "blockType": "timeline",
+      "name": "Frise",
+      "aliases": [
+        "frise chronologique",
+        "timeline"
+      ],
+      "purpose": "Représenter une succession d’événements ou d’étapes.",
+      "whenToUse": [
+        "chronologie",
+        "processus",
+        "évolution"
+      ],
+      "howItWorks": "Les jalons sont présentés dans leur ordre et accompagnés de leur contenu."
+    },
+    {
+      "id": "activity.point-of-interest",
+      "blockType": "point-of-interest",
+      "name": "Points d’intérêt",
+      "aliases": [
+        "points d'intérêt",
+        "poi",
+        "marqueurs"
+      ],
+      "purpose": "Commenter des zones précises d’une image sans demander de réponse évaluée.",
+      "whenToUse": [
+        "exploration guidée",
+        "annotation d’image"
+      ],
+      "howItWorks": "L’apprenant active des marqueurs placés par le concepteur pour afficher leurs explications."
+    },
+    {
+      "id": "activity.links-resources",
+      "blockType": "links-resources",
+      "name": "Liens et ressources",
+      "aliases": [
+        "liens & ressources",
+        "ressources"
+      ],
+      "purpose": "Regrouper des liens utiles et des ressources complémentaires.",
+      "whenToUse": [
+        "bibliographie",
+        "liens externes",
+        "ressources complémentaires"
+      ],
+      "howItWorks": "Les ressources sont présentées sous forme de liens identifiés."
+    },
+    {
+      "id": "activity.attachment",
+      "blockType": "attachment",
+      "name": "Fichier",
+      "aliases": [
+        "pièce jointe",
+        "document à télécharger"
+      ],
+      "purpose": "Mettre un document à disposition de l’apprenant.",
+      "whenToUse": [
+        "modèle",
+        "fiche pratique",
+        "document de référence"
+      ],
+      "howItWorks": "L’apprenant peut ouvrir ou télécharger le fichier joint."
+    },
+    {
+      "id": "activity.complete",
+      "blockType": "complete",
+      "name": "Texte à compléter",
+      "aliases": [
+        "texte à trous",
+        "compléter un texte"
+      ],
+      "purpose": "Faire restituer des termes dans leur contexte.",
+      "whenToUse": [
+        "vocabulaire",
+        "procédure",
+        "rappel de notions"
+      ],
+      "howItWorks": "L’apprenant remplit les zones attendues puis valide ses réponses."
+    },
+    {
+      "id": "activity.matching",
+      "blockType": "matching",
+      "name": "Relier",
+      "aliases": [
+        "appariement",
+        "association",
+        "matching"
+      ],
+      "purpose": "Faire associer des éléments appartenant à deux ensembles.",
+      "whenToUse": [
+        "terme-définition",
+        "cause-effet",
+        "élément-fonction"
+      ],
+      "howItWorks": "L’apprenant construit les paires puis valide l’ensemble."
+    },
+    {
+      "id": "activity.card-sort",
+      "blockType": "card-sort",
+      "name": "Tri de cartes",
+      "aliases": [
+        "classer des cartes",
+        "classement de cartes",
+        "tri"
+      ],
+      "purpose": "Faire classer des éléments dans des catégories.",
+      "whenToUse": [
+        "catégorisation",
+        "priorisation",
+        "distinction de familles"
+      ],
+      "howItWorks": "L’apprenant déplace chaque carte vers la catégorie appropriée."
+    },
+    {
+      "id": "activity.find-elements",
+      "blockType": "find-elements",
+      "name": "Chercher dans l’image",
+      "aliases": [
+        "recherche dans l’image",
+        "repérage dans une image"
+      ],
+      "purpose": "Évaluer l’observation et le repérage précis d’éléments dans une image.",
+      "whenToUse": [
+        "détection d’erreurs",
+        "repérage de risques",
+        "analyse visuelle"
+      ],
+      "howItWorks": "L’apprenant explore l’image et marque les zones répondant à la consigne.",
+      "cautions": [
+        "Le temps cognitif peut être important même lorsque la consigne contient peu de mots."
+      ]
+    },
+    {
+      "id": "activity.situational-dialogue",
+      "blockType": "situational-dialogue",
+      "name": "Mise en situation",
+      "aliases": [
+        "scénario",
+        "dialogue",
+        "situation"
+      ],
+      "purpose": "Faire prendre des décisions dans un scénario ramifié.",
+      "whenToUse": [
+        "prise de décision",
+        "entraînement comportemental",
+        "mise en contexte"
+      ],
+      "howItWorks": "Les choix de l’apprenant déterminent la suite du dialogue et les retours affichés."
+    },
+    {
+      "id": "activity.quiz",
+      "blockType": "quiz",
+      "name": "Quiz",
+      "aliases": [
+        "questionnaire"
+      ],
+      "purpose": "Vérifier l’acquisition de connaissances avec des questions évaluées.",
+      "whenToUse": [
+        "évaluation",
+        "auto-positionnement",
+        "contrôle de compréhension"
+      ],
+      "howItWorks": "L’apprenant répond aux questions, valide et reçoit le retour configuré."
+    },
+    {
+      "id": "activity.question-multiple",
+      "blockType": "question-multiple",
+      "name": "Question à choix multiple",
+      "aliases": ["QCM", "choix multiples"],
+      "purpose": "Proposer une question d'entraînement avec plusieurs bonnes réponses.",
+      "whenToUse": ["entraînement", "vérification ponctuelle"],
+      "howItWorks": "L'apprenant sélectionne une ou plusieurs réponses et reçoit les indications configurées, sans seuil ni blocage."
+    },
+    {
+      "id": "activity.question-unique",
+      "blockType": "question-unique",
+      "name": "Question à choix unique",
+      "aliases": ["QCU", "choix unique"],
+      "purpose": "Proposer une question d'entraînement avec une seule bonne réponse.",
+      "whenToUse": ["entraînement", "vérification ponctuelle"],
+      "howItWorks": "L'apprenant choisit une réponse et reçoit les indications configurées, sans seuil ni blocage."
+    },
+    {
+      "id": "activity.question-true-false",
+      "blockType": "question-true-false",
+      "name": "Vrai ou faux",
+      "aliases": ["vrai faux", "question binaire"],
+      "purpose": "Proposer une affirmation à valider ou à réfuter.",
+      "whenToUse": ["entraînement", "vérification ponctuelle"],
+      "howItWorks": "L'apprenant choisit Vrai ou Faux et reçoit les indications configurées, sans seuil ni blocage."
+    },
+    {
+      "id": "activity.question-random",
+      "blockType": "question-random",
+      "name": "Questions aléatoires",
+      "aliases": ["tirage de questions", "banque de questions"],
+      "purpose": "Tirer des questions d'une banque pour un entraînement non contraignant.",
+      "whenToUse": ["entraînement", "questions variables"],
+      "howItWorks": "Un nombre configurable de questions est tiré dans la banque ; l'ordre des questions et des réponses peut être mélangé, sans seuil ni blocage."
+    },
+    {
+      "id": "activity.result-message",
+      "blockType": "result-message",
+      "name": "Message de résultat",
+      "aliases": [
+        "résultat",
+        "message final"
+      ],
+      "purpose": "Présenter un retour lié au résultat obtenu dans le parcours.",
+      "whenToUse": [
+        "retour final",
+        "orientation selon le résultat"
+      ],
+      "howItWorks": "Le message affiché dépend du résultat transmis par l’activité associée."
+    },
+    {
+      "id": "activity.continue",
+      "blockType": "continue",
+      "name": "Continuer",
+      "aliases": [
+        "bouton continuer",
+        "bouton suivant"
+      ],
+      "purpose": "Contrôler explicitement le passage à la suite du parcours.",
+      "whenToUse": [
+        "progression volontaire",
+        "séparation de séquences"
+      ],
+      "howItWorks": "L’apprenant active le bouton pour révéler ou atteindre la suite de la leçon."
+    },
+    {
+      "id": "activity.course-exit",
+      "blockType": "course-exit",
+      "name": "Sortir de la leçon",
+      "aliases": [
+        "quitter la leçon",
+        "bouton de sortie"
+      ],
+      "purpose": "Proposer une sortie explicite de la leçon vers l’environnement hôte.",
+      "whenToUse": [
+        "fin de parcours",
+        "retour au LMS"
+      ],
+      "howItWorks": "Le bouton exécute l’action de sortie prévue par l’environnement de diffusion."
+    },
+    {
+      "id": "activity.divider",
+      "blockType": "divider",
+      "name": "Séparateur",
+      "aliases": [
+        "ligne de séparation"
+      ],
+      "purpose": "Créer une respiration visuelle entre deux contenus.",
+      "whenToUse": [
+        "séparer des idées",
+        "rythmer une page"
+      ],
+      "howItWorks": "Un séparateur graphique non interactif est inséré dans le flux."
+    },
+    {
+      "id": "activity.section-marker",
+      "blockType": "section-marker",
+      "name": "Séparateur repéré",
+      "aliases": [
+        "repère de section"
+      ],
+      "purpose": "Marquer une séparation identifiable dans la structure du parcours.",
+      "whenToUse": [
+        "nouvelle partie",
+        "repère de navigation"
+      ],
+      "howItWorks": "Le séparateur associe un repère textuel à la rupture visuelle."
+    },
+    {
+      "id": "activity.mcq",
+      "blockType": "mcq",
+      "name": "QCM historique",
+      "aliases": [
+        "mcq",
+        "ancien qcm"
+      ],
+      "purpose": "Restituer un questionnaire à choix multiples provenant d’un format de projet historique.",
+      "whenToUse": [
+        "compatibilité de projet existant"
+      ],
+      "howItWorks": "PAIDEIA conserve ce type pour relire les anciens contenus ; les nouveaux questionnaires utilisent l’activité Quiz.",
+      "cautions": [
+        "Ce type est maintenu pour compatibilité et ne doit pas être privilégié pour une nouvelle conception."
+      ]
+    },
+    {
+      "id": "activity.html-fallback",
+      "blockType": "html-fallback",
+      "name": "Contenu importé non rematché",
+      "aliases": [
+        "html fallback",
+        "bloc importé"
+      ],
+      "purpose": "Préserver un contenu importé qui n’a pas pu être converti vers une activité native.",
+      "whenToUse": [
+        "compatibilité d’import"
+      ],
+      "howItWorks": "Le contenu d’origine est conservé pour éviter une perte lors de l’import.",
+      "cautions": [
+        "Ses possibilités d’édition et d’analyse sont limitées par rapport aux activités natives."
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "procedure.video-captions",
+      "name": "Sous-titres vidéo",
+      "aliases": [
+        "sous-titres",
+        "sous titres",
+        "générer les sous-titres",
+        "whisper"
+      ],
+      "summary": "Les sous-titres peuvent être importés au format VTT ou générés localement avec Whisper, puis relus et corrigés dans l’éditeur.",
+      "steps": [
+        "Ouvrir l’activité Vidéo.",
+        "Ajouter un VTT ou lancer la génération locale avec Whisper.",
+        "Relire les segments et corriger le texte.",
+        "Vérifier le rendu, le contraste et la synchronisation dans l’aperçu."
+      ]
+    },
+    {
+      "id": "procedure.duration-estimate",
+      "name": "Estimation de durée",
+      "aliases": [
+        "temps estimé",
+        "durée estimée",
+        "rapport de durée"
+      ],
+      "summary": "Le calcul distingue la base quantifiable et la pondération pédagogique, puis produit un rapport explicable dans le dossier metrics du projet.",
+      "steps": [
+        "Ouvrir la page des chapitres.",
+        "Cliquer sur le chronomètre pour calculer ou recalculer.",
+        "Consulter le rapport courant pour voir les éléments mesurés, la pondération et les limites."
+      ]
+    }
+  ]
+}

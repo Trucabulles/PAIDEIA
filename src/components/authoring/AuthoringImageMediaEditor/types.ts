@@ -1,0 +1,37 @@
+import type { CSSProperties, ReactNode } from "react";
+import type { ImageCrop } from "../../../types/project";
+
+export type AuthoringImageMediaEditorProps = {
+  accept: string;
+  annotationActive?: boolean;
+  annotationEditor?: ReactNode;
+  annotationIcon?: ReactNode;
+  crop: ImageCrop | null;
+  cropIcon: ReactNode;
+  cropPreviewActive: boolean;
+  compactActionControls?: boolean;
+  displayedMediaFileName: string;
+  editorMediaLayout: string;
+  imageAlt: string;
+  imageAltBadge?: ReactNode;
+  imageAsset: string | null;
+  imageAssetRef?: string | null;
+  imageRounded: boolean;
+  imageSizeToken: string;
+  isCropMode: boolean;
+  showAppearanceControls?: boolean;
+  showLayoutSelector?: boolean;
+  showRoundedControl?: boolean;
+  showSizeForCenteredLayout?: boolean;
+  onApplyCrop: () => Promise<void> | void;
+  onToggleAnnotation?: () => void;
+  onCancelCrop: () => void;
+  onCropChange: (crop: ImageCrop) => void;
+  onImageRoundedChange: (rounded: boolean) => void;
+  onImageSizeChange: (size: string) => void;
+  onLayoutChange: (layout: string) => void;
+  onRemoveImage: () => void;
+  onToggleCrop: () => void;
+  onUpload: (file: File) => void;
+  style?: CSSProperties;
+};

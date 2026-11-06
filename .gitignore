@@ -1,0 +1,140 @@
+# Dependencies
+node_modules/
+
+# Frontend build output
+dist/
+build/
+out/
+coverage/
+.vite/
+.cache/
+*.tsbuildinfo
+.eslintcache
+
+# Tauri / Rust build output
+src-tauri/target/
+src-tauri/target-*/
+target/
+src-tauri/gen/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment
+.env
+.env.*
+!.env.example
+!.env.template
+/server/collaboration-https/config/config.php
+/server/collaboration-https/var/
+/server/collaboration-https/deploy/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local Codex / diagnostic workspaces
+.codex/
+.codex-docx/
+.codex-recovery/
+.codex-npm-cache/
+.codex-cargo-check/
+diagnostics/
+
+# Temporary and patch files
+.tmp-*/
+**/.tmp-*/
+*_old.*
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.rej
+*_old*.*
+/scripts/rollback_richbar_controls_20260826.ps1
+/scripts/fixtures/color-picker.html
+/scripts/fixtures/color-picker.tsx
+/scripts/verify-color-picker.mjs
+
+# PAIDEIA generated/local working data
+projects/
+imported-projects/
+release-archive/
+**/snapshots/
+backup/
+backups/
+/tools/arion-registry-editor/backups/
+/tools/arion-registry-editor/.runtime/
+*_backup/
+*_backup_*/
+*.backup
+*.paideia
+*.zip
+*.7z
+third_party/webview2/*.cab
+
+# Optional local AI engine and models (development machine only)
+/MinstralAi/
+/src-tauri/target-codex-check/
+/src-tauri/target-caption-check/
+/target-codex-check/
+
+# Explicitly versioned import/export regression fixtures may opt back in here
+!fixtures/**/*.paideia
+!fixtures/**/*.zip
+!tests/fixtures/**/*.paideia
+!tests/fixtures/**/*.zip
+
+# Generated desktop installers and symbols
+*.msi
+*.msix
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.pdb
+
+# Private per-project rollback copies from Rich Text maintenance
+/artifacts/
+/archives/
+/Dev_Documentation/
+/Documentation/
+/docs/*
+!/docs/README.md
+!/docs/Reprise_Depuis_GitHub.md
+!/docs/Architecture/
+/docs/Architecture/*
+!/docs/Architecture/Cartographie_Technique.md
+!/docs/Architecture/Component_Map.md
+!/docs/Architecture/Data_Flow.md
+!/docs/Architecture/Stockage_Banques.md
+!/docs/Architecture/Dictionnaire_Cartographie_Maintenance.md
+!/docs/Architecture/Guide_Deploiement_Collaboration_HTTPS.md
+!/docs/Architecture/Guide_DSI_Collaboration_Reseau.md
+!/docs/Architecture/Guide_DSI_SSI.md
+!/docs/Architecture/PAIDEIA_Guide_DSI_Collaboration.docx
+!/docs/Architecture/PAIDEIA_Guide_DSI_Collaboration.pdf
+!/docs/Architecture/PAIDEIA_Guide_DSI_SSI.docx
+!/docs/Architecture/Reference_Config_Collaboration_Managed.md
+!/docs/Arion_Utilisateur/
+/docs/Arion_Utilisateur/*
+!/docs/Arion_Utilisateur/*.md
+!/docs/Guide_Utilisateur/
+/docs/Guide_Utilisateur/*
+!/docs/Guide_Utilisateur/PAIDEIA_Guide_utilisateur.pdf
+/artifacts/rich-text-cleanup-*/
+/artifacts/portable/
+/artifacts/dsi/
+src-tauri/pdf-a4-runtime/*
+!src-tauri/pdf-a4-runtime/.gitkeep

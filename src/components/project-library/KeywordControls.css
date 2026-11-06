@@ -1,0 +1,51 @@
+.keyword-dialog { width: min(680px, calc(100vw - 40px)); max-height: min(86vh, 760px); overflow: hidden; padding: 14px; display: flex; }
+.keyword-dialog-scroll { display: grid; grid-auto-rows: max-content; align-content: start; gap: 16px; width: 100%; min-height: 0; max-height: calc(min(86vh, 760px) - 30px); overflow-y: auto; padding: 20px; }
+.keyword-field-label { display: block; margin: 18px 0 8px; font-weight: 700; color: #1a376b; }
+.keyword-dialog select, .keyword-dialog input, .keyword-dialog textarea { width: 100%; box-sizing: border-box; border: 1px solid #cad5e9; border-radius: 10px; padding: 10px 12px; color: #172f5d; background: #fff; font: inherit; }
+.keyword-label-current { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 1px solid #cad5e9; border-radius: 10px; padding: 10px 12px; background: #fff; color: #172f5d; font: inherit; cursor: pointer; }
+.keyword-label-choices { display: grid; max-height: 170px; overflow-y: auto; border: 1px solid #cad5e9; border-radius: 8px; margin-top: 4px; }
+.keyword-label-choices button { border: 0; background: #fff; color: #172f5d; padding: 8px 12px; text-align: left; cursor: pointer; }
+.keyword-label-choices button:is(:hover, [aria-selected="true"]) { background: #eaf1fd; }
+.keyword-dialog textarea { resize: vertical; }
+.keyword-picker { margin: 8px 0 16px; }
+.keyword-chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 34px; align-items: center; }
+.keyword-chip { display: inline-flex; align-items: center; gap: 8px; background: #eaf1fd; color: #173d7b; border-radius: 999px; padding: 5px 9px 5px 13px; }
+.keyword-chip button { border: 0; background: transparent; color: #173d7b; font-size: 20px; line-height: 1; cursor: pointer; }
+.keyword-empty { color: #6d7e9e; font-style: italic; }
+.keyword-add-row { display: flex; gap: 8px; margin-top: 10px; }
+.keyword-add-row input { flex: 1; min-width: 0; }
+.keyword-add-row button, .keyword-manager .keyword-dialog-scroll > button, .keyword-manager-item button, .keyword-edit-actions button { border: 1px solid #ccd7e8; border-radius: 9px; background: white; color: #173d7b; padding: 8px 12px; cursor: pointer; }
+.keyword-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.keyword-suggestions button { border: 1px solid #d4deee; border-radius: 999px; background: #f3f7ff; color: #173d7b; padding: 5px 10px; cursor: pointer; }
+.keyword-manager-list { margin-top: 16px; max-height: 230px; overflow-y: auto; border-top: 1px solid #e3e8f2; }
+.keyword-manager-item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid #e3e8f2; }
+.keyword-manager-item strong { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.keyword-manager-item .keyword-pin-toggle { flex: 0 0 32px; width: 32px; padding: 4px; border: 0; background: transparent; color: #173d7b; font-size: 1.45rem; line-height: 1; }
+.keyword-manager-item .keyword-pin-toggle[aria-pressed="true"] { color: #f2c94c; }
+.keyword-manager-item .keyword-pin-toggle:hover { background: #eaf1ff; }
+.keyword-manager-item span { color: #667a9b; font-size: .9em; white-space: nowrap; }
+.keyword-edit-box { margin-top: 14px; padding: 12px; background: #f4f7fc; border-radius: 10px; }
+.keyword-edit-actions { display: flex; gap: 8px; margin-top: 10px; }
+.keyword-merge-targets { display: grid; max-height: 150px; overflow-y: auto; border: 1px solid #cbd7e9; border-radius: 8px; }
+.keyword-merge-targets button { border: 0; background: white; color: #173d7b; padding: 8px 10px; text-align: left; cursor: pointer; }
+.keyword-merge-targets button[aria-pressed="true"], .keyword-merge-targets button:hover { background: #eaf1fd; }
+.keyword-warning { color: #865b08; }
+.keyword-error { color: #a32e2e; }
+
+.keyword-manager .keyword-dialog-scroll { display: flex; flex-direction: column; gap: 10px; height: calc(min(86vh, 760px) - 30px); overflow: hidden; }
+.keyword-manager .keyword-dialog-scroll > * { flex: 0 0 auto; }
+.keyword-manager-intro { display: grid; gap: 10px; }
+.keyword-manager .keyword-field-label { margin: 4px 0 0; }
+.keyword-manager #keyword-paste { height: clamp(64px, 12vh, 110px); min-height: 64px; max-height: 110px; resize: none; }
+.keyword-manager .keyword-manager-list { flex: 1 1 auto; min-height: 48px; max-height: none; margin-top: 6px; }
+.keyword-manager .modal-actions { margin-top: 0; }
+.keyword-manager .keyword-edit-box { margin-top: 0; }
+.keyword-manager-editing .keyword-manager-intro { display: none; }
+.keyword-manager-editing #keyword-paste { height: 64px; }
+.keyword-manager .keyword-merge-targets { max-height: 96px; }
+
+@media (max-height: 700px) {
+  .keyword-manager .keyword-dialog-scroll { gap: 6px; padding: 16px; }
+  .keyword-manager #keyword-paste { height: 64px; }
+  .keyword-manager .keyword-merge-targets { max-height: 64px; }
+}

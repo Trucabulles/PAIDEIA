@@ -1,0 +1,260 @@
+.activity {
+  --accordion-background: #edf4ff;
+  --accordion-accent: #d5dae3;
+  --accordion-border-color: #d5dae3;
+  --accordion-border-style: solid;
+  --accordion-border-width: 1px;
+  --accordion-radius: 18px;
+  width: min(100%, 800px);
+  margin-inline: auto;
+}
+
+.shadow :global(.accordion-item) {
+  box-shadow: 0 20px 52px rgba(16, 39, 82, 0.12);
+}
+
+.activity :global(.accordion-list) {
+  display: grid;
+  gap: 14px;
+}
+
+.activity :global(.accordion-item) {
+  --activity-content-text: #222222;
+  margin: 0;
+  overflow: hidden;
+  border-color: var(--accordion-border-color);
+  border-style: var(--accordion-border-style);
+  border-width: var(--accordion-border-width);
+  border-radius: var(--accordion-radius);
+  background: #ffffff;
+  color: var(--activity-content-text);
+}
+
+.activity :global(.accordion-trigger) {
+  background: var(--accordion-background);
+  color: var(--activity-content-text);
+}
+
+.activity :global(.accordion-item:has(.inline-rich-text-wrapper.active)) {
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.activity :global(.accordion-item:has(.inline-rich-text-wrapper.active) > .accordion-trigger) {
+  border-radius: var(--accordion-radius) var(--accordion-radius) 0 0;
+}
+
+.activity :global(.accordion-item:has(.inline-rich-text-wrapper.active) > .accordion-panel) {
+  border-radius: 0 0 var(--accordion-radius) var(--accordion-radius);
+}
+
+.activity :global(.accordion-trigger .accordion-icon) {
+  background: var(--accordion-accent);
+}
+
+.activity :global(.accordion-trigger .accordion-title) {
+  min-width: 0;
+}
+
+.activity :global(.accordion-trigger > .inline-rich-text-wrapper) {
+  flex: 1;
+  min-width: 0;
+  cursor: text;
+}
+
+.activity :global(.accordion-panel) {
+  display: grid;
+  gap: 18px;
+  background: #ffffff;
+  color: var(--activity-content-text);
+}
+
+.imageFrame {
+  position: relative;
+  display: block;
+  justify-self: center;
+  width: fit-content;
+  max-width: min(100%, 560px);
+  overflow: hidden;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.imageFrame img {
+  position: relative;
+  display: block;
+  width: auto;
+  max-width: min(100%, 560px);
+  height: auto;
+  max-height: 360px;
+  object-fit: contain;
+}
+
+.cropped {
+  aspect-ratio: 16 / 9;
+  width: min(100%, 560px);
+}
+
+.cropped img {
+  position: absolute;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+}
+
+.roundedImage {
+  border-radius: 22px;
+}
+
+.ellipse {
+  border-radius: 999px;
+}
+
+.editor {
+  display: grid;
+  gap: 18px;
+}
+
+.itemCard {
+  display: grid;
+  gap: 16px;
+}
+
+.itemContent {
+  display: grid;
+  gap: 16px;
+}
+
+.imageTools {
+  display: grid;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.imageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.imageActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.imagePreviewRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.imagePreview {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  max-width: min(100%, 460px);
+  background: transparent;
+}
+
+.imagePreview img,
+.imagePreview :global(.media-crop-frame) {
+  display: block;
+  width: auto;
+  max-width: min(100%, 460px);
+  height: auto;
+  max-height: 260px;
+  object-fit: contain;
+}
+
+.imagePreviewName {
+  min-width: 0;
+  max-width: 360px;
+  overflow: hidden;
+  color: #102752;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid rgba(122, 42, 33, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #8f3024;
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 850;
+  line-height: 1;
+  box-shadow: 0 10px 22px rgba(18, 58, 122, 0.12);
+}
+
+.cropButton {
+  width: 46px;
+  height: 46px;
+}
+
+.cropWrapper {
+  display: grid;
+  gap: 10px;
+}
+
+.appearanceSection {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(201, 211, 226, 0.9);
+}
+
+.appearanceTitle {
+  color: #6f7f9e;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.appearanceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+
+.appearanceGrid > label {
+  flex: 0 0 auto;
+}
+
+.appearanceGrid > label:nth-child(-n + 2) {
+  flex-basis: 82px;
+}
+
+.appearanceGrid > label :global(.paideia-color-trigger) {
+  width: 56px;
+  min-width: 56px;
+}
+
+.appearanceGrid > label:nth-child(n + 3) {
+  min-width: 150px;
+}
+
+@media (max-width: 720px) {
+  .imageHeader,
+  .appearanceGrid {
+    justify-content: flex-start;
+  }
+}

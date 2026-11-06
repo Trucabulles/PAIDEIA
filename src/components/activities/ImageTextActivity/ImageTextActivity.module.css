@@ -1,0 +1,280 @@
+/* All image/text composition dimensions live here. The shell adapter releases
+   the shared canvas width without changing the containers of other activities. */
+.shell,
+.frame {
+  --image-text-max-width: 970px;
+  --image-text-viewport-gutter: 48px;
+  --image-text-available-width: min(var(--image-text-max-width), calc(100vw - var(--image-text-viewport-gutter)));
+}
+
+/* Compatibility for shared background and authoring handles, scoped to this activity. */
+.shell {
+  --activity-content-width: var(--image-text-available-width);
+}
+
+:global(.editor-section) .shell:global(.linear-block) > :global(.linear-block-content):has(> .frame),
+:global(.preview-mode) .shell:global(.linear-block) > :global(.linear-block-content):has(> .frame) {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 0;
+}
+
+.shell:has(.frame[data-layout="image-center"]) {
+  margin-block: 0;
+}
+
+.frame {
+  box-sizing: border-box;
+  width: min(100%, var(--image-text-available-width));
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.activity {
+  box-sizing: border-box;
+  padding-inline: 50px;
+}
+
+.activity :global(.preview-media) {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 540px;
+  border: 0;
+  border-radius: 0;
+  object-fit: contain;
+  background: transparent;
+}
+
+.activity :global(.preview-media.rounded-media) {
+  border-radius: 22px;
+}
+
+.activity :global(.preview-media.ellipse-crop) {
+  border-radius: 50%;
+}
+
+.activity[data-layout="image-left"],
+.activity[data-layout="image-right"] {
+  display: flex;
+  width: min(100%, var(--image-text-content-width, 100%));
+  margin-inline: auto;
+  gap: 50px;
+  align-items: var(--image-text-vertical-align, center);
+  justify-content: center;
+}
+
+.activity[data-layout="image-left"] {
+  flex-direction: row;
+}
+
+.activity[data-layout="image-right"] {
+  flex-direction: row;
+}
+
+.activity:is([data-layout="image-left"], [data-layout="image-right"]) > .copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity[data-layout="image-right"] :global(.preview-media),
+.activity[data-layout="image-right"] :global(.editor-crop-stage) {
+  order: 2;
+  justify-self: end;
+}
+
+.activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(.preview-media) {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: var(--image-text-image-size, 50%);
+  align-self: center;
+}
+
+.activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(.media-crop-frame) {
+  width: var(--image-text-crop-natural-width, var(--image-text-image-size, 50%));
+  max-width: min(var(--image-text-image-size, 50%), calc(540px * var(--image-text-crop-ratio, 1)));
+}
+
+.activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(img.preview-media) {
+  width: min(var(--image-text-natural-width, var(--image-text-image-size, 50%)), var(--image-text-image-size, 50%));
+}
+
+.activity:is([data-layout="image-center"], [data-layout="image-below"], [data-layout="image-full"]) {
+  display: grid;
+  width: min(100%, var(--image-text-content-width, 100%));
+  margin-inline: auto;
+  gap: var(--image-text-media-gap, 28px);
+}
+
+.activity[data-layout="image-center"] {
+  justify-items: center;
+  text-align: center;
+  gap: 50px;
+  padding-block: 50px;
+}
+
+.activity[data-layout="image-center"] :is(:global(.preview-media), :global(.editor-crop-stage), :global(.media-crop-frame)) {
+  width: auto;
+  max-width: 100%;
+  max-height: none;
+}
+
+.activity[data-layout="image-center"] > :is(:global(.preview-media), :global(.editor-crop-stage), :global(.media-crop-frame)) {
+  width: var(--image-text-image-size, 50%);
+  max-width: 100%;
+  max-height: none;
+}
+
+.activity[data-layout="image-center"] > .copy {
+  width: min(100%, calc(var(--image-text-available-width) - 300px));
+}
+
+.activity[data-layout="image-full"] :is(:global(.preview-media), :global(.editor-crop-stage), :global(.media-crop-frame)) {
+  width: auto;
+  max-width: 100%;
+  max-height: none;
+  justify-self: center;
+}
+
+.activity[data-layout="image-full"] {
+  width: 100vw;
+  max-width: none;
+  margin-right: calc(50% - 50vw);
+  margin-left: calc(50% - 50vw);
+  justify-items: center;
+  justify-self: center;
+}
+
+.activity[data-layout="image-below"] :is(:global(.preview-media), :global(.editor-crop-stage), :global(.media-crop-frame)) {
+  order: 2;
+  width: auto;
+  max-height: none;
+  justify-self: center;
+}
+
+.activity[data-layout="image-overlay"] {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 28px;
+  justify-self: center;
+  width: 100%;
+}
+
+.activity[data-layout="image-overlay"] :is(:global(.preview-media), :global(.media-crop-frame)) {
+  position: relative;
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  border: 0;
+  border-radius: inherit;
+  filter: brightness(0.72);
+}
+
+.activity[data-layout="image-overlay"] :global(.editor-crop-stage) {
+  grid-area: 1 / 1;
+  width: 100%;
+}
+
+.activity[data-layout="image-overlay"] > .copy {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: min(720px, calc(100% - 56px));
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.activity:has(:global(.inline-rich-text-wrapper)) {
+  position: relative;
+}
+
+.activity :global(.inline-rich-text-wrapper) {
+  position: static;
+}
+
+@media screen and (max-width: 820px) {
+  .activity :global(.preview-media) {
+    height: auto;
+    max-height: none;
+  }
+
+  .shell,
+  .frame {
+    --image-text-viewport-gutter: 28px;
+  }
+
+  .activity:is([data-layout="image-left"], [data-layout="image-right"]) {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .activity:is([data-layout="image-left"], [data-layout="image-right"]) > .copy {
+    flex: none;
+    width: 100%;
+  }
+
+  .activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(.preview-media) {
+    max-width: 100%;
+  }
+
+  .activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(.media-crop-frame) {
+    width: var(--image-text-crop-natural-width, 100%);
+  }
+
+  .activity:is([data-layout="image-left"], [data-layout="image-right"]) > :global(img.preview-media) {
+    width: min(var(--image-text-natural-width, 100%), 100%);
+  }
+
+  .activity[data-layout="image-right"] :global(.preview-media) {
+    order: 0;
+  }
+
+  .activity[data-layout="image-center"] > .copy {
+    width: 100%;
+  }
+
+  .activity[data-layout="image-overlay"] {
+    min-height: 0;
+    border-radius: 22px;
+  }
+
+  .activity[data-layout="image-overlay"] :global(.preview-media) {
+    position: static;
+    height: auto;
+    max-height: none;
+    filter: none;
+  }
+
+  .activity[data-layout="image-overlay"] > .copy {
+    width: 100%;
+    padding: 18px;
+    box-shadow: none;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .shell,
+  .frame {
+    --image-text-viewport-gutter: 20px;
+  }
+}
+
+/* A full-width image must stay within the printable document. */
+@media print {
+  .shell,
+  .frame {
+    --image-text-available-width: min(var(--image-text-max-width), 100%);
+  }
+
+  .activity[data-layout="image-full"] {
+    width: 100%;
+    margin-inline: 0;
+  }
+}

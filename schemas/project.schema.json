@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paideia.local/schemas/project.schema.json",
+  "title": "PAIDEIA Project",
+  "type": "object",
+  "required": [
+    "id",
+    "slug",
+    "title",
+    "createdAt",
+    "updatedAt",
+    "defaultLocale",
+    "currentVersion",
+    "rootCourseId"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "defaultLocale": {
+      "type": "string"
+    },
+    "locales": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "currentVersion": {
+      "type": "string"
+    },
+    "rootCourseId": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

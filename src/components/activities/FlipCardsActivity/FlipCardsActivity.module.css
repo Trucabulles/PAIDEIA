@@ -1,0 +1,188 @@
+.activity {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+}
+
+.editor :global(.flip-card-style-grid) {
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  align-items: end;
+}
+
+.colorRows {
+  display: grid;
+  gap: 12px;
+}
+
+.colorRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.45fr) repeat(2, minmax(140px, 1fr));
+  align-items: end;
+  gap: 12px;
+}
+
+.faceLabel {
+  align-self: center;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+.colorField {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.colorField > span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: none;
+}
+
+.activity :global(.flip-card-grid) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.activity :global(.flip-card) {
+  flex: 0 1 calc((100% - 36px) / 3);
+  max-width: calc((100% - 36px) / 3);
+  min-width: min(100%, 220px);
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  perspective: 1200px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.activity :global(.flip-card-inner) {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  transform-style: preserve-3d;
+  transition: transform 360ms ease;
+}
+
+.activity :global(.flip-card.flipped .flip-card-inner) {
+  transform: rotateY(180deg);
+}
+
+.activity :global(.flip-card-face) {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-style: var(--flip-card-border-style, solid);
+  border-width: var(--flip-card-border-width, 2px);
+  border-radius: 24px;
+  backface-visibility: hidden;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.activity :global(.flip-card-front) {
+  padding: 20px;
+  background: var(--flip-card-front-bg, #F3F5FA);
+  border-color: var(--flip-card-front-border-color, #123A7A);
+  color: var(--flip-card-text-color, #222222);
+  align-items: center;
+  justify-content: center;
+}
+
+.activity :global(.flip-card-front strong),
+.activity :global(.flip-card-front .rich-content) {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.activity :global(.flip-card-front .rich-content) {
+  width: fit-content;
+  max-width: 100%;
+  margin: auto;
+  color: inherit;
+}
+
+.activity :global(.flip-card-front .rich-content :is(h1, h2, h3, h4, h5)) {
+  color: inherit;
+  margin: 0.2em 0;
+}
+
+.activity :global(.flip-card-face .rich-content :where(p, h1, h2, h3, h4, h5, h6, li)) {
+  color: inherit;
+}
+
+.activity :global(.flip-card-face-image) {
+  width: 100%;
+  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.activity :global(.flip-card-face-image.media-crop-frame) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.activity :global(.flip-card.has-front-image .flip-card-front),
+.activity :global(.flip-card.has-back-image .flip-card-back) {
+  padding: 0;
+}
+
+.activity :global(.flip-card-back) {
+  overflow: hidden;
+  padding: 0;
+  transform: rotateY(180deg);
+  background: var(--flip-card-back-bg, #FFFFFF);
+  border-color: var(--flip-card-back-border-color, #123A7A);
+  color: var(--flip-card-back-text-color, #222222);
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.activity :global(.flip-card-back-scroll) {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: inherit;
+}
+
+.activity :global(.flip-card-back .rich-content) {
+  width: fit-content;
+  max-width: 100%;
+  margin: auto;
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+@media (max-width: 700px) {
+  .activity :global(.flip-card-grid) {
+    justify-content: stretch;
+  }
+
+  .activity :global(.flip-card) {
+    flex-basis: 100%;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+  }
+}

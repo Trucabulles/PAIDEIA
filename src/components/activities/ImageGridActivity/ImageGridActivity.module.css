@@ -1,0 +1,269 @@
+.activity {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
+  margin: var(--activity-spacing, 30px auto);
+  padding-inline: 25px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.count2 .cards {
+  grid-template-columns: repeat(2, minmax(0, 400px));
+  justify-content: center;
+}
+
+.count3 .cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.count4 .cards {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.card {
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.media {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #edf2f9;
+}
+
+.rounded .media {
+  border-radius: 18px;
+}
+
+.shadow .media {
+  box-shadow: 0 14px 34px rgba(15, 35, 76, .18);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.containedImage {
+  object-fit: contain;
+}
+
+.media :global(.media-crop-frame) {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #d9e3f3, #f7f9fc);
+}
+
+.caption {
+  margin-top: 10px;
+  color: var(--content-text, #222222);
+}
+
+.captionContent {
+  color: inherit;
+}
+
+.editor {
+  display: grid;
+  gap: 18px;
+}
+
+.editorToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.editorToolbar > label {
+  display: grid;
+  gap: 6px;
+  color: #7181a1;
+  font-size: .86rem;
+}
+
+.editorToolbar > label select {
+  min-width: 130px;
+}
+
+.editorStyleControls {
+  width: auto;
+}
+
+.editorCards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+  padding-inline: 25px;
+}
+
+.editorCards.count2 {
+  grid-template-columns: repeat(2, minmax(0, 400px));
+  justify-content: center;
+}
+
+.editorCards.count3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.editorCards.count4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.editorCard {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #dbe4f2;
+  border-radius: 18px;
+  background: #f8faff;
+}
+
+.editorCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #173a75;
+}
+
+.editorDelete {
+  position: relative;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #943421;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(122, 31, 18, .18);
+}
+
+.editorDelete::before,
+.editorDelete::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: #fff;
+  content: "";
+  transform-origin: center;
+}
+
+.editorDelete::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.editorDelete::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.editorDelete:hover {
+  background: #7f291b;
+  box-shadow: 0 12px 26px rgba(122, 31, 18, .24);
+  transform: translateY(-1px);
+}
+
+.editorDelete:focus-visible {
+  outline: 3px solid rgba(18, 58, 122, .28);
+  outline-offset: 3px;
+}
+
+.editorMedia {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+}
+
+.editorMediaRounded {
+  border-radius: 12px;
+}
+
+.editorMediaShadow {
+  box-shadow: 0 14px 34px rgba(15, 35, 76, .18);
+}
+
+.editorUpload {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  overflow: hidden;
+  border: 1px dashed #9fb3d3;
+  border-radius: inherit;
+  color: #274986;
+  cursor: pointer;
+}
+
+.editorPreview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.editorUpload :global(.media-crop-frame) {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.editorUpload input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.editorCrop {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+}
+
+.editorMedia :global(.image-crop-editor-shell) {
+  height: 100%;
+}
+
+.editorCaption {
+  min-width: 0;
+}
+
+@media (max-width: 560px) {
+  .cards,
+  .count2 .cards,
+  .count3 .cards,
+  .count4 .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .editorCards,
+  .editorCards.count2,
+  .editorCards.count3,
+  .editorCards.count4 {
+    grid-template-columns: 1fr;
+    padding-inline: 0;
+  }
+}

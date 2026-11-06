@@ -1,0 +1,79 @@
+html:has(.arion-detached-root),
+html:has(.arion-detached-loading),
+body:has(.arion-detached-root),
+body:has(.arion-detached-loading) {
+  background: transparent;
+  overflow: hidden;
+}
+
+.arion-detached-root { background: transparent; }
+.arion-detached-root .designer-actions-panel {
+  border: 1px solid #cbd7ea;
+  border-radius: 24px;
+  padding: 24px;
+}
+.arion-detached-root .designer-actions-header {
+  border-radius: 24px 24px 32px 0;
+  user-select: none;
+  cursor: move;
+}
+.arion-detached-root.arion-maximized .designer-actions-panel {
+  border: 0;
+  border-radius: 0;
+}
+.arion-detached-root.arion-maximized .designer-actions-header {
+  border-radius: 0 0 32px 0;
+}
+.arion-detached-root .paideia-window-controls { margin-left: 2px; background: #ffffffc9; box-shadow: none; }
+.arion-detached-loading { border-radius: 24px; }
+.arion-desktop .designer-actions-command > div,
+.arion-desktop .designer-actions-counts,
+.arion-desktop .designer-actions-buttons {
+  align-items: center;
+  flex-direction: row;
+}
+.arion-compact .designer-actions-panel { padding: 18px; }
+
+/* A wide detached window is also a reading surface. Scale typography gently
+   without changing the anchored panel or turning the whole UI into browser zoom. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .arion-detached-root.arion-desktop .designer-actions-panel {
+    font-size: clamp(16px, calc(15px + 0.18vw), 19px);
+  }
+
+  .arion-detached-root.arion-desktop .designer-actions-header .designer-actions-heading h2 {
+    font-size: clamp(1.35rem, calc(1.15rem + 0.35vw), 1.7rem);
+  }
+
+  .arion-detached-root.arion-desktop .designer-actions-header .designer-actions-heading p {
+    font-size: clamp(0.9rem, calc(0.82rem + 0.18vw), 1.08rem);
+  }
+
+  .arion-detached-root.arion-desktop .designer-actions-message,
+  .arion-detached-root.arion-desktop .designer-actions-question,
+  .arion-detached-root.arion-desktop .designer-actions-preview {
+    line-height: 1.5;
+  }
+
+  /* Documentation sources contain deliberate line breaks for their narrow
+     docked presentation. In the detached reading surface, let paragraphs and
+     list items reflow across the available width. */
+  .arion-detached-root.arion-desktop .designer-help-text p,
+  .arion-detached-root.arion-desktop .designer-help-text li {
+    white-space: normal;
+  }
+}
+
+.arion-resize { position: fixed; z-index: 1200; }
+.arion-resize-North, .arion-resize-South { left: 24px; right: 24px; height: 5px; cursor: ns-resize; }
+.arion-resize-North { top: 0; }
+.arion-resize-South { bottom: 0; }
+.arion-resize-East, .arion-resize-West { top: 24px; bottom: 24px; width: 5px; cursor: ew-resize; }
+.arion-resize-East { right: 0; }
+.arion-resize-West { left: 0; }
+.arion-resize-NorthEast, .arion-resize-NorthWest,
+.arion-resize-SouthEast, .arion-resize-SouthWest { width: 16px; height: 16px; }
+.arion-resize-NorthEast { top: 6px; right: 6px; cursor: nesw-resize; }
+.arion-resize-NorthWest { top: 6px; left: 6px; cursor: nwse-resize; }
+.arion-resize-SouthEast { bottom: 6px; right: 6px; cursor: nwse-resize; }
+.arion-resize-SouthWest { bottom: 6px; left: 6px; cursor: nesw-resize; }

@@ -1,0 +1,25 @@
+.icon { width:32px; height:32px; display:block; }
+.accessButton { align-items:center; background:#fff; border:1px solid rgba(18,58,122,.2); border-radius:14px; color:#123a7a; display:inline-flex; height:44px; justify-content:center; min-width:44px; padding:5px; }
+.accessButton:hover,.accessButton:focus-visible { background:#edf4ff; outline:2px solid #123a7a; outline-offset:2px; }
+.backdrop { align-items:center; background:rgba(15,36,80,.56); display:flex; inset:0; justify-content:center; padding:24px; position:fixed; z-index:10000; }
+.readerDialog { background:#fff; border-radius:24px; box-shadow:0 24px 70px rgba(15,36,80,.28); display:flex; flex-direction:column; max-height:min(88vh,900px); overflow:hidden; width:min(1120px,calc(100vw - 48px)); }
+.readerHeader { align-items:flex-start; display:flex; gap:24px; justify-content:space-between; padding:24px 28px 16px; }
+.readerHeader span { color:#72809f; font-size:14px; font-weight:700; text-transform:uppercase; }
+.readerHeader h2 { color:#0f2450; margin:4px 0 0; }
+.readerContent { box-sizing:border-box; color:#222; font-family:Inter,Arial,sans-serif; font-size:18px; line-height:1.65; margin:0 auto; max-width:calc(var(--activity-content-width) - 300px); overflow:auto; padding:20px 32px 36px; width:100%; }
+.readerContent p { margin:0 0 1em; }
+.readerContent:focus { outline:2px solid #123a7a; outline-offset:-4px; }
+.readerFooter { align-items:center; border-top:1px solid rgba(18,58,122,.12); display:flex; gap:16px; justify-content:flex-end; padding:16px 28px; }
+.authoring { background:#fff; border:1px solid rgba(18,58,122,.14); border-radius:18px; display:grid; gap:14px; padding:16px; }
+.authoringHeader { align-items:center; display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; }
+.authoringHeader>div:first-child { display:grid; gap:4px; }
+.authoringActions { display:flex; flex-wrap:wrap; gap:8px; }
+.importFormats { color:#667593; font-size:13px; }
+.fileError { color:#963526; font-size:14px; font-weight:700; }
+.draft { color:#9a5b18; font-size:14px; font-weight:700; }
+.validated { color:#26734d; font-size:14px; font-weight:700; }
+.editorDialog { display:grid; gap:16px; max-height:90vh; width:min(980px,calc(100vw - 48px)); }
+.editorDialog label { display:grid; gap:6px; }
+.editorDialog textarea { font-family:Inter,Arial,sans-serif; font-size:18px; line-height:1.55; min-height:360px; resize:vertical; }
+.editorDialog footer { display:flex; gap:12px; justify-content:flex-end; }
+@media (max-width:700px) { .backdrop { padding:12px; } .readerDialog { border-radius:18px; max-height:94vh; width:calc(100vw - 24px); } .readerContent { max-width:100%; padding:16px 20px 28px; } }

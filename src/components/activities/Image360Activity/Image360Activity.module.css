@@ -1,0 +1,505 @@
+.card {
+  --image360-background: #ffffff;
+  --image360-border-color: rgba(18, 58, 122, 0.16);
+  --image360-border-style: solid;
+  --image360-border-width: 1px;
+  --image360-radius: 10px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  /*display: grid;*/
+  /*gap: 18px;*/
+  width: min(961px, calc(100vw - 96px));
+  border: var(--image360-border-width) var(--image360-border-style) var(--image360-border-color);
+  border-radius: var(--image360-radius);
+  background: var(--image360-background);
+  box-sizing: border-box;
+  padding: 10px 10px 10px 10px;
+ }
+
+.fullWidth {
+  width: min(100%, calc(100vw - 48px));
+}
+
+.shadow {
+  box-shadow: 0 16px 34px rgba(16, 39, 82, 0.14);
+}
+
+.title {
+  color: #102752;
+}
+
+.viewerShell {
+  position: relative;
+  overflow: hidden;
+  border-radius: max(0px, calc(var(--image360-radius) * 0.75));
+  background: #09101f;
+}
+
+.viewer {
+  height: clamp(360px, 48vw, 620px);
+  min-height: 360px;
+}
+
+.viewer :global(a-scene) {
+  width: 100%;
+  height: 100%;
+}
+
+.viewer :global(.a-enter-vr),
+.viewer :global(.a-enter-ar) {
+  display: none !important;
+}
+
+/*.help {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 4;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #5c6d8f;
+  font-weight: 750;
+  padding: 8px 12px;
+}*/
+
+.fullscreenButton {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  border-radius: 10px;
+  background: rgba(18, 58, 122, 0.28);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0px 0px rgba(16, 39, 82, 0.18);
+}
+
+.fullscreenButton:hover,
+.fullscreenButton:focus-visible {
+  background: rgba(18, 58, 122, 0.42);
+  outline: none;
+}
+
+.fullscreenIcon {
+  width: 28px;
+  height: 28px;
+}
+
+.fullscreenIcon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+}
+
+.viewerShell:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+.viewerShell:fullscreen .viewer {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.picking .viewerShell {
+  outline: 3px solid rgba(29, 95, 191, 0.42);
+  outline-offset: 4px;
+}
+
+.hotspotPanel {
+  --activity-content-text: #222222;
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(450px, calc(100% - 36px));
+  max-height: min(250px, calc(100% - 60px));
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px 5px 12px 12px;
+  border: 1px solid rgba(18, 58, 122, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 1);
+  color: var(--activity-content-text);
+  box-shadow: 0 18px 44px rgba(16, 39, 82, 0.25);
+}
+
+.hotspotBadgeLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.hotspotBadge {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(30, 59, 118, 1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 1);
+  color: #123a7a;
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(16, 39, 82, 0.18);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.hotspotBadge:hover,
+.hotspotBadge:focus-visible {
+  border-color: rgba(18, 58, 122, 0.34);
+  outline: none;
+}
+
+.hotspotPanelTitle {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.15rem;
+  font-weight: 850;
+}
+
+.hotspotPanelTitle :global(*) {
+  margin: 0;
+}
+
+.hotspotPanel :global(.rich-content) {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: visible;
+  overflow-x: hidden;
+  padding: 5px 12px 0px 5px;
+  scroll-padding-bottom: 12px;
+  scrollbar-gutter: stable;
+  border-radius: 0px 0 0 12px;
+  margin-bottom: 0px;
+  color: var(--activity-content-text);
+}
+
+.content {
+  color: var(--activity-content-text, var(--content-text, #222222));
+}
+
+.editor {
+  display: grid;
+  gap: 22px;
+}
+
+.editorSection,
+.appearanceSection {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 24px;
+  background: rgba(237, 244, 255, 0.42);
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.paideiaButton {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 18px;
+  background: #edf4ff;
+  color: #123a7a;
+  font-weight: 850;
+  box-shadow: none;
+}
+
+.AddPointButton {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgba(18, 58, 122, 0.18);
+  border-radius: 18px;
+  background: #edf4ff;
+  color: #123a7a;
+  font-weight: 850;
+  box-shadow: none;
+}
+.paideiaButton:hover,
+.paideiaButton:focus-visible {
+  border-color: rgba(18, 58, 122, 0.34);
+  background: #e5efff;
+}
+
+.paideiaButton:global(.danger-pill) {
+  border-color: rgba(142, 51, 37, 0.24);
+  background: #8e3325;
+  color: #ffffff;
+  box-shadow: 0 18px 44px rgba(142, 51, 37, 0.18);
+}
+
+.imageSelectButtonWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.imageSelectUnloadButton {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(142, 51, 37, 0.24);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #8e3325;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(16, 39, 82, 0.12);
+  cursor: pointer;
+}
+
+.imageSelectUnloadButton:hover,
+.imageSelectUnloadButton:focus-visible {
+  background: #fff5f3;
+  border-color: rgba(142, 51, 37, 0.4);
+  outline: none;
+}
+
+.imageMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.warning {
+  margin: 0;
+  color: #8e3325;
+  font-weight: 750;
+}
+
+.compactGrid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+}
+
+.hotspotPreview {
+  display: grid;
+  gap: 8px;
+}
+
+.hotspotPreview .card {
+  width: 100%;
+  max-width: none;
+  padding: 12px;
+}
+
+.hotspotPreview .viewer {
+  height: 420px;
+  min-height: 420px;
+}
+
+.hotspotPreviewHint {
+  margin: 0;
+  color: #7382a3;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.hotspotEditorLayout {
+  display: grid;
+  grid-template-columns: minmax(210px, 300px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.hotspotList {
+  display: grid;
+  gap: 10px;
+  max-height: flex;
+  overflow: none;
+}
+
+.hotspotList button {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #102752;
+  text-align: left;
+}
+
+.hotspotList small {
+  color: #7080a0;
+  font-weight: 700;
+}
+
+.activeHotspotRow {
+  border-color: #123a7a !important;
+  box-shadow: inset 0 0 0 1px #123a7a;
+}
+
+.hotspotForm {
+  display: grid;
+  gap: 14px;
+  max-height: flex;
+  /*overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding-inline: 6px 12px;*/
+}
+
+.hotspotForm > * {
+  direction: ltr;
+}
+
+.inlineGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldLabel {
+  color: #7382a3;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.toolbar {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.hotspotInlineField,
+.hotspotContentField {
+  min-height: 76px;
+  padding: 16px 18px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 18px;
+  background: #ffffff;
+  color: #102752;
+  outline: none;
+}
+
+.hotspotContentField {
+  min-height: 130px;
+}
+
+.editorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.appearanceTitle {
+  color: #7382a3;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.appearanceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px 14px;
+}
+
+.appearanceGrid > * {
+  flex: 0 0 auto;
+}
+
+.appearanceGrid label {
+  display: grid;
+  gap: 6px;
+  width: auto;
+  min-width: 0;
+}
+
+.appearanceGrid label:has(select) {
+  max-width: max-content;
+}
+
+.appearanceGrid :global(.paideia-color-trigger) {
+  width: 54px;
+  height: 54px;
+}
+
+.appearanceGrid select {
+  width: auto;
+  min-width: 116px;
+  max-width: 132px;
+  min-height: 54px;
+  padding-inline: 16px 32px;
+}
+
+.appearanceToggle {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 54px;
+  padding: 0 16px;
+  border: 1px solid rgba(18, 58, 122, 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #7382a3;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.appearanceToggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: #123a7a;
+}
+
+.appearanceToggle span {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .card {
+    width: min(100%, calc(100vw - 28px));
+    padding: 12px;
+  }
+
+  .viewer {
+    height: 420px;
+  }
+
+  .hotspotEditorLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

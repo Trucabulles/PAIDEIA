@@ -1,0 +1,131 @@
+.note {
+  --note-accent: var(--accent);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  box-sizing: border-box;
+  width: min(100%, 750px);
+  margin-inline: auto;
+  padding: 34px 42px;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-dark);
+  overflow-wrap: break-word;
+}
+
+.shadow {
+  box-shadow: 0 16px 34px rgba(18, 58, 122, 0.14);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  color: var(--note-accent);
+  display: block;
+  overflow: visible;
+}
+
+.withoutIcon {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.copy {
+  min-width: 0;
+}
+
+.copy :global(.export-block-title) {
+  margin-top: 0;
+}
+
+.copy :global(.rich-content) {
+  min-width: 0;
+}
+
+.iconSettings {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.iconPicker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-x: auto;
+}
+
+.iconPicker legend {
+  margin-bottom: 8px;
+  color: #60708d;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.iconOptions {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(54px, 1fr));
+  min-width: 426px;
+  gap: 8px;
+  align-items: start;
+}
+
+.iconOption {
+  display: grid;
+  grid-template-rows: 52px 22px;
+  place-items: center;
+  min-width: 0;
+  padding: 6px 2px 2px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #123a7a;
+  cursor: pointer;
+}
+
+.iconOption:has(input:checked) {
+  border-color: rgba(18, 58, 122, .32);
+  background: rgba(18, 58, 122, .07);
+}
+
+.iconOption:focus-within {
+  outline: none;
+  box-shadow: inset 0 0 0 3px rgba(18, 58, 122, .2);
+}
+
+.iconPreview {
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
+.iconOption input {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  accent-color: #123a7a;
+}
+
+.iconPicker:disabled .iconOptions {
+  opacity: .45;
+}
+
+.iconColorField {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.iconColorField:disabled {
+  opacity: .45;
+}
+
+@media (max-width: 720px) {
+  .note {
+    grid-template-columns: 1fr;
+    padding: 26px 24px;
+  }
+}

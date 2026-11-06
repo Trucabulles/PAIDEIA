@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PAIDEIA — Éditeur des registres Arion</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="eyebrow">Outil de développement autonome</span><h1>Registres Arion</h1><p>Alimenter les interactions sociales et les formulations d’aide sans modifier le code TypeScript.</p></div>
+    <div class="actions"><details class="server-controls"><summary id="server-menu-label">Serveur</summary><div><span id="server-count">Détection…</span><button id="restart-server" type="button" class="secondary">Redémarrer le ou les serveurs</button><button id="stop-server" type="button" class="danger">Arrêter le ou les serveurs</button></div></details><button id="reload" class="secondary">Recharger</button><button id="validate" class="secondary">Valider</button><button id="save">Enregistrer</button></div>
+  </header>
+  <main>
+    <nav class="tabs" aria-label="Registre à modifier"><button class="active" data-tab="social">Interactions personnalisées</button><button data-tab="help">Reconnaissance de l’aide</button><button data-tab="templates">Messages d’Arion</button><button data-tab="documentation">Documentation</button></nav>
+    <nav class="tabs" aria-label="Catalogue Arion"><button data-tab="massifiable">Paramètres massifiables</button><button data-tab="understanding">Compréhension des actions</button><button data-tab="knowledge">Contenus d’aide</button></nav>
+    <section id="workspace" aria-live="polite"></section>
+  </main>
+  <output id="status" role="status"></output>
+  <dialog id="regex-help" aria-labelledby="regex-help-title">
+    <article class="help-sheet">
+      <header><div><span class="eyebrow">Fiche express</span><h2 id="regex-help-title">Comprendre les regex d’Arion</h2></div><button id="close-regex-help" type="button" class="secondary" aria-label="Fermer l’aide">Fermer</button></header>
+      <p>Arion transforme d’abord la saisie en minuscules, retire les accents et simplifie la ponctuation. Écrivez donc <code>prepare</code>, et non <code>prépare</code>. Saisissez une expression par ligne, sans les délimiteurs <code>/…/</code>.</p>
+      <table>
+        <thead><tr><th>Signe</th><th>Signification</th><th>Exemple</th></tr></thead>
+        <tbody>
+          <tr><td><code>(a|b)</code></td><td><q>a</q> ou <q>b</q></td><td><code>(fais|prepare)</code></td></tr>
+          <tr><td><code>(texte)?</code></td><td>groupe facultatif</td><td><code>(peux tu )?faire</code></td></tr>
+          <tr><td><code>\b</code></td><td>limite d’un mot</td><td><code>\bcafe\b</code></td></tr>
+          <tr><td><code>^</code> et <code>$</code></td><td>début et fin de la phrase</td><td><code>^merci$</code></td></tr>
+          <tr><td><code>[ -]</code></td><td>un espace ou un tiret</td><td><code>fais[ -]moi</code></td></tr>
+          <tr><td><code>+</code></td><td>une ou plusieurs répétitions</td><td><code> +</code></td></tr>
+          <tr><td><code>*</code></td><td>zéro ou plusieurs répétitions</td><td><code>.*</code>, très permissif</td></tr>
+          <tr><td><code>\?</code> ou <code>\.</code></td><td>un vrai signe spécial</td><td><code>merci\?</code></td></tr>
+        </tbody>
+      </table>
+      <section><h3>Exemple</h3><code class="code-block">\b(peux[ -]tu )?(faire|preparer|servir) (un|du) cafe\b</code><p>Reconnaît notamment « Fais un café », « Peux-tu préparer du café » et « Servir un café ».</p></section>
+      <section><h3>Conseil</h3><p>Commencez par les <strong>Phrases reconnues</strong>. Utilisez une regex seulement lorsqu’un grand nombre de variantes rendrait la liste répétitive. Ajoutez ensuite quelques <strong>Phrases de test</strong> représentatives.</p></section>
+    </article>
+  </dialog>
+  <dialog id="list-import" aria-labelledby="list-import-title">
+    <article class="help-sheet import-sheet">
+      <header><div><span class="eyebrow">Import en masse</span><h2 id="list-import-title">Importer une liste</h2></div><button id="close-list-import" type="button" class="secondary">Fermer</button></header>
+      <p id="list-import-format"></p>
+      <div class="matrix-actions">
+        <a id="download-list-matrix" class="button-link secondary" href="#" download>Télécharger la matrice XLSX</a>
+        <button id="open-list-workbook" type="button" class="secondary">Ouvrir un XLSX rempli</button>
+      </div>
+      <label class="field"><span>Données à importer</span><textarea id="list-import-content" rows="12" spellcheck="false"></textarea><small>Copiez directement un tableau produit par ChatGPT, Excel ou LibreOffice. La première ligne d’en-tête est facultative.</small></label>
+      <label class="field import-mode"><span>Mode d’intégration</span><select id="list-import-mode"><option value="merge">Fusionner sans doublon</option><option value="replace">Remplacer les phrases des intentions présentes</option></select></label>
+      <output id="list-import-preview" class="import-preview"></output>
+      <footer><button id="analyze-list-import" type="button" class="secondary">Analyser</button><button id="apply-list-import" type="button" disabled>Intégrer</button></footer>
+    </article>
+  </dialog>
+  <input id="list-import-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+  <dialog id="source-selection" aria-labelledby="source-selection-title">
+    <article class="help-sheet source-selection-sheet">
+      <header><div><span class="eyebrow">Sources existantes</span><h2 id="source-selection-title">Choisir les contenus accessibles à Arion</h2></div><button id="close-source-selection" type="button" class="secondary">Fermer</button></header>
+      <p>Sélectionnez un document entier ou seulement certaines sections. Rien n’est indexé avant validation de cette fenêtre.</p>
+      <div id="source-selection-list" class="source-selection-list"></div>
+      <footer><button id="save-source-selection" type="button">Reconstruire l’index</button></footer>
+    </article>
+  </dialog>
+  <input id="documentation-file" type="file" accept=".md,text/markdown" hidden>
+  <template id="list-field"><label class="field"><span></span><textarea rows="7"></textarea><small>Une valeur par ligne.</small></label></template>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

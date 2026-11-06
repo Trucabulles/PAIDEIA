@@ -1,0 +1,236 @@
+.activity {
+  display: grid;
+  width: min(100%, 700px);
+  margin-inline: auto;
+}
+
+.list {
+  display: grid;
+  overflow: hidden;
+  border: 2px solid var(--attachment-border, #123a7a);
+  border-radius: var(--attachment-radius, 0);
+  background: var(--attachment-background, #edf4ff);
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: 18px 22px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--attachment-border, #123a7a) 32%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: #123a7a;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.placeholder {
+  cursor: default;
+}
+
+.card:first-child {
+  border-radius: var(--attachment-radius, 0) var(--attachment-radius, 0) 0 0;
+}
+
+.card:last-child {
+  border-bottom: 0;
+  border-radius: 0 0 var(--attachment-radius, 0) var(--attachment-radius, 0);
+}
+
+.card:only-child {
+  border-radius: var(--attachment-radius, 0);
+}
+
+.card:hover {
+  background: color-mix(in srgb, var(--attachment-border, #123a7a) 7%, transparent);
+}
+
+.icon {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 100px;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border: 2px solid currentColor;
+  border-radius: 12px;
+  background: #fff;
+  color: #123a7a;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.icon::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  border-bottom: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  background: color-mix(in srgb, currentColor 12%, white);
+  content: "";
+}
+
+.icon_pdf {
+  color: #a33128;
+}
+
+.icon_document {
+  color: #2455a4;
+}
+
+.icon_presentation {
+  color: #b4532a;
+}
+
+.icon_spreadsheet {
+  color: #28754d;
+}
+
+.icon_archive {
+  color: #725d24;
+}
+
+.icon_generic {
+  color: #123a7a;
+}
+
+.copy,
+.editorCopy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.copy strong,
+.editorCopy strong {
+  overflow: hidden;
+  color: #123a7a;
+  font-size: 1.12rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy small,
+.editorCopy small {
+  color: #5870a6;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.downloadMark {
+  display: inline-grid;
+  flex: 0 0 42px;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #123a7a;
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.empty,
+.editorEmpty {
+  padding: 24px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.editorPanel,
+.editorList {
+  display: grid;
+  gap: 14px;
+}
+
+.editorHeading,
+.editorItem,
+.editorActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.editorHeading {
+  justify-content: space-between;
+}
+
+.fileButton {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.fileButton input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.editorItem {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.editorIcon {
+  flex-basis: 72px;
+  width: 72px;
+  height: 72px;
+  font-size: 0.66rem;
+}
+
+.editorActions {
+  flex: 0 0 auto;
+}
+
+.styleGrid {
+  padding-top: 4px;
+}
+
+@media (max-width: 760px) {
+  .card,
+  .editorItem,
+  .editorHeading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .card .icon,
+  .editorItem .icon {
+    flex-basis: 72px;
+    width: 72px;
+    height: 72px;
+  }
+
+  .downloadMark {
+    display: none;
+  }
+
+  .editorActions {
+    flex-wrap: wrap;
+  }
+}

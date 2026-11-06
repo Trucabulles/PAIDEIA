@@ -1,0 +1,70 @@
+.activity {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 0;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 18px;
+  padding: 14px;
+  text-align: left;
+}
+
+.mockEditor {
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 620px;
+  grid-template-columns: 70px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(139, 155, 190, 0.16);
+  border-radius: 22px;
+  background: #121826;
+  color: #aeb9d1;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.mockGutter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  padding: 22px 18px;
+  background: #1a2233;
+  color: #8290ac;
+  user-select: none;
+}
+
+.mockPane {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.mockCode {
+  overflow: hidden;
+  margin: 0;
+  padding: 22px 26px;
+  color: #9aa5bb;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.hint {
+  display: grid;
+  flex: 1 1 auto;
+  place-items: center;
+  margin: 0;
+  padding: 18px 26px;
+  color: #8290ac;
+  font-weight: 800;
+  text-align: center;
+}
+
+.editor {
+  /* Existing global custom-html editor classes provide the visual layout. */
+}

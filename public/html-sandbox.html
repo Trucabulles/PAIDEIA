@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PAIDEIA HTML sandbox</title>
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+
+      #sandbox-root {
+        min-height: 680px;
+      }
+
+      #sandbox-frame {
+        display: block;
+        width: 100%;
+        min-height: 680px;
+        border: 0;
+        background: #fff;
+      }
+
+      #sandbox-placeholder {
+        display: none;
+        min-height: 680px;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+        color: #71809f;
+        background: #f6f8fc;
+        font: 600 14px/1.5 "Segoe UI", Arial, sans-serif;
+        text-align: center;
+      }
+
+      body.is-suspended #sandbox-placeholder {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body class="is-suspended">
+    <div id="sandbox-root"></div>
+    <div id="sandbox-placeholder">Contenu interactif suspendu.</div>
+    <script>
+      (() => {
+        const root = document.getElementById("sandbox-root");
+        const placeholder = document.getElementById("sandbox-placeholder");
+        let blockId = "";
+        let currentHtml = "";
+        let currentAssetBaseUrl = "";
+        let currentTitle = "HTML personnalisé";
+        let frame = null;
+        let active = false;
+
+        const postToHost = (type, details = {}) => {
+          window.parent.postMessage(
+            {
+              source: "paideia-html-sandbox",
+              type,
+              blockId,
+              ...details
+            },
+            "*"
+          );
+        };
+
+        const buildInnerDocument = (html) => {
+          const bridge = `<script data-paideia-sandbox-resize>
+(() => {
+  if (window.__paideiaSandboxResizeReady) return;
+  window.__paideiaSandboxResizeReady = true;
+  let lastHeight = 0;
+  let raf = 0;
+  const report = () => {
+    raf = 0;
+    // The root scroll height includes the iframe viewport, which would stop
+    // a previously tall frame from shrinking when the content gets shorter.
+    const bodyHeight = document.body
+      ? Math.max(document.body.scrollHeight, document.body.offsetHeight, Math.ceil(document.body.getBoundingClientRect().height))
+      : 0;
+    const rootHeight = document.body ? 0 : (document.documentElement ? document.documentElement.scrollHeight : 0);
+    const height = Math.max(bodyHeight, rootHeight, 680);
+    if (height === lastHeight) return;
+    lastHeight = height;
+    window.parent.postMessage({
+      source: "paideia-html-sandbox-inner",
+      type: "resize",
+      height
+    }, "*");
+  };
+  const schedule = () => {
+    if (raf) return;
+    raf = window.requestAnimationFrame(report);
+  };
+  window.addEventListener("load", schedule);
+  window.addEventListener("resize", schedule);
+  if ("ResizeObserver" in window) {
+    const observer = new ResizeObserver(schedule);
+    observer.observe(document.documentElement);
+    if (document.body) observer.observe(document.body);
+  }
+  schedule();
+  setTimeout(schedule, 250);
+  setTimeout(schedule, 1000);
+})();
+<\/script>`;
+
+          const base = currentAssetBaseUrl && !/<base\b/i.test(html)
+            ? `<base href="${currentAssetBaseUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">`
+            : "";
+          const htmlWithBase = base
+            ? /<head\b[^>]*>/i.test(html)
+              ? html.replace(/<head\b[^>]*>/i, (head) => `${head}${base}`)
+              : `${base}${html}`
+            : html;
+          if (htmlWithBase.includes("data-paideia-sandbox-resize")) {
+            return htmlWithBase;
+          }
+          if (/<\/body>/i.test(htmlWithBase)) {
+            return htmlWithBase.replace(/<\/body>/i, `${bridge}</body>`);
+          }
+          return `${htmlWithBase}${bridge}`;
+        };
+
+        const destroyInnerFrame = () => {
+          if (!frame) return;
+          frame.src = "about:blank";
+          frame.remove();
+          frame = null;
+        };
+
+        const mountInnerFrame = () => {
+          if (!active || !currentHtml) {
+            destroyInnerFrame();
+            document.body.classList.add("is-suspended");
+            placeholder.textContent = currentHtml
+              ? "Contenu interactif suspendu."
+              : "Aucun contenu HTML.";
+            postToHost("resize", { height: 680 });
+            return;
+          }
+
+          document.body.classList.remove("is-suspended");
+          if (!frame) {
+            frame = document.createElement("iframe");
+            frame.id = "sandbox-frame";
+            frame.setAttribute(
+              "sandbox",
+              "allow-forms allow-modals allow-popups allow-pointer-lock allow-presentation allow-same-origin allow-scripts"
+            );
+            frame.setAttribute(
+              "allow",
+              "autoplay; encrypted-media; fullscreen; picture-in-picture; web-share"
+            );
+            frame.setAttribute("allowfullscreen", "");
+            frame.setAttribute("scrolling", "no");
+            frame.title = currentTitle;
+            frame.addEventListener("load", () => postToHost("content-load"));
+            root.appendChild(frame);
+          }
+
+          frame.title = currentTitle;
+          const nextDocument = buildInnerDocument(currentHtml);
+          if (frame.srcdoc !== nextDocument) {
+            frame.srcdoc = nextDocument;
+          }
+        };
+
+        window.addEventListener("message", (event) => {
+          if (event.source === frame?.contentWindow) {
+            const message = event.data;
+            if (
+              message?.source === "paideia-html-sandbox-inner" &&
+              message.type === "resize"
+            ) {
+              const height = Math.max(680, Math.ceil(Number(message.height) || 0));
+              frame.style.height = `${height}px`;
+              postToHost("resize", { height });
+            }
+            return;
+          }
+
+          if (event.source !== window.parent) return;
+          const message = event.data;
+          if (message?.source !== "paideia-html-host") return;
+          if (message.blockId && blockId && message.blockId !== blockId) return;
+
+          if (message.type === "update") {
+            blockId = String(message.blockId || "");
+            currentHtml = String(message.html || "");
+            currentAssetBaseUrl = String(message.assetBaseUrl || "");
+            currentTitle = String(message.title || "HTML personnalisé");
+            active = Boolean(message.active);
+            mountInnerFrame();
+            return;
+          }
+
+          if (message.type === "set-active") {
+            active = Boolean(message.active);
+            mountInnerFrame();
+          }
+        });
+
+        postToHost("ready");
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,707 @@
+.character-resource-manager {
+  min-width: 0;
+  color: #17284d;
+}
+
+/* ---------- Barre d'actions : même contrat que Banque de questions / Assistant ---------- */
+.character-resource-manager .resource-character-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 48px;
+  margin-bottom: 20px;
+}
+
+.character-resource-manager .resource-character-save-area {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.character-resource-manager .character-resource-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.character-resource-manager .character-resource-back-button,
+.character-resource-manager .character-resource-save-button {
+  --character-button-fg: #17284d;
+  --character-button-border: rgba(23, 40, 77, 0.16);
+  --character-button-hover-bg: #f6fbff;
+  border: 1px solid var(--character-button-border) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: var(--character-button-fg) !important;
+}
+
+.character-resource-manager .character-resource-save-button {
+  box-shadow: 0 5px 14px rgba(23, 40, 77, 0.14);
+}
+
+.character-resource-manager .character-resource-back-button:hover,
+.character-resource-manager .character-resource-save-button:hover:not(:disabled) {
+  border-color: rgba(0, 159, 227, 0.4) !important;
+  background: var(--character-button-hover-bg) !important;
+  background-color: var(--character-button-hover-bg) !important;
+  color: var(--character-button-fg) !important;
+}
+
+.character-resource-manager .character-resource-save-button:hover:not(:disabled) {
+  box-shadow: 0 7px 18px rgba(23, 40, 77, 0.16);
+  transform: translateY(-1px);
+}
+
+.character-resource-manager .character-resource-button:disabled {
+  cursor: default;
+  opacity: 0.48;
+  transform: none;
+}
+
+.character-resource-manager .character-resource-save-button.is-saving {
+  cursor: progress;
+}
+
+.character-resource-manager .character-resource-save-button.is-saved {
+  --character-button-fg: #39755a;
+  --character-button-border: rgba(57, 117, 90, 0.32);
+  --character-button-hover-bg: #f5fbf7;
+}
+
+.character-resource-manager .character-resource-save-button.is-error {
+  --character-button-fg: #8d271c;
+  --character-button-border: rgba(141, 39, 28, 0.32);
+  --character-button-hover-bg: #fff7f5;
+}
+
+/* Axe médian commun : boîte icône et boîte texte sont centrées par le parent. */
+.character-resource-manager .character-resource-button-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.character-resource-manager .character-resource-button-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.character-resource-manager .character-resource-button-icon.is-spinning {
+  animation: characterSaveSpin 800ms linear infinite;
+}
+
+@keyframes characterSaveSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Identité du personnage ---------- */
+.character-resource-manager .resource-character-workbench,
+.character-resource-manager .resource-character-editor {
+  min-width: 0;
+}
+
+.character-resource-manager .resource-character-identity-card {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 22px;
+  padding: 22px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(23, 40, 77, 0.11);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(23, 40, 77, 0.05);
+}
+
+.character-resource-manager .resource-character-identity-preview {
+  display: grid;
+  grid-template-rows: 20px auto;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.character-resource-manager .resource-character-eyebrow {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+  color: #657391;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 20px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.character-resource-manager .resource-character-identity-image {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  min-height: 158px;
+  overflow: hidden;
+  border: 1px solid rgba(23, 40, 77, 0.11);
+  border-radius: 10px;
+  background: #f7fbff;
+  color: #7280a1;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.character-resource-manager .resource-character-identity-image.has-image {
+  min-height: 0;
+}
+
+.character-resource-manager .resource-character-identity-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.character-resource-manager .resource-character-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px 18px;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.character-resource-manager .resource-character-form label {
+  display: grid;
+  grid-template-rows: 20px auto;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+}
+
+.character-resource-manager .resource-character-form label > span {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+  color: #657391;
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 20px;
+}
+
+.character-resource-manager .resource-character-form input,
+.character-resource-manager .resource-character-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid rgba(23, 40, 77, 0.13);
+  border-radius: 9px;
+  background: #ffffff;
+  color: #17284d;
+  font: inherit;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.character-resource-manager .resource-character-form input {
+  height: 50px;
+  min-height: 50px;
+  padding: 0 14px;
+}
+
+.character-resource-manager .resource-character-form textarea {
+  min-height: 88px;
+  padding: 12px 14px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.character-resource-manager .resource-character-form input:focus,
+.character-resource-manager .resource-character-form textarea:focus {
+  border-color: rgba(0, 159, 227, 0.58);
+  box-shadow: 0 0 0 3px rgba(0, 159, 227, 0.10);
+  background: #fbfdff;
+}
+
+.character-resource-manager .resource-character-form-wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------- États / poses ---------- */
+.character-resource-manager .resource-pose-editor-list {
+  display: grid;
+  gap: 12px;
+}
+
+.character-resource-manager .resource-pose-row {
+  overflow: hidden;
+  border: 1px solid rgba(23, 40, 77, 0.11);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(23, 40, 77, 0.035);
+}
+
+.character-resource-manager .resource-pose-row-title {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(23, 40, 77, 0.08);
+  background: #f9fbfe;
+}
+
+.character-resource-manager .resource-pose-row-title strong {
+  color: #17284d;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.character-resource-manager .resource-pose-row-title > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #657391;
+  font-size: 0.78rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.character-resource-manager .resource-pose-main {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: 108px;
+  padding: 14px 16px;
+}
+
+.character-resource-manager .resource-pose-default-preview {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  overflow: hidden;
+  border: 1px solid rgba(23, 40, 77, 0.12);
+  border-radius: 9px;
+  background: #f7fbff;
+  color: #7280a1;
+  font-size: 0.74rem;
+  text-align: center;
+}
+
+.character-resource-manager .resource-pose-default-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.character-resource-manager .resource-pose-details {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.character-resource-manager .resource-pose-file-name {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  min-width: 0;
+  color: #657391;
+  font-size: 0.84rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.character-resource-manager .resource-pose-default-select {
+  display: grid;
+  grid-template-rows: 18px 40px;
+  gap: 5px;
+  min-width: 190px;
+  margin: 0;
+}
+
+.character-resource-manager .resource-pose-default-select > span {
+  display: flex;
+  align-items: center;
+  min-height: 18px;
+  color: #7280a1;
+  font-size: 0.73rem;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.character-resource-manager .resource-pose-default-select select {
+  box-sizing: border-box;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 34px 0 12px;
+  border: 1px solid rgba(23, 40, 77, 0.13);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17284d;
+  font: inherit;
+}
+
+.character-resource-manager .resource-pose-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: max-content;
+}
+
+/* Contrat médiane : parent et texte partagent le même axe, aucune compensation. */
+.character-resource-manager .resource-pose-upload-button {
+  box-sizing: border-box;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 42px;
+  min-height: 42px !important;
+  padding: 0 14px !important;
+  margin: 0;
+  border: 1px solid rgba(23, 40, 77, 0.16) !important;
+  border-radius: 9px !important;
+  background: #ffffff !important;
+  color: #17284d !important;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.character-resource-manager .resource-pose-upload-button:hover:not(.disabled) {
+  background: #f6fbff !important;
+  border-color: rgba(0, 159, 227, 0.34) !important;
+}
+
+.character-resource-manager .resource-pose-upload-button.disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.character-resource-manager .resource-pose-upload-label {
+  display: block;
+  line-height: 1;
+}
+
+.character-resource-manager .resource-pose-upload-button input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Tuiles personnages ---------- */
+.character-resource-manager .resource-bank-summary {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  margin-bottom: 16px;
+  color: #17284d;
+  font-weight: 800;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.character-resource-manager .resource-character-transfer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.character-resource-manager .resource-character-transfer-actions .character-resource-button {
+  border: 1px solid rgba(23, 40, 77, 0.16);
+  background: #fff;
+  color: #17284d;
+}
+
+.character-resource-manager .resource-character-transfer-actions .character-resource-button:hover:not(:disabled) {
+  border-color: rgba(0, 159, 227, 0.4);
+  background: #f6fbff;
+}
+
+.character-resource-manager .resource-character-export-select {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0 !important;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.character-resource-manager .resource-character-export-select span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.character-resource-manager .resource-character-export-select input {
+  appearance: none;
+  display: block;
+  flex: 0 0 22px;
+  box-sizing: border-box;
+  width: 22px !important;
+  min-width: 22px !important;
+  max-width: 22px !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1.5px solid rgba(23, 40, 77, 0.62);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 7px rgba(23, 40, 77, 0.16);
+  cursor: pointer;
+}
+
+.character-resource-manager .resource-character-export-select input:checked {
+  border-color: #21427d;
+  background-color: #21427d;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 4 4L19 6' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.6'/%3E%3C/svg%3E");
+}
+
+
+.character-resource-manager .resource-character-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.character-resource-manager .resource-character-tile {
+  position: relative;
+  min-width: 0;
+  overflow: visible;
+  border: 1px solid rgba(23, 40, 77, 0.11);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(23, 40, 77, 0.04);
+}
+
+.character-resource-manager .resource-character-tile-open,
+.character-resource-manager .resource-character-tile.add {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 220px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #17284d;
+}
+
+.character-resource-manager .resource-character-tile-open {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+  padding: 14px;
+}
+
+.character-resource-manager .resource-character-tile-open img {
+  display: block;
+  width: 100%;
+  height: 156px;
+  object-fit: contain;
+  border-radius: 9px;
+  background: #f7fbff;
+}
+
+.character-resource-manager .resource-character-tile-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 156px;
+  border-radius: 9px;
+  background: #f7fbff;
+  color: #7280a1;
+}
+
+.character-resource-manager .resource-character-tile-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.character-resource-manager .resource-character-tile.add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px dashed rgba(0, 159, 227, 0.34);
+  background: #f9fcff;
+  cursor: pointer;
+}
+
+.character-resource-manager .resource-character-tile.add:hover,
+.character-resource-manager .resource-character-tile-open:hover {
+  background: #f6fbff;
+}
+
+.character-resource-manager .resource-character-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #edf4ff;
+  color: #009fe3;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.character-resource-manager .resource-character-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-resource-manager .resource-character-delete-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8d271c !important;
+}
+
+.character-resource-manager .resource-character-delete-action:hover {
+  background: #fff7f5 !important;
+}
+
+.character-resource-manager .resource-character-delete-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.character-resource-manager .resource-character-delete-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.character-resource-manager .library-rail-empty {
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .character-resource-manager .resource-character-identity-card {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .character-resource-manager .resource-character-identity-image {
+    width: 120px;
+  }
+
+  .character-resource-manager .resource-character-form {
+    grid-template-columns: 1fr;
+  }
+
+  .character-resource-manager .resource-character-form-wide {
+    grid-column: auto;
+  }
+
+  .character-resource-manager .resource-pose-main {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
+
+  .character-resource-manager .resource-pose-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-left: 94px;
+  }
+}
+
+@media (max-width: 620px) {
+  .character-resource-manager .resource-character-topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .character-resource-manager .resource-character-save-area,
+  .character-resource-manager .character-resource-button {
+    width: 100%;
+  }
+
+  .character-resource-manager .resource-character-identity-card {
+    grid-template-columns: 1fr;
+  }
+
+  .character-resource-manager .resource-character-identity-image {
+    width: 100%;
+    min-height: 180px;
+  }
+
+  .character-resource-manager .resource-character-identity-image.has-image {
+    min-height: 0;
+  }
+
+  .character-resource-manager .resource-character-identity-image img {
+    height: auto;
+  }
+
+  .character-resource-manager .resource-pose-main {
+    grid-template-columns: 1fr;
+  }
+
+  .character-resource-manager .resource-pose-details {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .character-resource-manager .resource-pose-actions {
+    grid-column: auto;
+    justify-content: flex-start;
+    padding-left: 0;
+    flex-wrap: wrap;
+  }
+}

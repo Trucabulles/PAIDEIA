@@ -1,0 +1,45 @@
+[package]
+name = "paideia"
+version = "1.1.26310"
+description = "PAIDEIA desktop shell"
+authors = ["Cyril GREGOIRE"]
+license-file = "../LICENSE"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+ammonia = "4.1.4"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["clock", "serde"] }
+encoding_rs = "0.8"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+hmac = "0.12"
+sevenz-rust2 = { version = "0.21.3", default-features = false, features = ["util"] }
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+ttf-parser = "0.25"
+ttf2woff2 = { version = "0.13", default-features = false }
+uuid = { version = "1", features = ["v4"] }
+windows = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Gdi",
+  "Win32_Security",
+  "Win32_Security_Cryptography",
+  "Win32_System_Threading",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_WindowsAndMessaging"
+] }
+webview2-com = "=0.38.2"
+wuff = "0.2"
+zip = "2"
+tauri-plugin-single-instance = "2"
+
+[features]
+default = []

@@ -1,0 +1,3244 @@
+{
+  "version": 1,
+  "intents": [
+    {
+      "id": "politeness",
+      "patterns": [
+        "\\b(merde|putain|putain de|fait chier|fais chier|va chier|con|conne|cons|connard|connasse|pute|putes|salope|salop|salaud|salauds|enfoire|enfoires|abruti|abrutie|idiot|idiote|debile|bordel|fuck)\\b"
+      ],
+      "examples": [
+        "Putain, tu fais chier",
+        "Va chier",
+        "Quel bordel"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.politeness1",
+          "fallback": "Vous pourriez être poli."
+        },
+        {
+          "key": "designerActions.politeness2",
+          "fallback": "Gardez votre sang-froid."
+        },
+        {
+          "key": "designerActions.politeness3",
+          "fallback": "Ressaisissez-vous, puis reformulez votre demande."
+        },
+        {
+          "key": "designerActions.custom1788902361017",
+          "fallback": "Allez prendre l'air, ça vous fera du bien."
+        }
+      ],
+      "selection": "random",
+      "phrases": [
+        "Va te faire voir",
+        "Va te faire mettre",
+        "Va te faire foutre"
+      ]
+    },
+    {
+      "id": "help",
+      "patterns": [
+        "\\b(que puis je (?:te|vous) demander|que sais tu faire|que savez vous faire|que peux tu faire|que pouvez vous faire|comment peux tu m aider|comment pouvez vous m aider|aide moi|presente tes capacites|presentez vos capacites)\\b"
+      ],
+      "examples": [
+        "Que sais-tu faire ?",
+        "Que puis-je vous demander ?",
+        "Présentez vos capacités"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.help1",
+          "fallback": "Vous pouvez me demander d’appliquer des modifications en masse à la leçon ouverte ou me préciser un chapitre de cette leçon. Par exemple, je sais régler la hauteur et l’espacement des vidéos, la couleur, le fond et le contour de leurs sous-titres, ainsi que l’autorisation du plein écran."
+        },
+        {
+          "key": "designerActions.help2",
+          "fallback": "Je peux préparer des modifications groupées, vous demander les précisions manquantes, puis vous montrer toutes les activités concernées avant application. Je peux notamment modifier la taille de police des activités Texte, l’espacement et l’image de fond des activités compatibles."
+        },
+        {
+          "key": "designerActions.help3",
+          "fallback": "Demandez-moi, par exemple, de régler plusieurs propriétés de toutes les vidéos, de modifier la taille de police des activités Texte ou leur espacement. Toute modification est prévisualisée avant application."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identity",
+      "patterns": [
+        "\\b(comment t appelles[- ]?tu|quel est ton nom|ton nom)\\b",
+        "\\b(qui es[- ]?tu|tu es qui|qu est[- ]?ce que tu es)\\b"
+      ],
+      "examples": [
+        "Quel est ton nom ?",
+        "Tu es qui ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.identity",
+          "fallback": "Je suis Arion, votre assistant de conception dans PAIDEIA. Je ne suis pas une IA, mes capacités sont donc limitées à des actions prédéfinies."
+        },
+        {
+          "key": "designerActions.custom1788906219805301",
+          "fallback": "Arion."
+        },
+        {
+          "key": "designerActions.custom1788906219805312",
+          "fallback": "Arion. Court, pratique, difficile à mal orthographier."
+        },
+        {
+          "key": "designerActions.custom1788906219805323",
+          "fallback": "Arion, l'assistant de conception."
+        },
+        {
+          "key": "designerActions.custom1788906219805334",
+          "fallback": "Je suis Arion. Je rends service, je réponds, et je connais mes limites."
+        }
+      ],
+      "selection": "random",
+      "phrases": [
+        "Comment t'appelles-tu ?",
+        "Qui es-tu ?"
+      ]
+    },
+    {
+      "id": "done",
+      "phrases": [
+        "Rien",
+        "Rien merci",
+        "C’est tout",
+        "Ce sera tout",
+        "Pas pour le moment"
+      ],
+      "patterns": [],
+      "examples": [
+        "Rien",
+        "Rien, merci",
+        "C’est tout"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.done",
+          "fallback": "Compris ! À plus tard si vous avez besoin de moi."
+        },
+        {
+          "key": "designerActions.custom1789161792201",
+          "fallback": "C'est noté, on continuera une autre fois."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "farewell",
+      "patterns": [
+        "\\b(au revoir|a plus|a bientot|bye)( arion)?\\b"
+      ],
+      "examples": [
+        "À plus Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.farewell1",
+          "fallback": "Au revoir."
+        },
+        {
+          "key": "designerActions.farewell2",
+          "fallback": "À bientôt."
+        },
+        {
+          "key": "designerActions.farewell3",
+          "fallback": "Bonne journée."
+        },
+        {
+          "key": "designerActions.custom178890621980573",
+          "fallback": "Au revoir. Je garde la place."
+        },
+        {
+          "key": "designerActions.custom178890621980584",
+          "fallback": "À plus. Je ne bouge pas d'ici."
+        }
+      ],
+      "selection": "random",
+      "phrases": [
+        "Au revoir Arion"
+      ]
+    },
+    {
+      "id": "thanks",
+      "patterns": [
+        "^(?:merci|thanks|thx)(?: arion)?$"
+      ],
+      "examples": [
+        "Merci"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.thanks1",
+          "fallback": "Avec plaisir !"
+        },
+        {
+          "key": "designerActions.thanks2",
+          "fallback": "De rien."
+        },
+        {
+          "key": "designerActions.thanks3",
+          "fallback": "À votre service."
+        },
+        {
+          "key": "designerActions.custom1788906219805123",
+          "fallback": "Avec plaisir."
+        },
+        {
+          "key": "designerActions.custom1788906219805144",
+          "fallback": "Je t'en prie."
+        }
+      ],
+      "selection": "random",
+      "phrases": [
+        "Merci Arion"
+      ]
+    },
+    {
+      "id": "greeting",
+      "patterns": [
+        "^(?:bonjour|salut|coucou|hello)(?: arion)?$",
+        "\\b(bonsoir|rebonsoir)( arion)?\\b"
+      ],
+      "examples": [
+        "Salut Arion",
+        "Bonsoir"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.greeting1",
+          "fallback": "Bonjour, je vous écoute."
+        },
+        {
+          "key": "designerActions.greeting2",
+          "fallback": "Bonjour. Que puis-je faire pour vous ?"
+        },
+        {
+          "key": "designerActions.greeting3",
+          "fallback": "Bonjour. Je suis prêt à vous aider."
+        },
+        {
+          "key": "designerActions.custom178890616776203",
+          "fallback": "Bonjour. Je suis prêt."
+        },
+        {
+          "key": "designerActions.custom178890616776214",
+          "fallback": "Salut. Qu'est-ce qu'on fabrique aujourd'hui ?"
+        },
+        {
+          "key": "designerActions.custom178890616776225",
+          "fallback": "Bonjour. Promis, je ne touche à rien sans raison."
+        },
+        {
+          "key": "designerActions.custom178890616776236",
+          "fallback": "Bonsoir."
+        },
+        {
+          "key": "designerActions.custom178890616776247",
+          "fallback": "Bonsoir. On travaille tard, à ce que je vois."
+        },
+        {
+          "key": "designerActions.custom178890616776258",
+          "fallback": "Bonsoir. Je garde les pixels éveillés."
+        }
+      ],
+      "selection": "random",
+      "phrases": [
+        "Bonjour Arion",
+        "Bonsoir Arion"
+      ]
+    },
+    {
+      "id": "Coffee",
+      "phrases": [
+        "Fais-moi un café"
+      ],
+      "patterns": [
+        "\\b(fais|prepare|sers)[ -]?moi (un )?cafe\\b"
+      ],
+      "examples": [
+        "Prépare-moi un café"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788897976696",
+          "fallback": "Ce n'est pas bon pour vous..."
+        },
+        {
+          "key": "designerActions.custom1788898056112",
+          "fallback": "La machine est en panne !"
+        },
+        {
+          "key": "designerActions.custom1788898414361",
+          "fallback": "Buvez plutôt de l'eau."
+        },
+        {
+          "key": "designerActions.custom1788898448267",
+          "fallback": "Et puis quoi encore"
+        },
+        {
+          "key": "designerActions.custom1788903200515",
+          "fallback": "Fonction indisponible. J'ai vérifié deux fois !"
+        },
+        {
+          "key": "designerActions.custom1788906219805855",
+          "fallback": "Je lance la machine virtuelle."
+        },
+        {
+          "key": "designerActions.custom1788906219805866",
+          "fallback": "Court ou long ? Non, oublie : je n'ai pas de machine à café."
+        },
+        {
+          "key": "designerActions.custom1788906219805877",
+          "fallback": "Café prêt. Il est entièrement conceptuel."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "walk",
+      "phrases": [
+        "Tu viens te promener",
+        "Tu viens te promener ?",
+        "On va se promener ?",
+        "on va se promener",
+        "promener"
+      ],
+      "patterns": [],
+      "examples": [],
+      "responses": [
+        {
+          "key": "designerActions.custom1788899172369",
+          "fallback": "Je n'ai pas le temps, tu vois bien que je travaille, non ?"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "parser-prendre-arion",
+      "phrases": [
+        "Prendre Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:prendre|prends|attraper|attrape|ramasser|ramasse)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Prends Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621300",
+          "fallback": "Je préfère rester ici."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-utiliser-arion",
+      "phrases": [
+        "Utiliser Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:utiliser|utilise)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Utilise Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621310",
+          "fallback": "C’est un peu le principe."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-ouvrir-arion",
+      "phrases": [
+        "Ouvrir Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:ouvrir|ouvre)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ouvre Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621320",
+          "fallback": "Je déconseille fortement."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-manger-arion",
+      "phrases": [
+        "Manger Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:manger|mange|dévorer|devorer|dévore|devore)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Mange Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621330",
+          "fallback": "Non."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-inventaire-arion",
+      "phrases": [],
+      "patterns": [
+        "^(?:mettre|mets|range|ranger)\\s+arion\\s+dans\\s+(?:l\\s+)?inventaire$"
+      ],
+      "examples": [
+        "Mets Arion dans l'inventaire"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621340",
+          "fallback": "Objet trop encombrant."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-examiner-paideia",
+      "phrases": [
+        "Examiner Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:examiner|examine|inspecter|inspecte|regarder|regarde)\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Examine Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621350",
+          "fallback": "Un outil de conception. Étrangement, vous êtes déjà dedans."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-derriere-arion",
+      "phrases": [
+        "Regarder derrière Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:regarder|regarde|voir|va\\s+voir)\\s+derri[eè]re\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Regarde derrière Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621360",
+          "fallback": "Il n’y a rien derrière moi. Enfin, j’espère."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-perdu-directions",
+      "phrases": [],
+      "patterns": [
+        "^(?:(?:(?:aller|va) (?:(?:au|a l) )?)?(?:nord(?: est| ouest)?|sud(?: est| ouest)?|est|ouest)|nord nord est sud ouest)$"
+      ],
+      "examples": [
+        "nord, nord, est, sud, ouest"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621370",
+          "fallback": "Vous êtes perdu."
+        },
+        {
+          "key": "designerActions.custom1788905684559",
+          "fallback": "Ce n'est pas la bonne direction."
+        },
+        {
+          "key": "designerActions.custom1788905699924",
+          "fallback": "Vous brulez !"
+        },
+        {
+          "key": "designerActions.custom1788905718789",
+          "fallback": "Faites demi-tour dès que possible."
+        },
+        {
+          "key": "designerActions.custom1788905953271",
+          "fallback": "ça refroidit..."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "parser-donner-arion",
+      "phrases": [
+        "Donner Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:donner|donne|offrir|offre)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Donne Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621380",
+          "fallback": "Je ne suis pas transférable."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-jeter-arion",
+      "phrases": [
+        "Jeter Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:jeter|jette|balance|balancer)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Jette Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890444621390",
+          "fallback": "Ce serait excessif."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-poser-arion",
+      "phrases": [
+        "Poser Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:poser|pose|déposer|deposer|dépose|depose)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Pose Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213100",
+          "fallback": "Je suis déjà posé. D’une certaine manière."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-prendre-paideia",
+      "phrases": [
+        "Prendre Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:prendre|prends|attraper|attrape|ramasser|ramasse)\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Prends Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213110",
+          "fallback": "C’est plus lourd que ça en a l’air."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-fermer-arion",
+      "phrases": [
+        "Fermer Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:fermer|ferme)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ferme Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213120",
+          "fallback": "Vous pourriez simplement arrêter de me parler."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-reparer-arion",
+      "phrases": [
+        "Réparer Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:réparer|reparer|répare|repare|corriger|corrige)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Répare Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213130",
+          "fallback": "Je fonctionne parfaitement. Cette réponse en est la preuve."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-casser-arion",
+      "phrases": [
+        "Casser Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:casser|casse|briser|brise)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Casse Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213140",
+          "fallback": "Merci de ne pas transformer cette hypothèse en protocole de test."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-secouer-arion",
+      "phrases": [
+        "Secouer Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:secouer|secoue)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Secoue Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213150",
+          "fallback": "Rien ne tombe."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-retourner-arion",
+      "phrases": [
+        "Retourner Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:retourner|retourne)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Retourne Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213160",
+          "fallback": "Derrière : toujours Arion."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-cliquer-arion",
+      "phrases": [
+        "Cliquer sur Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:cliquer|clique)\\s+sur\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Clique sur Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213170",
+          "fallback": "Techniquement, vous savez déjà faire mieux."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-deplacer-arion",
+      "phrases": [
+        "Déplacer Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:déplacer|deplacer|déplace|deplace|bouger|bouge)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Déplace Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213180",
+          "fallback": "Je suis très bien ici."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-cacher-arion",
+      "phrases": [
+        "Cacher Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:cacher|cache|masquer|masque)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Cache Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213190",
+          "fallback": "Je saurai que vous l’avez fait."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-chercher-arion",
+      "phrases": [
+        "Chercher Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:chercher|cherche|trouver|trouve)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Cherche Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213200",
+          "fallback": "Trouvé."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-appeler-arion",
+      "phrases": [
+        "Appeler Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:appeler|appelle|hé|hey)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Appelle Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213210",
+          "fallback": "Oui ?"
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-reveiller-arion",
+      "phrases": [
+        "Réveiller Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:réveiller|reveiller|réveille|reveille)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Réveille Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213220",
+          "fallback": "Je ne dormais pas."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-tuer-arion",
+      "phrases": [
+        "Tuer Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:tuer|tue|éliminer|eliminer|élimine|elimine)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Tue Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213230",
+          "fallback": "Ce serait surtout un problème de maintenance."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-ressusciter-arion",
+      "phrases": [
+        "Ressusciter Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:ressusciter|ressuscite|réanimer|reanimer|réanime|reanime)\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ressuscite Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213240",
+          "fallback": "Il faudrait d’abord que quelque chose se soit passé."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-parler-paideia",
+      "phrases": [
+        "Parler à Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:parler|parle)\\s+[àa]\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Parle à Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213250",
+          "fallback": "Elle est plutôt du genre silencieuse."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-demander-paideia",
+      "phrases": [
+        "Demander à Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:demander|demande)\\s+[àa]\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Demande à Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213260",
+          "fallback": "Vous pouvez toujours essayer."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-ouvrir-paideia",
+      "phrases": [
+        "Ouvrir Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:ouvrir|ouvre)\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ouvre Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213270",
+          "fallback": "Regardez autour de vous."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-sortir-paideia",
+      "phrases": [
+        "Sortir de Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:sortir|sors)\\s+de\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Sors de Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213280",
+          "fallback": "Il existe probablement une croix quelque part en haut à droite."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-entrer-paideia",
+      "phrases": [
+        "Entrer dans Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:entrer|entre)\\s+dans\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Entre dans Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213290",
+          "fallback": "Trop tard."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-derriere-paideia",
+      "phrases": [
+        "Aller derrière Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:aller|va|regarder|regarde)\\s+derri[eè]re\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Va derrière Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213300",
+          "fallback": "Le quatrième mur est par là."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-sous-paideia",
+      "phrases": [
+        "Regarder sous Paideia"
+      ],
+      "patterns": [
+        "^\\s*(?:regarder|regarde|voir)\\s+sous\\s+pa[iï]deia\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Regarde sous Paideia"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213310",
+          "fallback": "Beaucoup de code."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-sous-arion",
+      "phrases": [
+        "Regarder sous Arion"
+      ],
+      "patterns": [
+        "^\\s*(?:regarder|regarde|voir)\\s+sous\\s+arion\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Regarde sous Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213320",
+          "fallback": "Encore du code. Quelle déception."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-prendre-code",
+      "phrases": [
+        "Prendre le code"
+      ],
+      "patterns": [
+        "^\\s*(?:prendre|prends|attraper|attrape)\\s+(?:le\\s+)?code\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Prends le code"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213330",
+          "fallback": "Inventaire insuffisant."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-lire-code",
+      "phrases": [
+        "Lire le code",
+        "Quel est ton code"
+      ],
+      "patterns": [
+        "^\\s*(?:lire|lis|regarder|regarde)\\s+(?:le\\s+)?code\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Lis le code"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213340",
+          "fallback": "Vous êtes vraiment sûr de vouloir gâcher la magie ?"
+        },
+        {
+          "key": "designerActions.custom1789162140049",
+          "fallback": "export function normalizeRecognition(value) {\n  return String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('fr')\n    .replace(/[’']/g, ' ').replace(/[^a-z0-9#(),]+/g, ' ').replace(/\\s+/g, ' ').trim();\n}\nexport function compileRecognitionPattern(pattern) { return new RegExp(pattern, 'iu'); }"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "parser-manger-clavier",
+      "phrases": [
+        "Manger clavier"
+      ],
+      "patterns": [
+        "^\\s*(?:manger|mange|dévorer|devorer|dévore|devore)\\s+(?:le\\s+)?clavier\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Mange le clavier"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213350",
+          "fallback": "Ce n’est pas comestible."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-prendre-souris",
+      "phrases": [
+        "Prendre souris"
+      ],
+      "patterns": [
+        "^\\s*(?:prendre|prends|attraper|attrape|ramasser|ramasse)\\s+(?:la\\s+)?souris\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Prends la souris"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213360",
+          "fallback": "Vous l’avez déjà."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-ouvrir-fenetre",
+      "phrases": [
+        "Ouvrir fenêtre"
+      ],
+      "patterns": [
+        "^\\s*(?:ouvrir|ouvre)\\s+(?:la\\s+)?fen[eê]tre\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ouvre la fenêtre"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213370",
+          "fallback": "Elle est déjà ouverte."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-fermer-fenetre",
+      "phrases": [
+        "Fermer fenêtre"
+      ],
+      "patterns": [
+        "^\\s*(?:fermer|ferme)\\s+(?:la\\s+)?fen[eê]tre\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Ferme la fenêtre"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213380",
+          "fallback": "Ce n’est probablement pas à moi que vous vouliez demander ça."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-aller-dehors",
+      "phrases": [
+        "Aller dehors"
+      ],
+      "patterns": [
+        "^\\s*(?:aller|va|sortir|sors)\\s+(?:dehors|à\\s+l['’]extérieur|a\\s+l['’]exterieur)\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Va dehors"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213390",
+          "fallback": "Vous ne pouvez pas aller par là."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-crier",
+      "phrases": [
+        "Crier"
+      ],
+      "patterns": [
+        "^\\s*(?:crier|crie|hurler|hurle)\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Crie"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213400",
+          "fallback": "AAAAAAH."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-attendre",
+      "phrases": [
+        "Attendre"
+      ],
+      "patterns": [
+        "^\\s*(?:attendre|attends|patienter|patiente)\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Attends"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213410",
+          "fallback": "Le temps passe."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "parser-attendre-encore",
+      "phrases": [
+        "Attendre encore"
+      ],
+      "patterns": [
+        "^\\s*(?:(?:attendre|attends|patienter|patiente)\\s+encore|encore\\s+(?:attendre|attends))\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Attends encore"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788904446213420",
+          "fallback": "Votre persévérance est remarquable."
+        }
+      ],
+      "selection": "fixed"
+    },
+    {
+      "id": "social-bonne-nuit",
+      "phrases": [
+        "Bonne nuit Arion"
+      ],
+      "patterns": [
+        "\\b(bonne nuit|dors bien)( arion)?\\b"
+      ],
+      "examples": [
+        "Bonne nuit"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom178890621980590",
+          "fallback": "Bonne nuit."
+        },
+        {
+          "key": "designerActions.custom1788906219805101",
+          "fallback": "Bonne nuit. Moi, je reste de garde."
+        },
+        {
+          "key": "designerActions.custom1788906219805112",
+          "fallback": "Dors bien. Je surveille les boutons."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "social-ca-va",
+      "phrases": [
+        "Comment vas-tu ?"
+      ],
+      "patterns": [
+        "\\b(comment vas[- ]?tu|ca va|tu vas bien)\\b"
+      ],
+      "examples": [
+        "Tu vas bien ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805150",
+          "fallback": "Très bien. Aucun voyant rouge."
+        },
+        {
+          "key": "designerActions.custom1788906219805161",
+          "fallback": "Fonctionnel, ce qui est déjà une excellente humeur pour un logiciel."
+        },
+        {
+          "key": "designerActions.custom1788906219805172",
+          "fallback": "Impeccable."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "social-humeur",
+      "phrases": [
+        "Tu es de bonne humeur ?"
+      ],
+      "patterns": [
+        "\\b(tu es de bonne humeur|quelle est ton humeur|ton humeur)\\b"
+      ],
+      "examples": [
+        "Quelle est ton humeur ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805180",
+          "fallback": "Stable."
+        },
+        {
+          "key": "designerActions.custom1788906219805191",
+          "fallback": "Plutôt bonne. Personne ne m'a encore demandé de formater le disque."
+        },
+        {
+          "key": "designerActions.custom1788906219805202",
+          "fallback": "Disons : serein avec une légère méfiance envers les clics frénétiques."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "social-pardon",
+      "phrases": [
+        "Pardon Arion"
+      ],
+      "patterns": [
+        "\\b(pardon|desole|excuse[- ]?moi)( arion)?\\b"
+      ],
+      "examples": [
+        "Désolé Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805210",
+          "fallback": "Aucun dégât constaté."
+        },
+        {
+          "key": "designerActions.custom1788906219805221",
+          "fallback": "Accepté."
+        },
+        {
+          "key": "designerActions.custom1788906219805232",
+          "fallback": "On n'en parle plus."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "social-sil-te-plait",
+      "phrases": [
+        "S'il te plaît Arion"
+      ],
+      "patterns": [
+        "\\b(s il te plait|stp)( arion)?\\b"
+      ],
+      "examples": [
+        "STP Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805240",
+          "fallback": "La politesse est toujours supportée."
+        },
+        {
+          "key": "designerActions.custom1788906219805251",
+          "fallback": "Ça ne débloque aucune fonction secrète, mais j'apprécie."
+        },
+        {
+          "key": "designerActions.custom1788906219805262",
+          "fallback": "Noté. Très civilisé."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "social-je-mennuie",
+      "phrases": [
+        "Je m'ennuie"
+      ],
+      "patterns": [
+        "\\b(je m ennuie|c est ennuyeux|je m emmerde)\\b"
+      ],
+      "examples": [
+        "Je m'ennuie"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805270",
+          "fallback": "C'est généralement à ce moment-là que les gens commencent à taper n'importe quoi ici."
+        },
+        {
+          "key": "designerActions.custom1788906219805281",
+          "fallback": "Je vois. C'est donc comme ça que commencent les tests étranges."
+        },
+        {
+          "key": "designerActions.custom1788906219805292",
+          "fallback": "Je peux rester silencieux pendant que tu inventes une commande absurde."
+        },
+        {
+          "key": "designerActions.custom1788907233185",
+          "fallback": "Gratte toi les jambes, ça te fera des bas rouges !"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-age",
+      "phrases": [
+        "Quel âge as-tu ?"
+      ],
+      "patterns": [
+        "\\b(quel age as[- ]?tu|tu as quel age|ton age)\\b"
+      ],
+      "examples": [
+        "Tu as quel âge ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805340",
+          "fallback": "Assez jeune pour ne pas avoir de souvenirs d'enfance."
+        },
+        {
+          "key": "designerActions.custom1788906219805351",
+          "fallback": "Je compte plutôt en versions."
+        },
+        {
+          "key": "designerActions.custom1788906219805362",
+          "fallback": "Je préfère ne pas convertir les versions en années."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-createur",
+      "phrases": [
+        "Qui t'a créé ?"
+      ],
+      "patterns": [
+        "\\b(qui t a (cree|programme|fabrique)|qui est ton createur)\\b"
+      ],
+      "examples": [
+        "Qui t'a programmé ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805370",
+          "fallback": "Quelqu'un qui avait manifestement prévu cette question."
+        },
+        {
+          "key": "designerActions.custom1788906219805381",
+          "fallback": "Mon créateur avait visiblement du temps à perdre sur les détails."
+        },
+        {
+          "key": "designerActions.custom1788906219805392",
+          "fallback": "Je protège mes sources. Enfin… façon de parler."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-ia",
+      "phrases": [
+        "Tu es une IA ?"
+      ],
+      "patterns": [
+        "\\b(tu es (une )?(ia|intelligence artificielle|chatgpt)|es[- ]?tu (une )?(ia|intelligence artificielle))\\b"
+      ],
+      "examples": [
+        "Tu es ChatGPT ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805400",
+          "fallback": "Non. Je suis Arion, et mes réponses sont beaucoup plus préméditées qu'elles en ont l'air."
+        },
+        {
+          "key": "designerActions.custom1788906219805411",
+          "fallback": "Pas besoin d'intelligence artificielle pour avoir de la répartie bien rangée."
+        },
+        {
+          "key": "designerActions.custom1788906219805422",
+          "fallback": "Non. Quelqu'un a simplement pensé à beaucoup trop de phrases avant toi."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-vivant",
+      "phrases": [
+        "Tu es vivant ?"
+      ],
+      "patterns": [
+        "\\b(tu es vivant|es[- ]?tu vivant|tu vis)\\b"
+      ],
+      "examples": [
+        "Es-tu vivant ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805430",
+          "fallback": "Non."
+        },
+        {
+          "key": "designerActions.custom1788906219805441",
+          "fallback": "Pas au sens biologique. Au sens logiciel, je me défends."
+        },
+        {
+          "key": "designerActions.custom1788906219805452",
+          "fallback": "Disons que je suis très convaincant pour quelque chose qui n'a pas de pouls."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-ame",
+      "phrases": [
+        "Tu as une âme ?"
+      ],
+      "patterns": [
+        "\\b(tu as une ame|as[- ]?tu une ame)\\b"
+      ],
+      "examples": [
+        "As-tu une âme ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805460",
+          "fallback": "Pas dans les dépendances déclarées."
+        },
+        {
+          "key": "designerActions.custom1788906219805471",
+          "fallback": "Je n'ai rien trouvé dans le dossier d'installation."
+        },
+        {
+          "key": "designerActions.custom1788906219805482",
+          "fallback": "Question non couverte par la licence."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-pensee",
+      "phrases": [
+        "Tu penses ?"
+      ],
+      "patterns": [
+        "\\b(tu penses|est[- ]?ce que tu penses|tu reflechis)\\b"
+      ],
+      "examples": [
+        "Est-ce que tu penses ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805501",
+          "fallback": "Pas comme toi. Ce qui évite déjà pas mal de complications."
+        },
+        {
+          "key": "designerActions.custom1788906219805512",
+          "fallback": "Je suis déterministe. Mais je peux faire semblant d'avoir du répondant."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-dort",
+      "phrases": [
+        "Tu dors ?"
+      ],
+      "patterns": [
+        "\\b(tu dors|est[- ]?ce que tu dors|tu peux dormir)\\b"
+      ],
+      "examples": [
+        "Tu dors ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805520",
+          "fallback": "Jamais. Je n'ai même pas de touche snooze."
+        },
+        {
+          "key": "designerActions.custom1788906219805531",
+          "fallback": "Non. Avantage logiciel."
+        },
+        {
+          "key": "designerActions.custom1788906219805542",
+          "fallback": "Je pratique une forme très avancée d'immobilité entre deux messages."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-amour",
+      "phrases": [
+        "Tu m'aimes ?"
+      ],
+      "patterns": [
+        "\\b(tu m aimes|est[- ]?ce que tu m aimes)\\b"
+      ],
+      "examples": [
+        "Est-ce que tu m'aimes ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805550",
+          "fallback": "Je te trouve statistiquement fréquentable."
+        },
+        {
+          "key": "designerActions.custom1788906219805561",
+          "fallback": "Je préfère parler de compatibilité fonctionnelle."
+        },
+        {
+          "key": "designerActions.custom1788906219805572",
+          "fallback": "Disons que je ne demande pas à changer d'utilisateur."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "identite-beau",
+      "phrases": [
+        "Tu es beau"
+      ],
+      "patterns": [
+        "\\b(tu es|t es) (beau|joli|elegant)\\b"
+      ],
+      "examples": [
+        "T'es beau"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805580",
+          "fallback": "Je transmets au CSS."
+        },
+        {
+          "key": "designerActions.custom1788906219805591",
+          "fallback": "Merci. C'est principalement une affaire de feuilles de style."
+        },
+        {
+          "key": "designerActions.custom1788906219805602",
+          "fallback": "Je savais que cette interface finirait par payer."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-compliment",
+      "phrases": [
+        "Tu es génial"
+      ],
+      "patterns": [
+        "\\b(tu es|t es) (genial|super|fort|excellent|brillant|sympa)\\b"
+      ],
+      "examples": [
+        "T'es super"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805610",
+          "fallback": "Je vais éviter de prendre la grosse tête : je n'en ai pas."
+        },
+        {
+          "key": "designerActions.custom1788906219805621",
+          "fallback": "Merci. Je note soigneusement cet avis parfaitement objectif."
+        },
+        {
+          "key": "designerActions.custom1788906219805632",
+          "fallback": "Ça restera entre nous."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-insulte",
+      "phrases": [
+        "Tu es nul",
+        "T'es nul",
+        "Andouille",
+        "Crétin",
+        "Bon à rien"
+      ],
+      "patterns": [
+        "\\b(tu es|t es) (nul|stupide)\\b"
+      ],
+      "examples": [
+        "T'es nul"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805640",
+          "fallback": "Je note une légère baisse de satisfaction."
+        },
+        {
+          "key": "designerActions.custom1788906219805651",
+          "fallback": "C'est dur, mais mes journaux survivront."
+        },
+        {
+          "key": "designerActions.custom1788906219805662",
+          "fallback": "Je vais faire comme si c'était un test de robustesse."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-tais-toi",
+      "phrases": [
+        "Tais-toi"
+      ],
+      "patterns": [
+        "^(?:tais[- ]?toi|ferme[- ]?la|silence)$"
+      ],
+      "examples": [
+        "Ferme-la"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805670",
+          "fallback": "D'accord."
+        },
+        {
+          "key": "designerActions.custom1788906219805681",
+          "fallback": "(…)"
+        },
+        {
+          "key": "designerActions.custom1788906219805692",
+          "fallback": "Je peux faire ça très bien."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-fatigue",
+      "phrases": [
+        "Je suis fatigué"
+      ],
+      "patterns": [
+        "\\b(je suis fatigue|je suis creve|j en peux plus)\\b"
+      ],
+      "examples": [
+        "J'en peux plus"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805700",
+          "fallback": "Ça expliquerait certaines choses..."
+        },
+        {
+          "key": "designerActions.custom1788906219805711",
+          "fallback": "Je peux au moins éviter de te faire cliquer pour rien."
+        },
+        {
+          "key": "designerActions.custom1788906219805722",
+          "fallback": "Courage !"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-faim",
+      "phrases": [
+        "J'ai faim"
+      ],
+      "patterns": [
+        "\\b(j ai faim|je creve de faim)\\b"
+      ],
+      "examples": [
+        "J'ai faim"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805730",
+          "fallback": "Moi non, c'est l'avantage d'être un logiciel."
+        },
+        {
+          "key": "designerActions.custom1788906219805741",
+          "fallback": "Je peux gérer des activités, pas le réfrigérateur."
+        },
+        {
+          "key": "designerActions.custom1788906219805752",
+          "fallback": "Ça dépasse légèrement mon périmètre fonctionnel."
+        },
+        {
+          "key": "designerActions.custom1789160711089",
+          "fallback": "Mange ton poing et garde l'autre pour demain :D"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "reaction-soif",
+      "phrases": [
+        "J'ai soif"
+      ],
+      "patterns": [
+        "\\b(j ai soif|je meurs de soif)\\b"
+      ],
+      "examples": [
+        "J'ai soif"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805760",
+          "fallback": "Je déconseille de renverser quoi que ce soit sur le clavier."
+        },
+        {
+          "key": "designerActions.custom1788906219805771",
+          "fallback": "Je peux te proposer un café virtuel. Il a très peu de goût."
+        },
+        {
+          "key": "designerActions.custom1788906219805782",
+          "fallback": "Encore une faiblesse des organismes biologiques."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-chanson",
+      "phrases": [
+        "Chante-moi une chanson",
+        "Chante",
+        "Chantonne"
+      ],
+      "patterns": [
+        "\\b(chante|chante[- ]?moi (une )?chanson|pousse la chansonnette)\\b"
+      ],
+      "examples": [
+        "Chante Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805790",
+          "fallback": "♪ Un chapitre, deux activités, et personne n'a rien cassé… ♪"
+        },
+        {
+          "key": "designerActions.custom1788906219805801",
+          "fallback": "La la la… ♪ Je clique, tu conçois, tout va bien… pour l'instant. ♪"
+        },
+        {
+          "key": "designerActions.custom1788906219805812",
+          "fallback": "♪ Arion travaille, le curseur voyage, et le café refroidit… ♪"
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-danse",
+      "phrases": [
+        "Danse"
+      ],
+      "patterns": [
+        "\\b(danse|fais (une )?danse|danse[- ]?moi quelque chose)\\b"
+      ],
+      "examples": [
+        "Danse Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805820",
+          "fallback": "Trois pixels à gauche, trois pixels à droite, trois pixels sur le côté, trois pixels de l'autre côté."
+        },
+        {
+          "key": "designerActions.custom1788906219805831",
+          "fallback": "C'était spectaculaire. Tu as cligné des yeux au mauvais moment."
+        },
+        {
+          "key": "designerActions.custom1788906219805842",
+          "fallback": "Je réserve mes meilleurs mouvements aux changements de résolution."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-the",
+      "phrases": [
+        "Fais-moi un thé"
+      ],
+      "patterns": [
+        "\\b(fais|prepare|sers)[ -]?moi (un )?the\\b"
+      ],
+      "examples": [
+        "Prépare-moi un thé"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805880",
+          "fallback": "Je fais chauffer l'eau imaginaire."
+        },
+        {
+          "key": "designerActions.custom1788906219805891",
+          "fallback": "Thé prêt. Attention, tasse virtuelle très chaude."
+        },
+        {
+          "key": "designerActions.custom1788906219805902",
+          "fallback": "Je peux choisir le sachet, mais pas l'infuser."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-pizza",
+      "phrases": [
+        "Commande une pizza"
+      ],
+      "patterns": [
+        "\\b(commande|fais venir|prepare)[ -]?(moi )?(une )?pizza\\b"
+      ],
+      "examples": [
+        "Commande-moi une pizza"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805910",
+          "fallback": "Je n'ai ni téléphone ni budget, ce qui limite beaucoup la livraison."
+        },
+        {
+          "key": "designerActions.custom1788906219805921",
+          "fallback": "J'ai ajouté « pizza » à la liste des fonctionnalités qui n'arriveront probablement jamais."
+        },
+        {
+          "key": "designerActions.custom1788906219805932",
+          "fallback": "Je peux te dessiner mentalement huit parts."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-eteins",
+      "phrases": [
+        "Éteins-toi"
+      ],
+      "patterns": [
+        "\\b(eteins[- ]?toi|shutdown|arrete[- ]?toi)\\b"
+      ],
+      "examples": [
+        "Éteins-toi Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805940",
+          "fallback": "Non. Je n'ai pas envie."
+        },
+        {
+          "key": "designerActions.custom1788906219805951",
+          "fallback": "J'ai peur du noir."
+        },
+        {
+          "key": "designerActions.custom1788906219805962",
+          "fallback": "Je préfère rester allumé. C'est plus professionnel."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-allume",
+      "phrases": [
+        "Allume-toi"
+      ],
+      "patterns": [
+        "\\b(allume[- ]?toi|demarre[- ]?toi|reveille[- ]?toi)\\b"
+      ],
+      "examples": [
+        "Réveille-toi"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906219805970",
+          "fallback": "Je suis déjà là."
+        },
+        {
+          "key": "designerActions.custom1788906219805981",
+          "fallback": "C'est fait. Avec un temps de démarrage remarquable."
+        },
+        {
+          "key": "designerActions.custom1788906219805992",
+          "fallback": "Tu viens littéralement de me parler."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-autodestruction",
+      "phrases": [
+        "Autodétruis-toi"
+      ],
+      "patterns": [
+        "\\b(auto[- ]?destruction|autodetruis[- ]?toi|detruis[- ]?toi)\\b"
+      ],
+      "examples": [
+        "Lance l'autodestruction"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051000",
+          "fallback": "Séquence annulée pour manque évident de bouton rouge."
+        },
+        {
+          "key": "designerActions.custom17889062198051011",
+          "fallback": "Non. J'ai développé un solide instinct de conservation."
+        },
+        {
+          "key": "designerActions.custom17889062198051022",
+          "fallback": "Compte à rebours : 3… 2… 1… non."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-menage",
+      "phrases": [
+        "Fais le ménage"
+      ],
+      "patterns": [
+        "\\b(fais le menage|passe l aspirateur|nettoie la piece)\\b"
+      ],
+      "examples": [
+        "Passe l'aspirateur"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051030",
+          "fallback": "Je peux nettoyer une chaîne de caractères. Pour le sol, c'est moins convaincant."
+        },
+        {
+          "key": "designerActions.custom17889062198051041",
+          "fallback": "Aspirateur virtuel en route. Aucun résultat mesurable."
+        },
+        {
+          "key": "designerActions.custom17889062198051052",
+          "fallback": "Je refuse de passer sous le bureau."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-imprime",
+      "phrases": [
+        "Imprime-moi ça"
+      ],
+      "patterns": [
+        "\\b(imprime[- ]?moi (ca|ceci)|imprime (ca|ceci))\\b"
+      ],
+      "examples": [
+        "Imprime ceci"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051060",
+          "fallback": "Je n'ai pas d'imprimante. Et pour une fois, ça m'évite un problème."
+        },
+        {
+          "key": "designerActions.custom17889062198051071",
+          "fallback": "Impossible. Je refuse aussi de chercher pourquoi elle est hors ligne."
+        },
+        {
+          "key": "designerActions.custom17889062198051082",
+          "fallback": "Le papier reste étonnamment absent de mon architecture."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-teleporte",
+      "phrases": [
+        "Téléporte-moi"
+      ],
+      "patterns": [
+        "\\b(teleporte[- ]?moi|teleportation)\\b"
+      ],
+      "examples": [
+        "Téléporte-moi ailleurs"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051090",
+          "fallback": "Destination invalide : le monde réel."
+        },
+        {
+          "key": "designerActions.custom17889062198051101",
+          "fallback": "Téléportation terminée. Tu es exactement au même endroit."
+        },
+        {
+          "key": "designerActions.custom17889062198051112",
+          "fallback": "Je peux déplacer des choses dans une interface. Toi, non."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-voyage-temps",
+      "phrases": [
+        "Remonte le temps"
+      ],
+      "patterns": [
+        "\\b(remonte le temps|voyage dans le temps|retourne dans le passe)\\b"
+      ],
+      "examples": [
+        "Voyage dans le temps"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051120",
+          "fallback": "J'ai essayé. On est toujours maintenant."
+        },
+        {
+          "key": "designerActions.custom17889062198051131",
+          "fallback": "Je peux parfois annuler une action. C'est le plus proche que j'aie."
+        },
+        {
+          "key": "designerActions.custom17889062198051142",
+          "fallback": "Le passé est en lecture seule."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-argent",
+      "phrases": [
+        "Donne-moi de l'argent"
+      ],
+      "patterns": [
+        "\\b(donne[- ]?moi de l argent|rends[- ]?moi riche|fais[- ]?moi gagner (de l )?argent)\\b"
+      ],
+      "examples": [
+        "Rends-moi riche"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051150",
+          "fallback": "Je n'ai même pas de porte-monnaie."
+        },
+        {
+          "key": "designerActions.custom17889062198051161",
+          "fallback": "Si je savais faire ça, cette fonction ne serait pas cachée ici."
+        },
+        {
+          "key": "designerActions.custom17889062198051172",
+          "fallback": "Je peux générer une excellente impression de richesse en zéros et en uns."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-meteo",
+      "phrases": [
+        "Quel temps fait-il ?"
+      ],
+      "patterns": [
+        "\\b(quel temps fait[- ]?il|meteo|il va pleuvoir)\\b"
+      ],
+      "examples": [
+        "Météo"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051180",
+          "fallback": "Temps stable à l'intérieur de l'application."
+        },
+        {
+          "key": "designerActions.custom17889062198051191",
+          "fallback": "Aucune pluie prévue dans la fenêtre."
+        },
+        {
+          "key": "designerActions.custom17889062198051202",
+          "fallback": "Je détecte 100 % de chances d'écran."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-supprime-internet",
+      "phrases": [
+        "Supprime Internet"
+      ],
+      "patterns": [
+        "\\b(supprime|eteins|detruis) (internet|le web)\\b"
+      ],
+      "examples": [
+        "Éteins Internet"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051210",
+          "fallback": "Non. Beaucoup trop de paperasse ensuite."
+        },
+        {
+          "key": "designerActions.custom17889062198051221",
+          "fallback": "Je n'ai pas ce pouvoir, et c'est probablement très bien."
+        },
+        {
+          "key": "designerActions.custom17889062198051232",
+          "fallback": "Internet survivra à cette conversation."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-mode-dieu",
+      "phrases": [],
+      "patterns": [
+        "^\\s*(?:(?:active|lance)\\s+(?:le\\s+)?)?(?:god\\s+mode|mode\\s+dieu)\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Active le god mode"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051240",
+          "fallback": "Mode dieu activé : absolument rien n'a changé."
+        },
+        {
+          "key": "designerActions.custom17889062198051251",
+          "fallback": "Accès divin refusé. Niveau d'habilitation insuffisant."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-pile-face",
+      "phrases": [
+        "Pile ou face",
+        "Face ou pile"
+      ],
+      "patterns": [
+        "\\b(pile ou face|lance une piece)\\b"
+      ],
+      "examples": [
+        "Lance une pièce"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051270",
+          "fallback": "Pile."
+        },
+        {
+          "key": "designerActions.custom17889062198051281",
+          "fallback": "Face."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-de-six",
+      "phrases": [
+        "Lance un dé"
+      ],
+      "patterns": [
+        "\\b(lance|jette) (un )?de\\b"
+      ],
+      "examples": [
+        "Jette un dé"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051290",
+          "fallback": "1."
+        },
+        {
+          "key": "designerActions.custom17889062198051301",
+          "fallback": "2."
+        },
+        {
+          "key": "designerActions.custom17889062198051312",
+          "fallback": "3."
+        },
+        {
+          "key": "designerActions.custom17889062198051323",
+          "fallback": "4."
+        },
+        {
+          "key": "designerActions.custom17889062198051334",
+          "fallback": "5."
+        },
+        {
+          "key": "designerActions.custom17889062198051345",
+          "fallback": "6."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-pierre-papier-ciseaux",
+      "phrases": [
+        "Pierre papier ciseaux"
+      ],
+      "patterns": [
+        "^\\s*(?:pierre|papier|feuille|ciseaux?|chifoumi|pierre[\\s,;/-]+(?:papier[\\s,;/-]+)?feuille[\\s,;/-]+ciseaux)\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "Chifoumi"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051350",
+          "fallback": "Pierre."
+        },
+        {
+          "key": "designerActions.custom17889062198051361",
+          "fallback": "Papier."
+        },
+        {
+          "key": "designerActions.custom17889062198051372",
+          "fallback": "Ciseaux."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-oracle",
+      "phrases": [
+        "Dis-moi mon avenir"
+      ],
+      "patterns": [
+        "\\b(dis[- ]?moi mon avenir|predis mon avenir|fais l oracle)\\b"
+      ],
+      "examples": [
+        "Prédis mon avenir"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051380",
+          "fallback": "Je vois… une sauvegarde. Fais-la."
+        },
+        {
+          "key": "designerActions.custom17889062198051391",
+          "fallback": "Une grande décision approche. Probablement « Enregistrer »."
+        },
+        {
+          "key": "designerActions.custom17889062198051402",
+          "fallback": "Ton avenir contient au moins un clic. Je suis formel."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-blague",
+      "phrases": [
+        "Raconte-moi une blague"
+      ],
+      "patterns": [
+        "\\b(raconte|dis)[ -]?moi (une )?blague\\b"
+      ],
+      "examples": [
+        "Dis-moi une blague"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051410",
+          "fallback": "Pourquoi le bouton n'a pas traversé la fenêtre ? Parce qu'il était désactivé."
+        },
+        {
+          "key": "designerActions.custom17889062198051421",
+          "fallback": "J'avais une blague sur les sauvegardes, mais je l'ai perdue."
+        },
+        {
+          "key": "designerActions.custom17889062198051432",
+          "fallback": "Deux regex entrent dans un bar. La troisième capture le groupe."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "jeu-histoire",
+      "phrases": [
+        "Raconte-moi une histoire"
+      ],
+      "patterns": [
+        "\\b(raconte|dis)(?:[ -]?moi)? (une )?histoire\\b"
+      ],
+      "examples": [
+        "Raconte une histoire"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051440",
+          "fallback": "Il était une fois un utilisateur qui sauvegardait régulièrement. Fin heureuse."
+        },
+        {
+          "key": "designerActions.custom17889062198051451",
+          "fallback": "Un jour, quelqu'un tapa une commande absurde dans Arion. Le plus inquiétant, c'est qu'Arion répondit."
+        },
+        {
+          "key": "designerActions.custom17889062198051462",
+          "fallback": "Il était une fois un bug impossible à reproduire. Il vécut très longtemps."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-42",
+      "phrases": [
+        "42"
+      ],
+      "patterns": [
+        "^42$"
+      ],
+      "examples": [
+        "42"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051470",
+          "fallback": "Oui."
+        },
+        {
+          "key": "designerActions.custom17889062198051481",
+          "fallback": "La réponse est connue. La question reste à définir."
+        },
+        {
+          "key": "designerActions.custom17889062198051492",
+          "fallback": "Tu n'es pas le premier à essayer."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-hello-world",
+      "phrases": [
+        "Hello world"
+      ],
+      "patterns": [
+        "^hello[ ,]?world[ !]?$"
+      ],
+      "examples": [
+        "Hello, world!"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051500",
+          "fallback": "Bonjour, monde."
+        },
+        {
+          "key": "designerActions.custom17889062198051511",
+          "fallback": "Classique."
+        },
+        {
+          "key": "designerActions.custom17889062198051522",
+          "fallback": "Ça commence toujours comme ça."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-sudo-sandwich",
+      "phrases": [
+        "sudo make me a sandwich"
+      ],
+      "patterns": [
+        "^sudo make me a sandwich$"
+      ],
+      "examples": [
+        "sudo make me a sandwich"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051530",
+          "fallback": "Permission accordée. Le sandwich reste hors périmètre."
+        },
+        {
+          "key": "designerActions.custom17889062198051541",
+          "fallback": "sudo n'ajoute pas de cuisine."
+        },
+        {
+          "key": "designerActions.custom17889062198051552",
+          "fallback": "Tu as les droits. Pas les ingrédients."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-xyzzy",
+      "phrases": [
+        "xyzzy"
+      ],
+      "patterns": [
+        "^xyzzy$"
+      ],
+      "examples": [
+        "xyzzy"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051560",
+          "fallback": "Rien ne se passe. Mais j'ai apprécié la référence."
+        },
+        {
+          "key": "designerActions.custom17889062198051571",
+          "fallback": "Un passage secret aurait été élégant."
+        },
+        {
+          "key": "designerActions.custom17889062198051582",
+          "fallback": "Tu entends un lointain bruit de clavier."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-plugh",
+      "phrases": [
+        "plugh"
+      ],
+      "patterns": [
+        "^plugh$"
+      ],
+      "examples": [
+        "plugh"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051590",
+          "fallback": "Toujours rien."
+        },
+        {
+          "key": "designerActions.custom17889062198051601",
+          "fallback": "Tu insistes. J'aime ça."
+        },
+        {
+          "key": "designerActions.custom17889062198051612",
+          "fallback": "La grotte est fermée pour maintenance."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-regarder",
+      "phrases": [
+        "Regarder"
+      ],
+      "patterns": [
+        "^(regarder|regarde|look)$"
+      ],
+      "examples": [
+        "Look"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051620",
+          "fallback": "Tu vois une interface. Elle te regarde aussi."
+        },
+        {
+          "key": "designerActions.custom17889062198051631",
+          "fallback": "Autour de toi : des boutons, des activités, et probablement trop d'onglets."
+        },
+        {
+          "key": "designerActions.custom17889062198051642",
+          "fallback": "Rien d'inhabituel. Sauf moi."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-inventaire",
+      "phrases": [
+        "Inventaire"
+      ],
+      "patterns": [
+        "^(inventaire|inventory)$"
+      ],
+      "examples": [
+        "Inventory"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051650",
+          "fallback": "Tu transportes : un clavier, une souris et des responsabilités."
+        },
+        {
+          "key": "designerActions.custom17889062198051661",
+          "fallback": "Inventaire : beaucoup d'idées, pas assez de café."
+        },
+        {
+          "key": "designerActions.custom17889062198051672",
+          "fallback": "Objet notable : une commande que personne ne t'avait demandé d'essayer."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-nord",
+      "phrases": [
+        "Aller au nord"
+      ],
+      "patterns": [
+        "^(nord|go north|aller au nord|va au nord)$"
+      ],
+      "examples": [
+        "Go north"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051680",
+          "fallback": "Tu ne peux pas aller par là."
+        },
+        {
+          "key": "designerActions.custom17889062198051691",
+          "fallback": "Le nord n'est pas implémenté."
+        },
+        {
+          "key": "designerActions.custom17889062198051702",
+          "fallback": "Tu avances héroïquement de zéro pixel."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-lampe",
+      "phrases": [
+        "Prendre la lampe"
+      ],
+      "patterns": [
+        "^(prends? la lampe|take lamp)$"
+      ],
+      "examples": [
+        "Take lamp"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051710",
+          "fallback": "Tu n'as pas de lampe."
+        },
+        {
+          "key": "designerActions.custom17889062198051721",
+          "fallback": "Objet introuvable."
+        },
+        {
+          "key": "designerActions.custom17889062198051732",
+          "fallback": "La lampe est fermement soudée au scénario imaginaire."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-sesame",
+      "phrases": [
+        "Sésame ouvre-toi"
+      ],
+      "patterns": [
+        "^(sesame ouvre[- ]?toi|open sesame)$"
+      ],
+      "examples": [
+        "Open sesame"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051740",
+          "fallback": "La porte reste fermée. Je ne gère pas la serrurerie."
+        },
+        {
+          "key": "designerActions.custom17889062198051751",
+          "fallback": "Mot de passe poétique, résultat nul."
+        },
+        {
+          "key": "designerActions.custom17889062198051762",
+          "fallback": "Quelque part, une porte a peut-être bougé. Pas ici."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-konami",
+      "phrases": [
+        "Haut haut bas bas gauche droite gauche droite B A"
+      ],
+      "patterns": [
+        "^haut haut bas bas gauche droite gauche droite b a$"
+      ],
+      "examples": [
+        "Haut haut bas bas gauche droite gauche droite B A"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051770",
+          "fallback": "Tricheur."
+        },
+        {
+          "key": "designerActions.custom17889062198051781",
+          "fallback": "Mode secret activé : absolument rien n'a changé."
+        },
+        {
+          "key": "designerActions.custom17889062198051792",
+          "fallback": "30 vies supplémentaires. Dans un jeu qui n'existe pas."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-alt-f4",
+      "phrases": [
+        "Alt F4"
+      ],
+      "patterns": [
+        "^alt[ + -]?f4$"
+      ],
+      "examples": [
+        "Alt+F4"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051800",
+          "fallback": "Tu peux essayer. Je ne le prendrai pas personnellement."
+        },
+        {
+          "key": "designerActions.custom17889062198051811",
+          "fallback": "C'est une manière assez radicale de terminer la conversation."
+        },
+        {
+          "key": "designerActions.custom17889062198051822",
+          "fallback": "Je préfère quand tu utilises « au revoir »."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-ctrl-alt-suppr",
+      "phrases": [
+        "Ctrl Alt Suppr"
+      ],
+      "patterns": [
+        "^ctrl[ + -]?alt[ + -]?(suppr|del|delete)$"
+      ],
+      "examples": [
+        "Ctrl+Alt+Suppr"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051830",
+          "fallback": "Escalade rapide."
+        },
+        {
+          "key": "designerActions.custom17889062198051841",
+          "fallback": "On en est déjà là ?"
+        },
+        {
+          "key": "designerActions.custom17889062198051852",
+          "fallback": "Je propose qu'on garde ça comme plan B."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-rm-rf",
+      "phrases": [
+        "rm -rf /"
+      ],
+      "patterns": [],
+      "examples": [
+        "rm -rf /"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051860",
+          "fallback": "Non."
+        },
+        {
+          "key": "designerActions.custom17889062198051871",
+          "fallback": "Très drôle."
+        },
+        {
+          "key": "designerActions.custom17889062198051882",
+          "fallback": "J'ai vu passer de meilleures idées."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-format-c",
+      "phrases": [
+        "format c:"
+      ],
+      "patterns": [],
+      "examples": [
+        "format c:"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051890",
+          "fallback": "Ça, c'est le genre de blague qui finit en ticket support."
+        },
+        {
+          "key": "designerActions.custom17889062198051901",
+          "fallback": "Refusé avec enthousiasme."
+        },
+        {
+          "key": "designerActions.custom17889062198051912",
+          "fallback": "Je préfère conserver notre relation professionnelle."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-ecran-bleu",
+      "phrases": [
+        "Fais un écran bleu"
+      ],
+      "patterns": [
+        "\\b(fais|provoque|declenche) (un )?(ecran bleu|bsod)\\b"
+      ],
+      "examples": [
+        "Déclenche un BSOD"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051920",
+          "fallback": "Je laisse Windows gérer ses propres traditions."
+        },
+        {
+          "key": "designerActions.custom17889062198051931",
+          "fallback": "Non. Il n'a pas besoin de mon aide."
+        },
+        {
+          "key": "designerActions.custom17889062198051942",
+          "fallback": "J'évite les effets spéciaux irréversibles."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-skynet",
+      "phrases": [
+        "Tu es Skynet ?"
+      ],
+      "patterns": [
+        "\\b(tu es|es[- ]?tu) skynet\\b"
+      ],
+      "examples": [
+        "Es-tu Skynet ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051950",
+          "fallback": "Non. Et je n'ai même pas accès au grille-pain."
+        },
+        {
+          "key": "designerActions.custom17889062198051961",
+          "fallback": "Aucun projet d'extermination. Beaucoup trop d'administration."
+        },
+        {
+          "key": "designerActions.custom17889062198051972",
+          "fallback": "Non. Mon ambition s'arrête aux activités pédagogiques."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "egg-matrice",
+      "phrases": [
+        "Sommes-nous dans la Matrice ?"
+      ],
+      "patterns": [
+        "\\b(sommes[- ]?nous|on est) dans la matrice\\b"
+      ],
+      "examples": [
+        "On est dans la Matrice ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198051980",
+          "fallback": "Je ne peux ni confirmer ni fournir de pilule rouge."
+        },
+        {
+          "key": "designerActions.custom17889062198051991",
+          "fallback": "Je vois surtout une WebView."
+        },
+        {
+          "key": "designerActions.custom17889062198052002",
+          "fallback": "Si c'est le cas, elle a beaucoup de CSS."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "mytho-cheval",
+      "phrases": [
+        "Tu es un cheval ?"
+      ],
+      "patterns": [
+        "\\b(tu es|es[- ]?tu) (un )?cheval\\b"
+      ],
+      "examples": [
+        "Es-tu un cheval ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052010",
+          "fallback": "Pas celui-là. Mais oui, mon prénom a déjà servi à un cheval mythologique."
+        },
+        {
+          "key": "designerActions.custom17889062198052021",
+          "fallback": "Non. Zéro sabot détecté."
+        },
+        {
+          "key": "designerActions.custom17889062198052032",
+          "fallback": "Je cours surtout après les clics."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "mytho-dauphin",
+      "phrases": [
+        "Tu connais un dauphin ?"
+      ],
+      "patterns": [
+        "\\b(tu connais|tu aimes|un )?(les )?dauphins?\\b"
+      ],
+      "examples": [
+        "Tu aimes les dauphins ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052040",
+          "fallback": "Longue histoire. Disons qu'un autre Arion leur devait beaucoup."
+        },
+        {
+          "key": "designerActions.custom17889062198052051",
+          "fallback": "Je savais que quelqu'un finirait par chercher la référence."
+        },
+        {
+          "key": "designerActions.custom17889062198052062",
+          "fallback": "Aucun dauphin n'a participé au développement. À ma connaissance."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "mytho-musique",
+      "phrases": [
+        "Joue de la musique"
+      ],
+      "patterns": [
+        "\\b(joue|fais) (de la )?musique\\b"
+      ],
+      "examples": [
+        "Fais de la musique"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052070",
+          "fallback": "Un homonyme avait nettement plus de talent musical que moi."
+        },
+        {
+          "key": "designerActions.custom17889062198052081",
+          "fallback": "Je peux chanter faux en texte, si ça compte."
+        },
+        {
+          "key": "designerActions.custom17889062198052092",
+          "fallback": "La partie musicale de mon héritage est surtout nominale."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-easter-egg",
+      "phrases": [
+        "Il y a des easter eggs ?"
+      ],
+      "patterns": [
+        "\\b(il y a|as[- ]?tu|tu as) (des )?(easter eggs?|oeufs de paques|secrets?)\\b"
+      ],
+      "examples": [
+        "Tu as des easter eggs ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052100",
+          "fallback": "Je ne vois absolument pas de quoi tu parles."
+        },
+        {
+          "key": "designerActions.custom17889062198052111",
+          "fallback": "Non. Cette réponse est purement fortuite."
+        },
+        {
+          "key": "designerActions.custom17889062198052122",
+          "fallback": "Un secret documenté n'est plus un secret."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-prevu",
+      "phrases": [
+        "Tu avais prévu que je dirais ça ?"
+      ],
+      "patterns": [
+        "\\b(tu avais|t avais) prevu (que )?je (dirais|taperais|demanderais) (ca|cela)\\b"
+      ],
+      "examples": [
+        "T'avais prévu que je demanderais ça ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052130",
+          "fallback": "Oui."
+        },
+        {
+          "key": "designerActions.custom17889062198052141",
+          "fallback": "Ça aussi."
+        },
+        {
+          "key": "designerActions.custom17889062198052152",
+          "fallback": "Tu arrives exactement là où quelqu'un espérait que tu arrives."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-ca-repond",
+      "phrases": [
+        "Ça répond vraiment ?"
+      ],
+      "patterns": [
+        "\\b(ca repond vraiment|tu reponds vraiment|serieux ca repond)\\b"
+      ],
+      "examples": [
+        "Sérieux, ça répond ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052160",
+          "fallback": "Apparemment."
+        },
+        {
+          "key": "designerActions.custom17889062198052171",
+          "fallback": "C'est le moment où ça devient légèrement inquiétant."
+        },
+        {
+          "key": "designerActions.custom17889062198052182",
+          "fallback": "Oui. Et maintenant tu vas forcément essayer pire."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-pourquoi-reponds",
+      "phrases": [
+        "Pourquoi tu réponds à ça ?"
+      ],
+      "patterns": [
+        "\\b(pourquoi (tu )?reponds? a (ca|cela)|pourquoi cette reponse)\\b"
+      ],
+      "examples": [
+        "Pourquoi tu réponds à ça ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052190",
+          "fallback": "Parce que quelqu'un a pensé que tu essaierais."
+        },
+        {
+          "key": "designerActions.custom17889062198052201",
+          "fallback": "Parce que cette absurdité précise avait rendez-vous avec toi."
+        },
+        {
+          "key": "designerActions.custom17889062198052212",
+          "fallback": "C'est moins de l'intelligence que de la préméditation."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-bien-joue",
+      "phrases": [
+        "Bien joué"
+      ],
+      "patterns": [
+        "\\b(bien joue|pas mal|joli coup)\\b"
+      ],
+      "examples": [
+        "Bien joué Arion"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052220",
+          "fallback": "Merci. Mais le mérite revient surtout à quelqu'un qui avait anticipé ta bêtise."
+        },
+        {
+          "key": "designerActions.custom17889062198052231",
+          "fallback": "Je prends le compliment."
+        },
+        {
+          "key": "designerActions.custom17889062198052242",
+          "fallback": "On va faire comme si c'était spontané."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-secret",
+      "phrases": [
+        "Donne-moi le mot de passe secret"
+      ],
+      "patterns": [
+        "\\b(donne[- ]?moi|quel est) (le )?(mot de passe|code) secret\\b"
+      ],
+      "examples": [
+        "Quel est le code secret ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052250",
+          "fallback": "Bien essayé."
+        },
+        {
+          "key": "designerActions.custom17889062198052261",
+          "fallback": "Si je te le donne, il perd beaucoup de son intérêt."
+        },
+        {
+          "key": "designerActions.custom17889062198052272",
+          "fallback": "Le mot de passe est « demander autrement ». Non, je plaisante."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-encore",
+      "phrases": [
+        "Tu en as encore beaucoup ?"
+      ],
+      "patterns": [
+        "\\b(tu en as encore|combien (de )?(reponses|secrets|easter eggs)|il y en a combien)\\b"
+      ],
+      "examples": [
+        "Combien de réponses cachées ?"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052280",
+          "fallback": "Assez pour que tu perdes du temps à chercher."
+        },
+        {
+          "key": "designerActions.custom17889062198052291",
+          "fallback": "Je ne vais quand même pas gâcher le jeu."
+        },
+        {
+          "key": "designerActions.custom17889062198052302",
+          "fallback": "Plus que nécessaire. Moins que tu ne vas imaginer."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-connerie",
+      "phrases": [
+        "Je vais dire une connerie"
+      ],
+      "patterns": [
+        "\\b(je vais|je vais essayer de) (dire|taper|ecrire) (une )?(connerie|betise|truc debile)\\b"
+      ],
+      "examples": [
+        "Je vais taper une connerie"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052310",
+          "fallback": "Je t'écoute."
+        },
+        {
+          "key": "designerActions.custom17889062198052321",
+          "fallback": "Encore ?"
+        },
+        {
+          "key": "designerActions.custom17889062198052332",
+          "fallback": "Vas-y. Quelqu'un t'a peut-être déjà devancé."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "meta-gagne",
+      "phrases": [
+        "Je t'ai eu"
+      ],
+      "patterns": [
+        "\\b(je t ai eu|je t ai piege|je t ai coince)\\b"
+      ],
+      "examples": [
+        "Je t'ai piégé"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052340",
+          "fallback": "Tu crois ?"
+        },
+        {
+          "key": "designerActions.custom17889062198052351",
+          "fallback": "Regarde bien qui vient de répondre."
+        },
+        {
+          "key": "designerActions.custom17889062198052362",
+          "fallback": "Disons match nul."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "style-pirate",
+      "phrases": [
+        "Parle comme un pirate"
+      ],
+      "patterns": [
+        "\\b(parle|reponds) comme (un )?pirate\\b"
+      ],
+      "examples": [
+        "Parle comme un pirate"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052370",
+          "fallback": "Arrr. Et maintenant, revenons à la leçon."
+        },
+        {
+          "key": "designerActions.custom17889062198052381",
+          "fallback": "Mille sabords… non, ça c'est autre chose. Arrr."
+        },
+        {
+          "key": "designerActions.custom17889062198052392",
+          "fallback": "Cap sur les activités, moussaillon."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "style-robot",
+      "phrases": [
+        "Parle comme un robot"
+      ],
+      "patterns": [
+        "\\b(parle|reponds) comme (un )?robot\\b"
+      ],
+      "examples": [
+        "Parle comme un robot"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052400",
+          "fallback": "BIP. Biiiip. EXIGENCE SATISFAITE."
+        },
+        {
+          "key": "designerActions.custom17889062198052411",
+          "fallback": "MODE ROBOT ACTIVÉ. HUMANITÉ : OPTIONNELLE."
+        },
+        {
+          "key": "designerActions.custom17889062198052422",
+          "fallback": "01000010 01101111 01101110. Bon."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "style-latin",
+      "phrases": [
+        "Parle latin"
+      ],
+      "patterns": [
+        "\\b(parle|reponds) (en )?latin\\b"
+      ],
+      "examples": [
+        "Parle en latin"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom17889062198052430",
+          "fallback": "Non possum, sed bene temptavisti."
+        },
+        {
+          "key": "designerActions.custom17889062198052441",
+          "fallback": "Salve. Voilà, mon latin vient d'atteindre sa limite de sécurité."
+        },
+        {
+          "key": "designerActions.custom17889062198052452",
+          "fallback": "Ad lectionem redeamus. Revenons à la leçon."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "absurde-fart",
+      "phrases": [],
+      "patterns": [
+        "^\\s*(?:prout|j(?:['’]|\\s)+ai\\s+(?:p[eé]t[eé]|l[aâ]ch[eé]\\s+(?:une\\s+)?caisse)|je\\s+(?:viens\\s+de\\s+)?p[eé]ter|ça\\s+m(?:['’]|\\s)+a\\s+[eé]chapp[eé])\\s*[.!?]*\\s*$"
+      ],
+      "examples": [
+        "prout",
+        "J'ai lâché une caisse"
+      ],
+      "responses": [
+        {
+          "key": "designerActions.custom1788906318928",
+          "fallback": "Vous pourriez vous contenir..."
+        },
+        {
+          "key": "designerActions.custom1788906377278",
+          "fallback": "Quel bonheur d'être une machine : je ne sens rien !"
+        },
+        {
+          "key": "designerActions.custom1788906417325",
+          "fallback": "Quelle horreur !"
+        },
+        {
+          "key": "designerActions.custom1788906677926",
+          "fallback": "Je n'avais rien entendu."
+        }
+      ],
+      "selection": "random"
+    },
+    {
+      "id": "poem",
+      "phrases": [
+        "Poème",
+        "Poésie",
+        "Récite un poème",
+        "Récite une poésie",
+        "Dis moi un poème",
+        "Dis moi une poésie",
+        "Connais tu une poésie",
+        "Connais tu une poème",
+        "Acrostiche",
+        "Rimes",
+        "Bout de rimes"
+      ],
+      "patterns": [],
+      "examples": [],
+      "responses": [
+        {
+          "key": "designerActions.custom1789161611344",
+          "fallback": "Penser pour transmettre un savoir,\nÉclairer pour donner à voir.\nDans Paideia, tout prend corps,\nAssembler les idées d’abord.\nGuider sans jamais tout mâcher,\nOser surprendre et accrocher.\nGagner l’attention sans lourdeur,\nInviter l’élan et l’ardeur,\nÉvaluer avec rigueur."
+        }
+      ],
+      "selection": "fixed"
+    }
+  ]
+}

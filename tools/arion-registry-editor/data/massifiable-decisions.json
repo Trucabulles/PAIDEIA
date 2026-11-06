@@ -1,0 +1,1710 @@
+{
+  "version": 1,
+  "decisions": {
+    "block.activityItems[].cardFeedbackHtml": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].contentHtml": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string"
+    },
+    "block.contentHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.matching.failureFeedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.labelAppearance.backgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.labelAppearance.borderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.labelAppearance.borderStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.labelAppearance.borderWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.labelAppearance.rounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.matching.maxAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.matching.showAttemptFeedback": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.matching.successFeedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.successThreshold": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.audioAllowDownload": {
+      "decision": "À retenir",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.audioAutoplayNext": {
+      "decision": "À retenir",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.mediaGap": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.mediaLayout": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quoteShowAuthor": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.flipCardBackBorderColor": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.flipCardFrontBorderColor": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.findElements.imageAppearance.borderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.imageAppearance.borderStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.imageAppearance.borderWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.imageAppearance.rounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.findElements.imageAppearance.shadow": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.findElements.labels.correction": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.labels.description": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.labels.risk": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.maxAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.findElements.successThreshold": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.slidesActivityBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.slidesActivityBorderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.slidesActivityBorderStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.slidesActivityBorderWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.slidesActivityRounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.slidesActivityShadow": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.sectionBackgroundPositionY": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.imageRounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.imageSize": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.image360AllowFullscreen": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.image360FullWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.image360ZoomEnabled": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "project.courseAppearance.backgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.courseAppearance.roundedCorners": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "project.courseAppearance.shadows": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "project.courseCoverStyle.backgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.courseCoverStyle.backgroundPositionY": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "project.courseCoverStyle.buttonPosition": {
+      "decision": "",
+      "notes": "",
+      "type": "\"center-bottom\" | \"right-bottom\" | \"under-title\" | undefined"
+    },
+    "project.courseCoverStyle.heightPx": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "project.courseCoverStyle.overlayColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | undefined"
+    },
+    "project.courseCoverStyle.overlayEnabled": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "project.courseCoverStyle.overlayOpacity": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "project.courseCoverStyle.overlayPosition": {
+      "decision": "",
+      "notes": "",
+      "type": "\"center\" | \"left\" | \"right\" | \"full\" | undefined"
+    },
+    "project.courseCoverStyle.overlaySpread": {
+      "decision": "",
+      "notes": "",
+      "type": "\"compact\" | \"normal\" | \"wide\" | undefined"
+    },
+    "project.courseCoverStyle.titleAlign": {
+      "decision": "",
+      "notes": "",
+      "type": "\"center\" | \"left\" | \"right\" | \"justify\" | undefined"
+    },
+    "project.courseCoverStyle.titleColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.courseCoverStyle.titleOutline": {
+      "decision": "",
+      "notes": "",
+      "type": "\"none\" | \"thin\" | \"thick\" | \"medium\" | undefined"
+    },
+    "project.courseCoverStyle.titleOutlineColor": {
+      "decision": "",
+      "notes": "",
+      "type": "\"light\" | \"dark\" | undefined"
+    },
+    "project.courseCoverStyle.titlePosition": {
+      "decision": "",
+      "notes": "",
+      "type": "\"left-bottom\" | \"center\" | \"center-bottom\" | \"right-bottom\" | undefined"
+    },
+    "project.activitySpacingPx": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null"
+    },
+    "project.titleStyle.color": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.titleStyle.fontFamily": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.titleStyle.fontSize": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.titleStyle.fontStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.titleStyle.fontWeight": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.markerPopupHeight": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.markerPopupWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.markerScheme": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.markerTextColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelBorderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelBorderStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelBorderWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelPadding": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.panelShadow": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.quiz.settings.allowRetry": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.gateChapterUntilPassed": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.limitQuestions": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.maxAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.settings.passingScore": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.settings.questionLimit": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.settings.reviewAfterAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.settings.reviewMode": {
+      "decision": "",
+      "notes": "",
+      "type": "QuizReviewMode"
+    },
+    "block.quiz.settings.sendScoreToLms": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.showCorrectAnswer": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.showFeedback": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.shuffleAnswers": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.settings.shuffleQuestions": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.titleMode": {
+      "decision": "",
+      "notes": "",
+      "type": "\"auto\" | \"custom\" | undefined"
+    },
+    "block.dividerColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.dividerStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.dividerWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.headerBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.headerHeight": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.headerImagePositionY": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.headerTextColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.headerTextOutline": {
+      "decision": "",
+      "notes": "",
+      "type": "\"none\" | \"thin\" | \"thick\" | \"medium\" | null | undefined"
+    },
+    "block.headerTextOutlineColor": {
+      "decision": "",
+      "notes": "",
+      "type": "\"light\" | \"dark\" | null | undefined"
+    },
+    "block.complete.cover.enabled": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.complete.ending.failureHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.ending.successHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.gateChapterUntilPassed": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.complete.maxAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.complete.successThreshold": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.contentAlign": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.contentWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.verticalAlign": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.cardSort.cardAppearance.borderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.cardAppearance.borderStyle": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.cardAppearance.borderWidth": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.cardAppearance.rounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.cardSort.failureFeedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.gateChapterUntilPassed": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.cardSort.interactionMode": {
+      "decision": "",
+      "notes": "",
+      "type": "\"direct\" | \"feedback\""
+    },
+    "block.cardSort.maxAttempts": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.cardSort.successFeedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.successThreshold": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quoteAuthorHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoAllowFullscreen": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.videoCaptionBackgroundEnabled": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.videoCaptionColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoCaptionOutline": {
+      "decision": "",
+      "notes": "",
+      "type": "\"none\" | \"thin\" | \"thick\" | null | undefined"
+    },
+    "block.buttonBackgroundColor": {
+      "decision": "À retenir",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.buttonTextColor": {
+      "decision": "À retenir",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.summary": {
+      "decision": "À retenir",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].cardFeedbackCorrectHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].cardFeedbackIncorrectHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.sectionBackgroundBlur": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.sectionBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.sectionBackgroundHeight": {
+      "decision": "",
+      "notes": "",
+      "type": "\"medium\" | \"minimum\" | \"large\" | null | undefined"
+    },
+    "block.sectionBackgroundImageRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.sectionBackgroundOpacity": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.sectionBackgroundOverlayDark": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.sectionBackgroundRounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.sectionBackgroundWide": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "project.courseAppearance.textColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "project.courseAppearance.textColorMode": {
+      "decision": "",
+      "notes": "",
+      "type": "\"custom\" | \"default\""
+    },
+    "block.panelRounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.paddingOffset": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.matching.pairs[].leftBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.matching.pairs[].leftHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.pairs[].leftId": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.pairs[].rightBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.matching.pairs[].rightHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.pairs[].rightId": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].displayName": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].extension": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].openInNewTab": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.attachmentFiles[].sizeBytes": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.htmlAssetRoot": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.findElements.zones[].correctionHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.zones[].riskHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.zones[].severity": {
+      "decision": "",
+      "notes": "",
+      "type": "FindElementsSeverity"
+    },
+    "block.findElements.zones[].shape": {
+      "decision": "",
+      "notes": "",
+      "type": "\"rectangle\" | \"polygon\""
+    },
+    "block.activityItems[].accentColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].backTitle": {
+      "decision": "",
+      "notes": "",
+      "type": "string | undefined"
+    },
+    "block.activityItems[].backType": {
+      "decision": "",
+      "notes": "",
+      "type": "\"image\" | \"text\" | undefined"
+    },
+    "block.activityItems[].characterId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].characterName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].characterRole": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].contentTitle": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].correctCategoryId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].dateLabel": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].frontText": {
+      "decision": "",
+      "notes": "",
+      "type": "string | undefined"
+    },
+    "block.activityItems[].frontType": {
+      "decision": "",
+      "notes": "",
+      "type": "\"image\" | \"text\" | undefined"
+    },
+    "block.activityItems[].imageRounded": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.activityItems[].imageSize": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].kind": {
+      "decision": "",
+      "notes": "",
+      "type": "\"intro\" | \"step\" | \"summary\" | \"result-success\" | \"result-failure\" | undefined"
+    },
+    "block.activityItems[].mediaLayout": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].nextNodeId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].nodeType": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].resourceOpenMode": {
+      "decision": "",
+      "notes": "",
+      "type": "\"new-tab\" | \"same-window\" | null | undefined"
+    },
+    "block.activityItems[].resourceUrl": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].resourceValid": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.activityItems[].responses[].feedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].responses[].nextNodeId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].situationalDialoguePoseRefs": {
+      "decision": "",
+      "notes": "",
+      "type": "Record<string, string | null | undefined> | null | undefined"
+    },
+    "block.activityItems[].timeColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].titleColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.image360Hotspots[].color": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.image360InitialPitch": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.image360InitialYaw": {
+      "decision": "",
+      "notes": "",
+      "type": "number | null | undefined"
+    },
+    "block.markerType": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].defaultCharacterId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].defaultPoseId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].description": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].poses[].state": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].poses[].usage": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].showNameRole": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].color": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].icon": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.optimizationProfile": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.questions[].answers[].correct": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.quiz.questions[].feedbackCorrectHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.questions[].feedbackIncorrectHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.questions[].generalFeedbackHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.questions[].mode": {
+      "decision": "",
+      "notes": "",
+      "type": "QuizQuestionMode"
+    },
+    "block.quiz.questions[].sourceBankId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.questions[].sourceQuestionId": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.quiz.startLeadHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.quiz.titleHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.cover.titleHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.exercises[].blanks[].caseSensitive": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.cardSort.categories[].borderColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.categories[].labelHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.matching.pairs[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.assetRefs[]": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].assetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.attachmentFiles[].storedName": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.family": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.htmlEntryFile": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.htmlPackageName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.mediaFileName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.richInlineAssetRefs[]": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.sourceBlockType": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.sourceFormat": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.sourceRawHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.subtitleRefs[]": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.title": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.trackingKey": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.type": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.variant": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoOptimizationProfile": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoOptimizedAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoOriginalAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.videoSubtitleOriginalRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.flipCardBackBackgroundColor": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.flipCardFrontBackgroundColor": {
+      "decision": "À exclure",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.findElements.zones[].descriptionHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.zones[].height": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "block.findElements.zones[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.zones[].points[].x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.findElements.zones[].points[].y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.findElements.zones[].title": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.findElements.zones[].width": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "block.findElements.zones[].x": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "block.findElements.zones[].y": {
+      "decision": "",
+      "notes": "",
+      "type": "number | undefined"
+    },
+    "block.activityItems[].assetRefs[]": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].backImageAccessibility.altText": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].backImageAccessibility.decorative": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.activityItems[].backImageAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].backImageCrop.height": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].backImageCrop.shape": {
+      "decision": "",
+      "notes": "",
+      "type": "\"rectangle\" | \"ellipse\" | undefined"
+    },
+    "block.activityItems[].backImageCrop.width": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].backImageCrop.x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].backImageCrop.y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].backImageFileName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].cardBackgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].emotion": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].frontImageAccessibility.altText": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].frontImageAccessibility.decorative": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.activityItems[].frontImageAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].frontImageCrop.height": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].frontImageCrop.shape": {
+      "decision": "",
+      "notes": "",
+      "type": "\"rectangle\" | \"ellipse\" | undefined"
+    },
+    "block.activityItems[].frontImageCrop.width": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].frontImageCrop.x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].frontImageCrop.y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].frontImageFileName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].imageAccessibility.altText": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].imageAccessibility.decorative": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.activityItems[].imageAnnotationSourceAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].imageAnnotationStateRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].imageCrop.height": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].imageCrop.shape": {
+      "decision": "",
+      "notes": "",
+      "type": "\"rectangle\" | \"ellipse\" | undefined"
+    },
+    "block.activityItems[].imageCrop.width": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].imageCrop.x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].imageCrop.y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.activityItems[].mediaFileName": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].resourceRawDestination": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].responses[].action": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].responses[].emotion": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].responses[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].responses[].label": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].title": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.activityItems[].transcriptAllowDownload": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.activityItems[].transcriptHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].transcriptLanguage": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.activityItems[].transcriptSource": {
+      "decision": "",
+      "notes": "",
+      "type": "\"manual\" | \"whisper\" | \"imported\" | null | undefined"
+    },
+    "block.activityItems[].transcriptStatus": {
+      "decision": "",
+      "notes": "",
+      "type": "\"draft\" | \"validated\" | null | undefined"
+    },
+    "block.imageAccessibility.altText": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.imageAccessibility.decorative": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.imageAnnotationSourceAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.imageAnnotationStateRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.imageCrop.height": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.imageCrop.shape": {
+      "decision": "",
+      "notes": "",
+      "type": "\"rectangle\" | \"ellipse\" | undefined"
+    },
+    "block.imageCrop.width": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.imageCrop.x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.imageCrop.y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.image360Hotspots[].contentHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.image360Hotspots[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.image360Hotspots[].order": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.image360Hotspots[].pitch": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.image360Hotspots[].title": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.image360Hotspots[].yaw": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.situationalDialogueCharacters[].backgroundRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.situationalDialogueCharacters[].name": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.situationalDialogueCharacters[].poses[].assetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].poses[].emotion": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.situationalDialogueCharacters[].poses[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.situationalDialogueCharacters[].poses[].label": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.situationalDialogueCharacters[].role": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].contentHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].label": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].media.assetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].media.fileName": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].media.imageAccessibility.altText": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].media.imageAccessibility.decorative": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean"
+    },
+    "block.pointOfInterestMarkers[].media.optimizedAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.originalAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.posterAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.subtitleAssetRef": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.transcriptAllowDownload": {
+      "decision": "",
+      "notes": "",
+      "type": "boolean | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.transcriptHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.transcriptLanguage": {
+      "decision": "",
+      "notes": "",
+      "type": "string | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.transcriptSource": {
+      "decision": "",
+      "notes": "",
+      "type": "\"manual\" | \"whisper\" | \"imported\" | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.transcriptStatus": {
+      "decision": "",
+      "notes": "",
+      "type": "\"draft\" | \"validated\" | null | undefined"
+    },
+    "block.pointOfInterestMarkers[].media.type": {
+      "decision": "",
+      "notes": "",
+      "type": "\"image\" | \"video\" | \"audio\""
+    },
+    "block.pointOfInterestMarkers[].order": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.pointOfInterestMarkers[].title": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.pointOfInterestMarkers[].x": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.pointOfInterestMarkers[].y": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.introHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.quiz.questions[].answers[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.quiz.questions[].answers[].textHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.quiz.questions[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.quiz.questions[].points": {
+      "decision": "",
+      "notes": "",
+      "type": "number"
+    },
+    "block.quiz.questions[].questionHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.cover.descriptionHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.exercises[].blanks[].answer": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.exercises[].blanks[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.exercises[].blanks[].variants": {
+      "decision": "",
+      "notes": "",
+      "type": "string[]"
+    },
+    "block.complete.exercises[].contentHtml": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.complete.exercises[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.cardAppearance.backgroundColor": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.categories[].id": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    },
+    "block.cardSort.categories[].label": {
+      "decision": "",
+      "notes": "",
+      "type": "string"
+    }
+  }
+}

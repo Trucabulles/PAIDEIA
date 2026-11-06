@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+  <title>Sélectionner tout</title>
+  <defs>
+    <!-- Forme du carré avant -->
+    <rect id="frontSquare" x="8.2" y="8.2" width="11.2" height="11.2" rx="1.7"/>
+
+    <!-- Masque pour le carré intermédiaire : on retire le carré avant -->
+    <mask id="maskMid">
+      <rect width="24" height="24" fill="black"/>
+      <rect x="5.6" y="5.6" width="11.2" height="11.2" rx="1.7" fill="white"/>
+      <use href="#frontSquare" fill="black"/>
+    </mask>
+
+    <!-- Masque pour le carré arrière : on retire le carré intermédiaire et le carré avant -->
+    <mask id="maskBack">
+      <rect width="24" height="24" fill="black"/>
+      <rect x="3.0" y="3.0" width="11.2" height="11.2" rx="1.7" fill="white"/>
+      <rect x="5.6" y="5.6" width="11.2" height="11.2" rx="1.7" fill="black"/>
+      <use href="#frontSquare" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- Carré arrière : visible seulement hors recouvrement -->
+  <rect x="3.0" y="3.0" width="11.2" height="11.2" rx="1.7"
+        fill="none" stroke="#17284D" stroke-width="1.1"
+        stroke-linecap="round" stroke-linejoin="round"
+        mask="url(#maskBack)"/>
+
+  <!-- Carré intermédiaire : visible seulement hors recouvrement -->
+  <rect x="5.6" y="5.6" width="11.2" height="11.2" rx="1.7"
+        fill="none" stroke="#17284D" stroke-width="1.1"
+        stroke-linecap="round" stroke-linejoin="round"
+        mask="url(#maskMid)"/>
+
+  <!-- Carré avant : complet -->
+  <use href="#frontSquare" fill="#FFFFFF" stroke="#17284D" stroke-width="1.1"
+       stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Coche centrée dans le carré avant -->
+  <path d="M11.35 13.95l2.05 2.05 4.35-4.35"
+        fill="none" stroke="#17284D" stroke-width="1.4"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

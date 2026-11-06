@@ -1,0 +1,98 @@
+.row {
+  align-items: center;
+  gap: clamp(18px, 4vw, 48px);
+  width: 100%;
+  margin-inline: auto;
+}
+
+.course-exit {
+  width: min(100%, 700px);
+  margin-inline: auto;
+}
+
+.continue {
+  width: 100%;
+}
+
+.button {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: calc(100% - 50px);
+  overflow: hidden;
+}
+
+.button :global(.navigation-button-label) {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.text-left-button-right,
+.button-left-text-right {
+  justify-content: space-between;
+}
+
+.text-top-button-bottom {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.text-top-button-bottom .button,
+.text-left-button-right .button,
+.button-left-text-right .button {
+  align-self: center;
+}
+
+.text-left-button-right .button,
+.button-left-text-right .button {
+  flex-shrink: 0;
+  height: auto;
+  min-height: 47.2px;
+  max-width: min(45%, calc(100% - 50px));
+}
+
+.text-left-button-right .button :global(.navigation-button-label),
+.button-left-text-right .button :global(.navigation-button-label),
+.text-top-button-bottom .button :global(.navigation-button-label) {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.button-only {
+  justify-content: center;
+}
+
+@media (max-width: 820px) {
+  .text-left-button-right,
+  .button-left-text-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .text-left-button-right .button,
+  .button-left-text-right .button {
+    max-width: calc(100% - 50px);
+  }
+}
+
+.editorPreview {
+  /* Visual styling remains in global button-editor-preview for zero visual change. */
+}

@@ -1,0 +1,101 @@
+.activity-editor-tabs {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.activity-editor-tabs__list {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(150px, max-content));
+  justify-content: start;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 18px;
+  background: #eef3fb;
+}
+
+.activity-editor-tabs__tab {
+  min-height: 46px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: #7180a3;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.activity-editor-tabs__tab[aria-selected="true"] {
+  border-color: rgba(18, 58, 122, 0.14);
+  background: #fff;
+  color: #123a7a;
+  box-shadow: 0 7px 18px rgba(18, 58, 122, 0.08);
+}
+
+.activity-editor-tabs__tab:focus-visible {
+  outline: 3px solid rgba(36, 69, 133, 0.2);
+  outline-offset: 2px;
+}
+
+.activity-editor-tabs__panel {
+  min-width: 0;
+}
+
+.tabs-appearance-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column: 1 / -1;
+  gap: 30px;
+  width: 100%;
+  min-width: 0;
+}
+
+.tabs-appearance-stack > * {
+  box-sizing: border-box;
+  grid-column: 1;
+  align-self: stretch;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.activity-editor-tabs__panel--card {
+  padding: 24px 26px;
+  border: 1px solid rgba(18, 58, 122, 0.12);
+  border-radius: 22px;
+  background: #f7f9fc;
+}
+
+.activity-editor-tabs__panel--card > .media-config-panel,
+.activity-editor-tabs__panel--card > .media-options-row,
+.activity-editor-tabs__panel--card > .inspector-span-2 {
+  grid-column: auto;
+}
+
+.activity-editor-tabs__panel--card > .media-options-row {
+  margin-top: 16px;
+}
+
+.activity-editor-tabs__panel[hidden] {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  .activity-editor-tabs__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .activity-editor-tabs__tab {
+    padding-inline: 14px;
+  }
+
+  .activity-editor-tabs__panel--card {
+    padding: 20px;
+  }
+}

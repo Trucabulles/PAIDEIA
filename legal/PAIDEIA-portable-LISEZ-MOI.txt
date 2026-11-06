@@ -1,0 +1,18 @@
+PAIDEIA — VERSION PORTABLE
+==========================
+
+1. Décompressez entièrement l’archive dans un dossier accessible en écriture.
+2. Lancez PAIDEIA.exe depuis ce dossier.
+3. Ne supprimez pas le fichier portable.mode : il active l’isolation portable.
+
+Toutes les données propres à cette distribution sont conservées dans le dossier
+data situé à côté de PAIDEIA.exe. La version portable n’utilise pas les données
+d’une installation MSI ou NSIS présente sur le même ordinateur.
+
+Pour déplacer PAIDEIA, fermez l’application puis déplacez ou copiez l’ensemble du
+dossier portable. Pour une mise à jour, conservez le dossier data et remplacez les
+autres fichiers par ceux de la nouvelle archive.
+
+La version portable ne crée pas d’association de fichiers ni de raccourci Windows.
+Son exécution peut être limitée par les règles de sécurité du poste ou du support
+amovible utilisé.

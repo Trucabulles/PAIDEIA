@@ -1,0 +1,320 @@
+.activity {
+  /* Existing global header classes provide the visual layout. */
+}
+
+.editor {
+  /* Existing global header editor classes provide the visual layout. */
+}
+
+.optionGroup {
+  margin: 20px 0 0;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.optionGroup > legend {
+  padding: 0 8px;
+  color: #6f7f9e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.textReadability {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.subsectionTitle {
+  display: block;
+  margin-bottom: 12px;
+  color: #6f7f9e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.imagePositionHint {
+  margin: 10px 0 0;
+}
+
+.previewShell {
+  --header-editor-preview-height: 180px;
+  display: block;
+  width: 100%;
+  max-width: none;    
+}
+
+
+.topControls {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) max-content;
+  gap: 28px;
+  align-items: start;
+}
+
+.fileField {
+  display: grid;
+  gap: 8px;
+  width: 175px;
+  margin-bottom: 6px;
+}
+
+.fileField > span,
+.colorControls span {
+  color: #6f7f9e;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.colorControls {
+  display: flex;
+  align-items: start;
+  justify-content: flex-end;
+  gap: 22px;
+  padding-top: 34px;
+}
+
+.colorControls label {
+  display: grid;
+  gap: 8px;
+  min-width: 112px;
+}
+
+.filePreviewRow {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.filePreviewThumb {
+  position: relative;
+  overflow: hidden;
+  width: 116px;
+  height: 72px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.filePreviewImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filePreviewRemove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid rgba(141, 39, 28, 0.18);
+  border-radius: 999px;
+  background: #fff;
+  color: #8d271c;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(15, 35, 76, 0.12);
+}
+
+.filePreviewRemove:hover,
+.filePreviewRemove:focus-visible {
+  background: #fff5f3;
+}
+
+.filePreviewName {
+  min-width: 500px;
+  color: var(--text-dark);
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.heightSlider {
+  --slider-progress: 40%;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.heightSlider::-webkit-slider-runnable-track {
+  height: 8px;
+  border: 1px solid rgba(16, 39, 82, 0.24);
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0,
+    var(--accent) var(--slider-progress),
+    rgba(255, 255, 255, 0.92) var(--slider-progress),
+    rgba(255, 255, 255, 0.92) 100%
+  );
+}
+
+.heightSlider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: 0 0 0 1px rgba(16, 39, 82, 0.08);
+}
+
+.heightSlider::-moz-range-track {
+  height: 8px;
+  border: 1px solid rgba(16, 39, 82, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.heightSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px rgba(16, 39, 82, 0.08);
+}
+
+.heightSlider::-moz-range-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.editor :global(.header-editor-preview) {
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent; 
+}
+
+.draggablePreview {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.draggablePreview:focus-visible {
+  outline: 3px solid rgba(18, 58, 122, 0.35);
+  outline-offset: -3px;
+}
+
+.draggingPreview,
+.draggingPreview:active {
+  cursor: grabbing;
+}
+
+.editor :global(.header-banner) {
+  min-height: 0 !important;
+  height: var(--header-editor-preview-height);
+  border-radius: 0;
+  padding: 18px 28px;
+}
+
+.editor :global(.header-banner-copy) {
+  width: min(60%, 700px);
+  margin-right: 0;
+  margin-left: 0; 
+}
+
+.activity :global(.header-banner-copy-left),
+.editor :global(.header-banner-copy-left) {
+  text-align: left;
+}
+
+.activity :global(.header-banner-copy-center),
+.editor :global(.header-banner-copy-center) {
+  text-align: center;
+}
+
+.activity :global(.header-banner-copy-right),
+.editor :global(.header-banner-copy-right) {
+  text-align: right;
+}
+
+.editor :global(.header-banner .rich-content h1) {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1.08;    
+}
+
+@media (max-width: 720px) {
+  .topControls {
+    grid-template-columns: 1fr;
+  }
+
+  .colorControls {
+    justify-content: start;
+    padding-top: 0;
+  }
+
+  .filePreviewRow {
+    grid-template-columns: 1fr;
+  }
+
+  .editor :global(.header-banner-copy) {
+    width: 100%;  	
+  }
+
+}
+.overlayControl {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto;
+  align-content: start;
+  gap: 8px;
+  min-width: 300px;
+}
+
+@media (max-width: 720px) {
+  .overlayControl {
+    min-width: 0;
+  }
+}
+
+.overlayControl > span {
+  grid-column: 1 / -1;
+}
+
+.overlayControl select {
+  width: 100%;
+  min-width: 0;
+}
+
+.darkOverlay {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  align-self: center;
+  gap: 8px !important;
+  min-width: max-content;
+}
+
+.darkOverlay input {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--accent);
+}

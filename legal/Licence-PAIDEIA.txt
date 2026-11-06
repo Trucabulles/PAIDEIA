@@ -1,0 +1,52 @@
+LICENCE PAIDEIA — SOURCES OUVERTES
+Version 1.0 — 6 novembre 2026
+Copyright © 2026 Cyril Grégoire
+
+1. Champ d’application
+La présente licence s’applique au code source, aux exécutables, à la documentation et aux autres éléments de PAIDEIA distribués sous cette licence. Elle n’emporte aucune cession de droits de propriété intellectuelle. Les composants, polices, médias et autres éléments de tiers restent soumis à leurs propres licences.
+
+2. Utilisation et modification
+Toute personne ou organisation peut installer, utiliser et déployer PAIDEIA gratuitement, y compris dans un cadre professionnel, administratif ou commercial. Elle peut consulter, étudier, auditer, compiler et modifier les sources publiées sous cette licence, créer sa propre version et la maintenir pour ses besoins internes. Les modifications conservées en interne n’ont pas à être publiées.
+
+Ces autorisations sont non exclusives et valent dans le monde entier pour la durée de protection des droits concernés, dans les conditions de la présente licence.
+
+L’arrêt du développement de PAIDEIA, la fermeture du dépôt ou le retrait des fichiers du téléchargement ne mettent pas fin aux autorisations déjà accordées. Les utilisateurs qui ont conservé une copie obtenue sous la présente licence peuvent continuer à l’utiliser et, s’ils ont conservé les sources, à les compiler, les modifier et les maintenir. Ils peuvent aussi redistribuer gratuitement leur version, dans les conditions de l’article 3.
+
+3. Redistribution gratuite
+Toute personne ou organisation peut redistribuer gratuitement PAIDEIA, en version originale ou modifiée, sous forme de code source ou d’exécutable, à condition de :
+- joindre la présente licence et conserver les mentions de droits d’auteur et les avis de licence des éléments tiers ;
+- mettre gratuitement à disposition des destinataires le code source correspondant à la version distribuée, avec les éléments nécessaires à sa compilation dont la redistribution est autorisée ;
+- indiquer les modifications apportées et présenter toute version modifiée comme non officielle ;
+- conserver la présente licence pour les éléments qu’elle couvre, sans ajouter de restriction aux droits qu’elle accorde.
+
+Les mentions exactes de l’origine de PAIDEIA ou de la compatibilité avec celui-ci sont permises. Le nom, le logo et l’identité visuelle de PAIDEIA ne peuvent pas être utilisés pour laisser croire qu’une version modifiée est officielle ou approuvée par le titulaire des droits.
+
+4. Limites de la licence et missions autorisées
+4.1. Commercialisation du logiciel
+La présente licence n’autorise pas la vente, la location, la sous-licence payante ni la mise à disposition payante de PAIDEIA, de son code couvert par cette licence ou d’une version dérivée qui en reprend des éléments protégés. Cela vaut également si le logiciel est renommé, proposé comme service hébergé payant ou intégré à une offre payante. Les droits accordés à l’article 5 demeurent applicables.
+
+4.2. Support et maintenance
+Sous réserve des missions autorisées à l’article 4.3, la présente licence n’autorise pas les offres payantes de support, d’assistance technique ou de maintenance spécifiquement dédiées à PAIDEIA ou à une version dérivée, même si le logiciel est fourni gratuitement. Sont notamment visés les contrats et abonnements de correctifs ou de mises à jour. Une organisation peut assurer ces tâches pour elle-même avec ses propres équipes.
+
+4.3. Missions pour les besoins internes de l’utilisateur
+Tout utilisateur peut confier à un tiers une mission rémunérée d’audit, d’intégration ou d’adaptation de PAIDEIA pour ses seuls besoins internes. Le tiers peut accéder aux sources et les modifier pour exécuter cette mission. Il peut remettre les modifications à l’utilisateur qui l’a mandaté, sans les diffuser à d’autres. Cette autorisation ne couvre ni la vente du logiciel ou de ses dérivés, ni les offres payantes de support ou de maintenance dédiées.
+
+5. Formations et contenus produits
+Les utilisateurs conservent les droits dont ils disposent sur les contenus qu’ils créent ou importent. Sous réserve des droits de tiers, ils peuvent utiliser, diffuser et vendre les leçons et formations créées avec PAIDEIA, notamment sous forme de PDF de relecture, de PDF apprenant ou de paquets SCORM.
+
+Pour les paquets SCORM, cette autorisation couvre aussi le code que PAIDEIA ajoute pour afficher le cours, faire fonctionner ses activités et transmettre la progression au LMS, lorsque ce code est distribué avec la formation. Sa redistribution séparée reste soumise aux conditions générales de la présente licence. Les éléments de tiers restent soumis à leurs propres licences.
+
+6. Contributions
+Les utilisateurs ne sont pas tenus de soumettre leurs modifications au projet PAIDEIA.
+
+Lorsqu’une personne soumet volontairement une contribution pour intégration au projet, elle conserve les droits dont elle dispose sur cet apport. Elle autorise le titulaire des droits sur PAIDEIA à intégrer, modifier et redistribuer cette contribution sous la présente licence, et confirme qu’elle dispose des droits nécessaires pour accorder cette autorisation.
+
+Cette autorisation ne constitue pas une cession de droits. Toute redistribution de la contribution sous une autre licence nécessite un accord distinct de son titulaire.
+
+7. Garantie et assistance
+PAIDEIA est fourni en l’état, sans engagement d’assistance, de maintenance ou de mise à jour. Dans les limites permises par la loi, le titulaire des droits ne garantit ni l’absence d’erreur, ni la compatibilité avec un environnement particulier, ni l’aptitude à un usage déterminé.
+
+8. Non-respect de la licence et droit applicable
+En cas de violation de la présente licence, le titulaire des droits peut mettre en demeure la personne ou l’organisation concernée d’y mettre fin. Il peut saisir la juridiction compétente pour demander la cessation des actes non autorisés et, le cas échéant, la réparation du préjudice subi. Une mise en demeure préalable est adressée lorsque la loi l’exige.
+
+La présente licence est régie par le droit français. La publication d’une nouvelle licence ne retire pas rétroactivement les droits déjà accordés sur les versions antérieures.
