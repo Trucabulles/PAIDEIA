@@ -1,0 +1,18 @@
+FFmpeg pour PAIDEIA
+
+Téléchargez et installez FFmpeg vous-même depuis l’un des sites ci-dessous.
+Ce dossier regroupe les liens de téléchargement.
+
+Page officielle
+https://ffmpeg.org/download.html
+
+Compilations Windows référencées par le projet FFmpeg
+https://www.gyan.dev/ffmpeg/builds/
+https://github.com/BtbN/FFmpeg-Builds/releases
+
+Choisissez une archive Windows x64 contenant ffmpeg.exe, ffprobe.exe et
+l’encodeur libx264. La version 8.1.2 a été validée pour PAIDEIA.
+
+Décompressez l’archive en conservant ffmpeg.exe et ffprobe.exe ensemble.
+Dans PAIDEIA, ouvrez Modules complémentaires > Outils vidéo FFmpeg, puis
+sélectionnez ffmpeg.exe. PAIDEIA détecte ffprobe.exe dans le même dossier.
