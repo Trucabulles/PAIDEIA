@@ -1,6 +1,6 @@
 # PAIDEIA
 
-PAIDEIA est un logiciel de bureau Windows pour créer et mettre en forme des leçons interactives. Il enregistre les leçons et leurs ressources sur le poste localement sous forme archives PAIDEIA. Il peut également produire des SCORM 1.2 pour utiliser sur un LMS (seul moodle a pu être testé à ce jour) et exporter des PDF de relecture pour la conception de contenus pédagogiques ou des PDF reprenant les éléments d'une leçon a destination des apprenants.
+PAIDEIA est un logiciel de bureau Windows pour créer et mettre en forme des leçons interactives. Il enregistre les leçons et leurs ressources sur le poste localement sous forme d'archives PAIDEIA. Il peut également produire des SCORM 1.2 pour utiliser sur un LMS (seul moodle a pu être testé à ce jour) et exporter des PDF de relecture pour la conception de contenus pédagogiques ou des PDF reprenant les éléments d'une leçon a destination des apprenants.
 
 - [Télécharger gratuitement PAIDEIA pour Windows](https://github.com/Trucabulles/PAIDEIA/releases)
 - [Guide utilisateur](docs/Guide_Utilisateur/PAIDEIA_Guide_utilisateur.pdf)
