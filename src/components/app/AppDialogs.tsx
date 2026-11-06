@@ -817,21 +817,21 @@ export function AppDialogs({
       {characterPackageConflictDialog ? (
         <div className="paideia-modal-backdrop" role="presentation">
           <section aria-labelledby="character-package-conflict-title" aria-modal="true" className="paideia-modal character-package-conflict-modal" role="dialog">
-            <p className="modal-kicker">Banque de personnages</p>
-            <h2 id="character-package-conflict-title">Personnages déjà présents</h2>
+            <p className="modal-kicker">{t("resources.characters")}</p>
+            <h2 id="character-package-conflict-title">{t("resources.characterConflicts")}</h2>
             <p>
-              {characterPackageConflictDialog.conflicts.length} personnage{characterPackageConflictDialog.conflicts.length > 1 ? "s du paquet correspondent" : " du paquet correspond"} à {characterPackageConflictDialog.conflicts.length > 1 ? "des personnages existants" : "un personnage existant"}.
+              {t("resources.characterConflictCount", { count: characterPackageConflictDialog.conflicts.length })}
             </p>
             <ul className="character-package-conflict-list">
               {characterPackageConflictDialog.conflicts.map((conflict) => (
                 <li key={conflict.portableId}>« {conflict.name} »</li>
               ))}
             </ul>
-            <p>Choisissez si ces personnages doivent être mis à jour ou ajoutés comme copies indépendantes.</p>
+            <p>{t("resources.characterConflictChoice")}</p>
             <div className="modal-actions character-package-conflict-actions">
-              <button className="ghost-pill" onClick={onCharacterPackageConflictCancel} type="button">Annuler</button>
-              <button className="ghost-pill" onClick={onCharacterPackageConflictCopy} type="button">Importer comme copies</button>
-              <button autoFocus className="primary-pill" onClick={onCharacterPackageConflictUpdate} type="button">Mettre à jour</button>
+              <button className="ghost-pill" onClick={onCharacterPackageConflictCancel} type="button">{t("common.cancel")}</button>
+              <button className="ghost-pill" onClick={onCharacterPackageConflictCopy} type="button">{t("resources.importAsCopies")}</button>
+              <button autoFocus className="primary-pill" onClick={onCharacterPackageConflictUpdate} type="button">{t("resources.updateCharacters")}</button>
             </div>
           </section>
         </div>
@@ -918,7 +918,7 @@ export function AppDialogs({
             {importDialog.status === "running" && importDialog.allowBackground ? (
               <div className="modal-actions">
                 <button className="ghost-pill" onClick={onImportDialogClose} type="button">
-                  {importDialog.backgroundLabel ?? "Continuer en arrière-plan"}
+                  {importDialog.backgroundLabel ?? t("import.continueInBackground")}
                 </button>
               </div>
             ) : importDialog.status !== "running" ? (

@@ -5878,6 +5878,8 @@ struct SharedResourceBank {
     family: String,
     bank: serde_json::Value,
     image: Option<(String, String)>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    base_fingerprint: Option<String>,
 }
 
 fn shared_bank_image_field(family: crate::resource_bank_store::Family) -> &'static str {
@@ -5934,7 +5936,48 @@ fn prepare_shared_bank(
         family: key.to_string(),
         bank,
         image,
+        base_fingerprint: None,
     })
+}
+
+fn shared_bank_fingerprint(bank: &serde_json::Value, image: Option<&[u8]>) -> String {
+    let mut comparable = bank.clone();
+    if let Some(fields) = comparable.as_object_mut() {
+        fields.remove("revision");
+    }
+    let mut hash = Sha256::new();
+    hash.update(comparable.to_string().as_bytes());
+    if let Some(bytes) = image {
+        hash.update(bytes);
+    }
+    format!("{:x}", hash.finalize())
+}
+
+fn prepared_bank_fingerprint(resource: &SharedResourceBank) -> Result<String, String> {
+    let image = resource.image.as_ref().map(|(_, data)| STANDARD.decode(data))
+        .transpose().map_err(|error| error.to_string())?;
+    Ok(shared_bank_fingerprint(&resource.bank, image.as_deref()))
+}
+
+fn add_shared_bank_base(resource: &mut SharedResourceBank) -> Result<(), String> {
+    use crate::resource_bank_store::{self as store, Family};
+    let family = Family::parse(&resource.family)?;
+    let Some(id) = resource.bank["id"].as_str() else { return Ok(()) };
+    let root = individual_bank_root(family)?;
+    // The embedded lesson snapshot may lag behind the local catalogue.
+    // Only use its history when the archived content matches the current bank.
+    let (Ok(current), Ok(previous)) = (store::load(&root, family, id), store::previous(&root, id))
+        else { return Ok(()) };
+    let (Ok(current), Ok(previous)) = (
+        prepare_shared_bank(&root, &resource.family, family, current),
+        prepare_shared_bank(&root, &resource.family, family, previous),
+    ) else { return Ok(()) };
+    let fingerprint = prepared_bank_fingerprint(resource)?;
+    let base = prepared_bank_fingerprint(&previous)?;
+    if fingerprint == prepared_bank_fingerprint(&current)? && fingerprint != base {
+        resource.base_fingerprint = Some(base);
+    }
+    Ok(())
 }
 
 fn collect_shared_resource_banks(project_path: &str) -> Result<Option<Vec<u8>>, String> {
@@ -6036,6 +6079,11 @@ fn collect_shared_resource_banks(project_path: &str) -> Result<Option<Vec<u8>>, 
     if resources.is_empty() {
         return Ok(None);
     }
+    for resource in &mut resources {
+        if resource.base_fingerprint.is_none() {
+            add_shared_bank_base(resource)?;
+        }
+    }
     let bytes = serde_json::to_vec(&resources).map_err(|e| e.to_string())?;
     if bytes.len() as u64 > SHARED_RESOURCE_BANKS_MAX_BYTES {
         return Err("Les banques associées dépassent la taille maximale de 128 Mio".into());
@@ -6065,18 +6113,73 @@ pub fn has_paideia_shared_banks(project_path: String) -> bool {
 }
 
 #[tauri::command]
-pub async fn import_paideia_shared_banks(project_path: String) -> Result<(), String> {
+pub async fn inspect_paideia_shared_bank_updates(project_path: String) -> Result<Vec<serde_json::Value>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        use crate::resource_bank_store::{self as store, Family};
+        let _lock = store::LOCK.lock().map_err(|e| e.to_string())?;
+        let mut updates = Vec::new();
+        for resource in read_shared_resource_banks(&shared_resource_banks_path(&project_path))? {
+            let Some(base) = resource.base_fingerprint.as_deref() else { continue };
+            let family = Family::parse(&resource.family)?;
+            let id = resource.bank["id"].as_str().ok_or("Identifiant absent")?;
+            let root = individual_bank_root(family)?;
+            let Ok(local) = store::load(&root, family, id) else { continue };
+            let prepared = prepare_shared_bank(&root, &resource.family, family, local.clone())?;
+            if prepared_bank_fingerprint(&prepared)? != base {
+                continue;
+            }
+            let incoming = prepared_bank_fingerprint(&resource)?;
+            if incoming == base {
+                continue;
+            }
+            let field = if matches!(family, Family::Questions) { "questions" } else { "entries" };
+            let items = |bank: &serde_json::Value| -> HashMap<String, serde_json::Value> {
+                bank[field].as_array().into_iter().flatten()
+                    .filter_map(|item| Some((item["id"].as_str()?.to_owned(), item.clone())))
+                    .collect()
+            };
+            let before = items(&local);
+            let after = items(&resource.bank);
+            updates.push(serde_json::json!({
+                "key": format!("{}:{id}", resource.family),
+                "fingerprint": format!("{base}:{incoming}"),
+                "name": resource.bank["name"],
+                "added": after.keys().filter(|key| !before.contains_key(*key)).count(),
+                "removed": before.keys().filter(|key| !after.contains_key(*key)).count(),
+                "changed": before.iter().filter(|(key, item)| after.get(*key).is_some_and(|next| next != *item)).count(),
+                "imageChanged": prepared.image.as_ref().map(|(_, data)| data) != resource.image.as_ref().map(|(_, data)| data),
+                "linkedLessons": local["projectPaths"].as_array().map_or(0, Vec::len),
+            }));
+        }
+        Ok(updates)
+    }).await.map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn import_paideia_shared_banks(project_path: String, updates: Option<HashMap<String, String>>) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || {
         use crate::resource_bank_store::{self as store, Family};
         let resources = read_shared_resource_banks(&shared_resource_banks_path(&project_path))?;
+        let updates = updates.unwrap_or_default();
         let mut validated = Vec::new();
-        for SharedResourceBank {
-            family,
-            mut bank,
-            image,
-        } in resources
-        {
-            let family = Family::parse(&family)?;
+        let mut source_ids = HashSet::new();
+        for resource in resources {
+            let key = format!("{}:{}", resource.family, resource.bank["id"].as_str().ok_or("Identifiant absent")?);
+            let fingerprint = updates.contains_key(&key)
+                .then(|| prepared_bank_fingerprint(&resource))
+                .transpose()?;
+            let SharedResourceBank {
+                family,
+                mut bank,
+                image,
+                base_fingerprint,
+            } = resource;
+            let family_key = family;
+            let family = Family::parse(&family_key)?;
+            let id = bank["id"].as_str().ok_or("Identifiant absent")?;
+            if !source_ids.insert((family_key.clone(), id.to_owned())) {
+                return Err("Banque en double dans l’archive.".into());
+            }
             detach_shared_bank(&mut bank, family);
             crate::rich_text_sanitizer::sanitize_rich_text_value(&mut bank);
             let mut bank = match family {
@@ -6106,17 +6209,114 @@ pub async fn import_paideia_shared_banks(project_path: String) -> Result<(), Str
                     Ok::<_, String>((versioned_user_image_name("tile", &extension, &bytes), bytes))
                 })
                 .transpose()?;
-            validated.push((family, bank, image));
+            validated.push((family_key, family, bank, image, base_fingerprint, fingerprint));
         }
 
         let _lock = store::LOCK.lock().map_err(|e| e.to_string())?;
-        for (family, bank, image) in validated {
-            persist_shared_bank(&individual_bank_root(family)?, family, bank, image)?;
+        let mut confirmed = HashSet::new();
+        for (key, family, bank, _, base, incoming) in &validated {
+            let id = bank["id"].as_str().ok_or("Identifiant absent")?;
+            let selection = format!("{key}:{id}");
+            if let Some(expected) = updates.get(&selection) {
+                let root = individual_bank_root(*family)?;
+                let local = store::load(&root, *family, id)?;
+                let local = prepared_bank_fingerprint(&prepare_shared_bank(&root, key, *family, local)?)?;
+                let incoming = incoming.as_deref().ok_or("Empreinte de la banque reçue absente")?;
+                if base.as_ref() != Some(&local)
+                    || format!("{local}:{incoming}") != *expected
+                    || !confirmed.insert(selection)
+                {
+                    return Err("La banque locale a changé depuis la confirmation.".into());
+                }
+            }
         }
+        if confirmed.len() != updates.len() {
+            return Err("Choix de mise à jour incohérent.".into());
+        }
+        let mut project = load_project_from_path(&project_path)?;
+        let mut ids = HashMap::new();
+        for (key, family, bank, image, _, _) in validated {
+            let id = bank["id"].as_str().ok_or("Identifiant absent")?.to_owned();
+            let root = individual_bank_root(family)?;
+            let update = confirmed.contains(&format!("{key}:{id}"));
+            let retained = persist_shared_bank(&root, family, bank, image, update, Some(&project_path))?;
+            ids.insert((key, id), retained);
+        }
+        rebind_shared_banks(&mut project, &ids)?;
+        save_project_to_path(&project_path, &project)?;
         Ok(())
     })
     .await
     .map_err(|e| e.to_string())?
+}
+
+fn rebind_shared_banks(
+    project: &mut PaideiaProject,
+    ids: &HashMap<(String, String), String>,
+) -> Result<(), String> {
+    let mut references = HashMap::new();
+    for bank in &mut project.reference_banks {
+        let source = bank.source_resource_id.as_ref().unwrap_or(&bank.id);
+        if let Some(retained) = ids.get(&("references".into(), source.clone())) {
+            references.insert(bank.id.clone(), retained.clone());
+            bank.id = retained.clone();
+            bank.source_resource_id = Some(retained.clone());
+        }
+    }
+    for bank in &mut project.glossary_assistants {
+        if let Some(retained) = ids.get(&("assistants".into(), bank.id.clone())) {
+            bank.id = retained.clone();
+        }
+    }
+    let questions: HashMap<&str, &str> = ids.iter()
+        .filter(|((family, _), _)| family == "questions")
+        .map(|((_, old), new)| (old.as_str(), new.as_str())).collect();
+    for bank in &mut project.question_banks {
+        if let Some(retained) = questions.get(bank.id.as_str()) {
+            bank.id = (*retained).to_owned();
+        }
+    }
+    let attribute = regex::Regex::new(r#"(?i)(\sdata-paideia-reference-bank-id\s*=\s*)(?:"([^"]*)"|'([^']*)')"#)
+        .map_err(|error| error.to_string())?;
+    fn visit(
+        value: &mut serde_json::Value,
+        questions: &HashMap<&str, &str>,
+        references: &HashMap<String, String>,
+        attribute: &regex::Regex,
+    ) {
+        match value {
+            serde_json::Value::Object(fields) => {
+                if let Some(source) = fields.get_mut("sourceBankId") {
+                    if let Some(retained) = source.as_str().and_then(|id| questions.get(id)) {
+                        *source = serde_json::json!(retained);
+                    }
+                }
+                for child in fields.values_mut() {
+                    visit(child, questions, references, attribute);
+                }
+            }
+            serde_json::Value::Array(items) => {
+                for child in items {
+                    visit(child, questions, references, attribute);
+                }
+            }
+            serde_json::Value::String(html)
+                if !references.is_empty() && html.contains("data-paideia-reference-bank-id") => {
+                if let std::borrow::Cow::Owned(updated) = attribute.replace_all(html, |capture: &regex::Captures| {
+                    let old = capture.get(2).or_else(|| capture.get(3)).unwrap().as_str();
+                    references.get(old).filter(|new| new.as_str() != old)
+                        .map_or_else(|| capture[0].to_owned(), |new| format!("{}\"{new}\"", &capture[1]))
+                }) {
+                    *html = updated;
+                }
+            }
+            _ => {}
+        }
+    }
+    let mut content = serde_json::to_value(&*project).map_err(|error| error.to_string())?;
+    visit(&mut content, &questions, &references, &attribute);
+    *project = serde_json::from_value(content).map_err(|error| error.to_string())?;
+    Ok(())
 }
 
 fn persist_shared_bank(
@@ -6124,7 +6324,9 @@ fn persist_shared_bank(
     family: crate::resource_bank_store::Family,
     mut bank: serde_json::Value,
     image: Option<(String, Vec<u8>)>,
-) -> Result<(), String> {
+    update: bool,
+    project_path: Option<&str>,
+) -> Result<String, String> {
     use crate::resource_bank_store as store;
     let catalog = store::catalog(root, family)?;
     let source_id = bank["id"]
@@ -6145,7 +6347,7 @@ fn persist_shared_bank(
     }
     let version_id = format!("partage-{:x}", hash.finalize());
     let mut id = source_id.clone();
-    let mut duplicate = false;
+    let mut duplicate = None;
     for existing in catalog["banks"].as_array().ok_or("Annuaire invalide")? {
         let Some(existing_id) = existing["id"].as_str() else {
             continue;
@@ -6172,21 +6374,52 @@ fn persist_shared_bank(
             fields.remove("revision");
         }
         if full == comparable && same_image {
-            duplicate = true;
+            duplicate = Some(existing_id.to_owned());
             break;
         }
         if existing_id == source_id {
             id = version_id.clone();
         }
     }
-    if duplicate {
-        return Ok(());
+    if update {
+        id = source_id.clone();
+    } else if let Some(existing_id) = duplicate.as_ref() {
+        id = existing_id.clone();
     }
-    if catalog["banks"]
+    if !update && duplicate.is_none() && catalog["banks"]
         .as_array()
         .is_some_and(|banks| banks.iter().any(|item| item["id"] == id))
     {
         id = uuid::Uuid::new_v4().to_string();
+    }
+    if update || duplicate.is_some() {
+        let existing = store::load(root, family, &id)?;
+        if !update {
+            bank = existing;
+        } else {
+            for field in ["projectPaths", "lessonIds", "collectionIds"] {
+                if let Some(value) = existing.get(field) {
+                    bank[field] = value.clone();
+                }
+            }
+            if matches!(family, crate::resource_bank_store::Family::References) {
+                let revision = existing["revision"].as_u64().unwrap_or(1);
+                bank["revision"] = serde_json::json!(revision.saturating_add(1));
+            }
+        }
+    }
+    if let Some(path) = project_path.filter(|_| !matches!(family, crate::resource_bank_store::Family::Questions)) {
+        let mut paths = bank["projectPaths"].as_array().cloned().unwrap_or_default();
+        if !paths.iter().any(|value| value.as_str().is_some_and(|value| value.eq_ignore_ascii_case(path))) {
+            paths.push(serde_json::json!(path));
+        }
+        bank["projectPaths"] = serde_json::Value::Array(paths);
+    }
+    if !update && duplicate.is_some() {
+        if project_path.is_some() && !matches!(family, crate::resource_bank_store::Family::Questions) {
+            store::upsert(root, family, &[bank])?;
+        }
+        return Ok(id);
     }
     bank["id"] = serde_json::json!(id);
     if let Some((name, bytes)) = image {
@@ -6219,7 +6452,7 @@ fn persist_shared_bank(
             serde_json::json!(format!("{directory}/{name}"));
     }
     store::upsert(root, family, &[bank])?;
-    Ok(())
+    Ok(id)
 }
 
 #[tauri::command]
@@ -24348,6 +24581,8 @@ fn render_scorm_block(
                     tracking_attrs, width_class
                 )
             } else {
+                // Pour exclure les iframes distantes du SCORM, filtrer le HTML ici,
+                // y compris celui des leçons déjà enregistrées ou importées.
                 let srcdoc = build_custom_html_srcdoc(&content, block.html_asset_root.as_deref());
                 format!(
                     r#"<article {} class="block custom-html{}"><iframe class="custom-html-frame" sandbox="allow-forms allow-popups allow-pointer-lock allow-presentation allow-same-origin allow-scripts" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; web-share" allowfullscreen scrolling="no" onload="paideiaResizeCustomHtmlFrame(this)" srcdoc="{}" title="{}"></iframe></article>"#,
@@ -28889,12 +29124,12 @@ mod html_package_tests {
         store::upsert(&root, Family::References, &[local.clone()]).unwrap();
 
         let same = serde_json::json!({"id":"bank","name":"Local","entries":[],"revision":1});
-        persist_shared_bank(&root, Family::References, same, None).unwrap();
+        persist_shared_bank(&root, Family::References, same, None, false, None).unwrap();
         assert_eq!(store::all(&root, Family::References).unwrap().len(), 1);
 
         let shared = serde_json::json!({"id":"bank","name":"Partagée","entries":[{"id":"one","term":"Mot","definitionHtml":"<p>Définition</p>"}],"revision":1});
         for _ in 0..2 {
-            persist_shared_bank(&root, Family::References, shared.clone(), None).unwrap();
+            persist_shared_bank(&root, Family::References, shared.clone(), None, false, None).unwrap();
         }
         let banks = store::all(&root, Family::References).unwrap();
         assert_eq!(banks.len(), 2);
@@ -28902,6 +29137,14 @@ mod html_package_tests {
         let copy = banks.iter().find(|bank| bank["name"] == "Partagée").unwrap();
         assert_ne!(copy["id"], "bank");
         assert_eq!(copy["entries"], shared["entries"]);
+        let updated = persist_shared_bank(&root, Family::References, shared, None, true, Some("imported-lesson")).unwrap();
+        assert_eq!(updated, "bank");
+        let updated = store::load(&root, Family::References, "bank").unwrap();
+        assert_eq!(updated["name"], "Partagée");
+        assert_eq!(updated["revision"], 5);
+        assert_eq!(updated["projectPaths"], serde_json::json!(["local-lesson", "imported-lesson"]));
+        assert_eq!(updated["collectionIds"], local["collectionIds"]);
+        assert_eq!(store::previous(&root, "bank").unwrap(), local);
     }
 
     #[test]
@@ -28921,6 +29164,41 @@ mod html_package_tests {
             assert_eq!(output.join(SHARED_RESOURCE_BANKS_FILE).is_file(), include);
             if include { assert_eq!(fs::read(output.join(SHARED_RESOURCE_BANKS_FILE)).unwrap(), banks); }
         }
+    }
+
+    #[test]
+    fn paideia_shared_bank_links_survive_reopening_for_all_families() {
+        let root = temporary_assets_dir("paideia-shared-bank-links");
+        let mut block = sample_quiz_block();
+        block.quiz.as_mut().unwrap().questions[0].source_bank_id = Some("question-source".into());
+        let mut project = sample_project(vec![sample_chapter("chapter", "Chapter", block, None)]);
+        project.course_intro_html = r#"<p><span data-paideia-reference-bank-id="lesson-ref" data-paideia-reference-entry-id="one">Term</span></p>"#.into();
+        project.reference_banks.push(serde_json::from_value(serde_json::json!({
+            "id":"lesson-ref","name":"Reference","sourceResourceId":"reference-source",
+            "entries":[{"id":"one","term":"Term","definitionHtml":"<p>Definition</p>"}]
+        })).unwrap());
+        project.glossary_assistants.push(serde_json::from_value(serde_json::json!({
+            "id":"assistant-source","name":"Assistant"
+        })).unwrap());
+        project.question_banks.push(serde_json::from_value(serde_json::json!({
+            "id":"question-source","name":"Questions"
+        })).unwrap());
+        let ids = HashMap::from([
+            (("references".into(), "reference-source".into()), "reference-copy".into()),
+            (("assistants".into(), "assistant-source".into()), "assistant-copy".into()),
+            (("questions".into(), "question-source".into()), "question-copy".into()),
+        ]);
+        rebind_shared_banks(&mut project, &ids).unwrap();
+        let path = root.to_str().unwrap();
+        save_project_to_path(path, &project).unwrap();
+        let reopened = load_project_from_path(path).unwrap();
+        assert_eq!(reopened.reference_banks[0].id, "reference-copy");
+        assert_eq!(reopened.reference_banks[0].source_resource_id.as_deref(), Some("reference-copy"));
+        assert!(reopened.course_intro_html.contains(r#"data-paideia-reference-bank-id="reference-copy""#));
+        assert_eq!(reopened.glossary_assistants[0].id, "assistant-copy");
+        assert_eq!(reopened.question_banks[0].id, "question-copy");
+        let quiz = reopened.course.modules[0].chapters[0].pages[0].blocks[0].quiz.as_ref().unwrap();
+        assert_eq!(quiz.questions[0].source_bank_id.as_deref(), Some("question-copy"));
     }
 
     #[test]

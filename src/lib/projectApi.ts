@@ -1213,8 +1213,23 @@ export function hasPaideiaSharedBanks(projectPath: string): Promise<boolean> {
   return invokeCommand<boolean>("has_paideia_shared_banks", { projectPath });
 }
 
-export function importPaideiaSharedBanks(projectPath: string): Promise<void> {
-  return invokeCommand<void>("import_paideia_shared_banks", { projectPath });
+export type SharedBankUpdate = {
+  key: string;
+  fingerprint: string;
+  name: string;
+  added: number;
+  removed: number;
+  changed: number;
+  imageChanged: boolean;
+  linkedLessons: number;
+};
+
+export function inspectPaideiaSharedBankUpdates(projectPath: string): Promise<SharedBankUpdate[]> {
+  return invokeCommand<SharedBankUpdate[]>("inspect_paideia_shared_bank_updates", { projectPath });
+}
+
+export function importPaideiaSharedBanks(projectPath: string, updates: Record<string, string>): Promise<void> {
+  return invokeCommand<void>("import_paideia_shared_banks", { projectPath, updates });
 }
 
 export async function openPaideiaArchive(file: File, destinationRoot: string): Promise<string> {

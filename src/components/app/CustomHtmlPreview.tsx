@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { logDevEvent } from "../../lib/projectApi";
 import { useI18n } from "../../i18n/react";
+import { applyCustomHtmlFramePolicy } from "./customHtmlFramePolicy";
 
 const CUSTOM_HTML_SANDBOX_URL = new URL("html-sandbox.html", document.baseURI).toString();
 
@@ -103,12 +104,17 @@ export const CustomHtmlPreview = memo(function CustomHtmlPreview({
   // Imported local packages use the same direct sandbox as pasted HTML. Their
   // relative resources resolve through the base URL injected into the document.
   const usesNestedSandbox = hasExternalIframe;
+  const blockedFrameNotice = t("htmlCustom.externalFrameBlocked", undefined, "Contenu externe bloqué dans PAIDEIA, inclus dans le SCORM");
+  const previewHtml = useMemo(
+    () => applyCustomHtmlFramePolicy(html, assetBaseUrl, blockedFrameNotice),
+    [assetBaseUrl, blockedFrameNotice, html]
+  );
   const directSandboxDocument = useMemo(
     () =>
       usesNestedSandbox
         ? undefined
-        : buildDirectHtmlSandboxDocument(html, blockId, assetBaseUrl),
-    [assetBaseUrl, blockId, html, usesNestedSandbox]
+        : buildDirectHtmlSandboxDocument(previewHtml, blockId, assetBaseUrl),
+    [assetBaseUrl, blockId, previewHtml, usesNestedSandbox]
   );
   const shouldUnloadOffscreen = enableViewportUnload && hasExternalIframe;
   const [isViewportActive, setIsViewportActive] = useState(!shouldUnloadOffscreen);
@@ -137,14 +143,14 @@ export const CustomHtmlPreview = memo(function CustomHtmlPreview({
         source: "paideia-html-host",
         type,
         blockId,
-        html,
+        html: previewHtml,
         assetBaseUrl,
         title,
         active: shouldActivateSandbox
       },
       "*"
     );
-  }, [assetBaseUrl, blockId, html, shouldActivateSandbox, title, usesNestedSandbox]);
+  }, [assetBaseUrl, blockId, previewHtml, shouldActivateSandbox, title, usesNestedSandbox]);
 
   useEffect(() => {
     setIsExternalIframeActivated(!requireManualExternalIframeActivation || !hasExternalIframe);

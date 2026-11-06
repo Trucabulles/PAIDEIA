@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useI18n } from "../../i18n/react";
 import { importBankFiles } from "./resourceBankPackage";
 
 type Bank = { id: string; name: string };
@@ -9,6 +10,7 @@ export function useResourceBankTransfer(options: {
   onImport: (files: File[]) => Promise<void>;
   onExport: (bankIds: string[]) => Promise<void>;
 }) {
+  const { t } = useI18n();
   const { banks, extensions, onImport, onExport } = options;
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [busy, setBusy] = useState(false);
@@ -65,7 +67,7 @@ export function useResourceBankTransfer(options: {
         onChange={(event) => setSelected(event.target.checked ? new Set(banks.map((bank) => bank.id)) : new Set())}
         type="checkbox"
       />
-      Tout sélectionner
+      {t("common.selectAll")}
     </label>,
     actions: <div className="resource-bank-transfer-actions">
       <input
@@ -81,17 +83,17 @@ export function useResourceBankTransfer(options: {
       />
       <button className="resource-bank-transfer-button" disabled={busy} onClick={() => inputRef.current?.click()} type="button">
         <svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 18h14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
-        Importer
+        {t("common.import")}
       </button>
       <button className="resource-bank-transfer-button" disabled={busy || !selectedCount} onClick={() => void handleExport()} type="button">
         <svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><path d="M12 20V10m0 0 4 4m-4-4-4 4M5 6h14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
-        Exporter ({selectedCount})
+        {t("resources.exportCharacters", { count: selectedCount })}
       </button>
     </div>,
     error: error ? <p className="resource-bank-transfer-error" role="alert">{error}</p> : null,
     checkbox: (bank: Bank) => <label className="resource-bank-tile-select" onClick={(event) => event.stopPropagation()}>
       <input
-        aria-label={`Sélectionner ${bank.name}`}
+        aria-label={`${t("resources.selectCharacter")} — ${bank.name}`}
         checked={selected.has(bank.id)}
         disabled={busy}
         onChange={(event) => setSelected((current) => {

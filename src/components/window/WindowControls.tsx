@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import { useI18n } from "../../i18n/react";
 import "./windowControls.css";
 
 type ResizeDirection = "North" | "South" | "East" | "West" | "NorthEast" | "NorthWest" | "SouthEast" | "SouthWest";
@@ -12,16 +13,19 @@ type WindowControlsProps = {
 };
 
 export function WindowControls({
-  closeLabel = "Fermer",
+  closeLabel,
   isMaximized,
   onClose,
   onMinimize,
   onToggleMaximize
 }: WindowControlsProps) {
-  const maximizeLabel = isMaximized ? "Restaurer" : "Agrandir";
+  const { t } = useI18n();
+  const minimizeLabel = t("window.minimize");
+  const maximizeLabel = t(isMaximized ? "window.restore" : "window.maximize");
+  const resolvedCloseLabel = closeLabel ?? t("common.close");
   return (
     <div className="paideia-window-controls">
-      <button aria-label="Réduire" title="Réduire" onClick={onMinimize} type="button">
+      <button aria-label={minimizeLabel} title={minimizeLabel} onClick={onMinimize} type="button">
         <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 8.5h10" /></svg>
       </button>
       <button aria-label={maximizeLabel} title={maximizeLabel} onClick={onToggleMaximize} type="button">
@@ -29,7 +33,7 @@ export function WindowControls({
           ? <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M5.5 5.5V3.5h7v7h-2M3.5 5.5h7v7h-7z" /></svg>
           : <svg aria-hidden="true" viewBox="0 0 16 16"><rect x="3.5" y="3.5" width="9" height="9" /></svg>}
       </button>
-      <button aria-label={closeLabel} title={closeLabel} onClick={onClose} type="button">
+      <button aria-label={resolvedCloseLabel} title={resolvedCloseLabel} onClick={onClose} type="button">
         <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
     </div>

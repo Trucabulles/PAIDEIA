@@ -65,7 +65,7 @@ export function normalizeFindElementsData(value?: FindElementsActivityData | nul
     zones: (source.zones ?? []).map((zone, index) => ({
       id: zone.id || `find_elements_zone_${index + 1}`,
       shape: zone.shape === "polygon" ? "polygon" : "rectangle",
-      title: zone.title ?? `Élément ${index + 1}`,
+      title: zone.title ?? `${translateActive("findElements.elementName")} ${index + 1}`,
       severity: ["faible", "moyen", "important", "critique"].includes(zone.severity) ? zone.severity : "sans",
       descriptionHtml: zone.descriptionHtml || "<p></p>",
       riskHtml: zone.riskHtml || "<p></p>",

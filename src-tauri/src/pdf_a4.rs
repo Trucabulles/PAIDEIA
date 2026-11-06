@@ -32,7 +32,7 @@ pub fn run_print_host() {
                 .decorations(false)
                 .skip_taskbar(true)
                 .data_directory(PathBuf::from(&profile))
-                .additional_browser_args("--remote-debugging-port=0 --disable-background-networking --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows")
+                .additional_browser_args("--remote-debugging-port=0 --disable-component-update --disable-background-networking --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows")
                 .build()?;
             Ok(())
         })

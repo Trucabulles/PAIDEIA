@@ -33,7 +33,7 @@ export function cardSortCategoryLabelText(value: string) {
   return value.replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
 }
 
-export function createDefaultCardSortData(categoryLabel = (index: number) => `Catégorie ${index}`): CardSortActivityData {
+export function createDefaultCardSortData(categoryLabel = (index: number) => translateActive("cardSort.defaultCategory", { index })): CardSortActivityData {
   return {
     categories: [
       { id: "category_1", label: categoryLabel(1), labelHtml: `<p>${escapeHtml(categoryLabel(1))}</p>`, borderColor: DEFAULT_CATEGORY_BORDER },
@@ -73,7 +73,7 @@ export function normalizeCardSortData(value?: CardSortActivityData | null): Card
   const fallback = createDefaultCardSortData();
   const categories = (value?.categories ?? fallback.categories)
     .map((category, index) => {
-      const fallbackLabel = category.label?.trim() || `Catégorie ${index + 1}`;
+      const fallbackLabel = category.label?.trim() || translateActive("cardSort.defaultCategory", { index: index + 1 });
       const labelHtml = category.labelHtml?.trim() || `<p>${escapeHtml(fallbackLabel)}</p>`;
       const legacyBackgroundColor = (category as typeof category & { backgroundColor?: string }).backgroundColor;
       return {
@@ -86,7 +86,8 @@ export function normalizeCardSortData(value?: CardSortActivityData | null): Card
     .filter((category, index, list) => list.findIndex((candidate) => candidate.id === category.id) === index);
   while (categories.length < 2) {
     const order = categories.length + 1;
-    categories.push({ id: `category_${order}`, label: `Catégorie ${order}`, labelHtml: `<p>Catégorie ${order}</p>`, borderColor: DEFAULT_CATEGORY_BORDER });
+    const label = translateActive("cardSort.defaultCategory", { index: order });
+    categories.push({ id: `category_${order}`, label, labelHtml: `<p>${escapeHtml(label)}</p>`, borderColor: DEFAULT_CATEGORY_BORDER });
   }
   return {
     categories,

@@ -38,6 +38,8 @@ export function HtmlCustomActivityEditorPanel({
       importPending={importPending}
       layout={value.mediaLayout}
       lineCount={lineCount}
+      // Pour interdire la saisie et l’import d’iframes distantes, valider le HTML
+      // dans onCodeChange et dans le traitement du fichier par onFileSelect.
       onCodeChange={(contentHtml) => onChange({ contentHtml })}
       onFileSelect={onFileSelect}
       onLayoutChange={(mediaLayout) => onChange({ mediaLayout })}

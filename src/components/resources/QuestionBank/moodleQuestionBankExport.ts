@@ -1,4 +1,5 @@
 import { hasValidPartialCredit, questionCreditMode } from "../../../assessment/assessmentEngine";
+import { translateActive } from "../../../i18n";
 import type { QuestionBankQuestion, QuizAnswer } from "../../../types/project";
 
 export type MoodleAllOrNothingExport = "standard" | "plugin";
@@ -35,7 +36,7 @@ function trueFalseAnswerValue(answer: QuizAnswer): string {
 }
 
 function serializeQuestion(question: QuestionBankQuestion, index: number, allOrNothing: MoodleAllOrNothingExport): string {
-  const label = question.title?.trim() || `Question ${index + 1}`;
+  const label = question.title?.trim() || translateActive("quiz.questionNumber", { count: index + 1 });
   const correctCount = question.answers.filter((answer) => answer.correct).length;
   if (!question.questionHtml?.trim() || question.answers.length < 2 || correctCount < 1 || (question.mode !== "multiple" && correctCount !== 1)) {
     throw new Error(`Question ${index + 1} « ${label} » : énoncé ou réponses incomplets.`);

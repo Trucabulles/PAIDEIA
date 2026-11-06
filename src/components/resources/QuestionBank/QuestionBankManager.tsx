@@ -615,7 +615,7 @@ export function QuestionBankManager({
     return (
       <section className={styles.panel}>
         <div className="resource-bank-title-row">
-          <p className={styles.count}>{banks.length} {banks.length > 1 ? "banques" : "banque"}</p>
+          <p className={styles.count}>{t(banks.length === 1 ? "references.bankCount" : "references.bankCountPlural", { count: banks.length })}</p>
           <CreateResourceButton label={t("questionBank.addBank", undefined, "Ajouter une banque")} onClick={addBank} />
           {bulk.selectAll}
           {bulk.actions}
@@ -648,11 +648,11 @@ export function QuestionBankManager({
                   </span>
                   <span className="resource-portal-body">
                     <span className="resource-portal-title">{bank.name}</span>
-                    <span className="resource-portal-subtitle">{bank.contentCount ?? bank.questions.length} {(bank.contentCount ?? bank.questions.length) === 1 ? "question" : "questions"}</span>
+                    <span className="resource-portal-subtitle">{t((bank.contentCount ?? bank.questions.length) === 1 ? "questionBank.questionCount" : "questionBank.questionCountPlural", { count: bank.contentCount ?? bank.questions.length })}</span>
                   </span>
                 </button>
                 <button
-                  aria-label={`Options ${bank.name}`}
+                  aria-label={t("common.optionsFor", { name: bank.name })}
                   className={`library-card-menu-toggle ${styles.tileMenuToggle}`}
                   onClick={(event) => {
                     event.stopPropagation();

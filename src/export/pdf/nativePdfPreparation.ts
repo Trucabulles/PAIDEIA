@@ -72,7 +72,7 @@ export async function prepare(
       activity.sections.push({ kind: "rich-text", html: `<p><strong>Vidéo :</strong> ${videoRefs.map(ref => escape(ref.split(/[\\/]/).pop()!)).join(", ")}</p><p>Aperçu non disponible.</p>` });
     }
     if (state.profile !== "learner" && subtitleHtmlByBlockId[block.id]) {
-      activity.sections.push({ kind: "rich-text", label: "Transcription", html: subtitleHtmlByBlockId[block.id] });
+      activity.sections.push({ kind: "rich-text", label: model.labels.transcript, html: subtitleHtmlByBlockId[block.id] });
     }
   }
   state.model = model;

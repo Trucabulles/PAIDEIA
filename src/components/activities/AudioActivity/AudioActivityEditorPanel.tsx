@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useI18n } from "../../../i18n/react";
 import type { ImageCrop, ActivityItem } from "../../../types/project";
 import { AudioCoverFallback } from "../../app/AudioCoverFallback";
 import { CroppedImage } from "../../app/CroppedImage";
@@ -65,9 +66,10 @@ export function AudioActivityEditorPanel({
   value,
   renderTranscriptControls
 }: AudioActivityEditorPanelProps) {
+  const { t } = useI18n();
   const coverNode = coverSrc ? (
     <CroppedImage
-      alt={coverTitle || "Cover audio"}
+      alt={coverTitle || t("audio.coverAlt")}
       className="media-thumbnail-image"
       crop={coverCrop}
       src={coverSrc}

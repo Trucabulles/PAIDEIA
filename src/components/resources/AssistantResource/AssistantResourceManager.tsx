@@ -708,7 +708,7 @@ export function AssistantResourceManager({
                   </span>
                   <span className="resource-portal-body">
                     <span className="resource-portal-title">{assistant.name}</span>
-                    <span className="resource-portal-subtitle">{assistant.contentCount ?? assistant.entries.length} {(assistant.contentCount ?? assistant.entries.length) === 1 ? "entrée" : "entrées"}</span>
+                    <span className="resource-portal-subtitle">{t((assistant.contentCount ?? assistant.entries.length) === 1 ? "assistant.entryCount" : "assistant.entryCountPlural", { count: assistant.contentCount ?? assistant.entries.length })}</span>
                   </span>
                 </button>
                 <button
@@ -734,7 +734,7 @@ export function AssistantResourceManager({
                     </button>
                     <button onClick={() => { setActionMenuId(null); setRenameError(""); setRenameAssistantId(assistant.id); setRenameAssistantName(assistant.name); }} type="button">{t("common.rename")}</button>
                     <button onClick={() => { setActionMenuId(null); void requestExport(assistant).catch(individual.report); }} type="button">{t("references.export")}</button>
-                    <button onClick={() => { setActionMenuId(null); void exportPdf(assistant); }} type="button">Générer un PDF</button>
+                    <button onClick={() => { setActionMenuId(null); void exportPdf(assistant); }} type="button">{t("library.generatePdf")}</button>
                     <button onClick={() => { setActionMenuId(null); void duplicateAssistant(assistant).catch(individual.report); }} type="button">{t("common.duplicate")}</button>
                     <button
                       className="danger"
@@ -997,7 +997,7 @@ export function AssistantResourceManager({
                   <span className="assistant-resource-button-icon"><ExportIcon /></span>
                   {t("questionBank.exportCsv").replace(/CSV/gi, "XLSX")}
                 </button>
-                <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => void exportPdf(selectedAssistant)} type="button">Générer un PDF</button>
+                <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => void exportPdf(selectedAssistant)} type="button">{t("library.generatePdf")}</button>
               </div>
               <button className="assistant-resource-button assistant-resource-primary-button" onClick={addEntry} type="button">
                 <span className="assistant-resource-button-icon"><PlusIcon /></span>

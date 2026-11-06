@@ -76,8 +76,8 @@ export function LicenseDialog({ onClose, document: documentKind = "license" }: L
     return () => { cancelled = true; };
   }, [thirdParty]);
   const content = useMemo(() => thirdParty
-    ? (notices ? <ThirdPartyContent notices={notices} french={language === "fr"} /> : <p>{language === "fr" ? "Chargement…" : "Loading…"}</p>)
-    : renderLicenseContent(licenseText), [licenseText, thirdParty, notices, language]);
+    ? (notices ? <ThirdPartyContent notices={notices} french={language === "fr"} /> : <p>{t("pdf.loading")}</p>)
+    : renderLicenseContent(licenseText), [licenseText, thirdParty, notices, language, t]);
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -186,17 +186,18 @@ type ThirdPartyNotices = {
 };
 
 function ThirdPartyContent({ notices, french }: { notices: ThirdPartyNotices; french: boolean }) {
+  const { t } = useI18n();
   const groups = [...new Set(notices.components.map(component => component.group))];
   return <>
-    <p>{french ? "Composants tiers documentés et polices embarquées de PAIDEIA." : "Documented third party components and bundled PAIDEIA fonts."}</p>
+    <p>{t("thirdParty.description")}</p>
     {groups.map(group => <div key={group}>
-      <h3>{!french && group === "Polices" ? "Fonts" : !french && group === "Attributions" ? "Attributions" : group}</h3>
+      <h3>{group === "Polices" ? t("pdf.fonts") : group === "Attributions" ? t("thirdParty.attributions") : t("thirdParty.label")}</h3>
       <ul>{notices.components.filter(component => component.group === group).map(component => <li key={`${component.name}-${component.version}`}>
         <strong>{component.name} {component.version}</strong> — {component.license}
         {component.source ? <div className="third-party-source">{component.source.replace(/^git\+/, "")}</div> : null}
         {(french ? component.description : component.descriptionEn) ? <p>{french ? component.description : component.descriptionEn}</p> : null}
         {component.notices.map(notice => <details className="third-party-notice" key={`${notice.section}-${notice.name}`}>
-          <summary>{french ? "Consulter la licence" : "View the licence"}</summary>
+          <summary>{t("thirdParty.viewLicense")}</summary>
           <pre>{notices.sections.find(section => section.id === notice.section)?.text}</pre>
         </details>)}
       </li>)}</ul>

@@ -857,7 +857,7 @@ export function AppChrome({
           {desktopWindowAvailable ? (
             <div className="main-window-controls">
               <WindowControls
-                closeLabel="Fermer PAIDEIA"
+                closeLabel={`${t("common.close")} — PAIDEIA`}
                 isMaximized={mainWindowIsMaximized}
                 onClose={() => void getCurrentWindow().close()}
                 onMinimize={() => void getCurrentWindow().minimize()}

@@ -195,14 +195,14 @@ await test("Note and Text stay independent; old props cannot flash over a pendin
   });
   assert.deepEqual(commits, [["note", "<p>Note saisie</p>"]]);
   assert.equal(textEditor.innerHTML, "<p>Texte initial</p>");
-  active = "text"; note = "<p>Ancienne rÃ©ponse intermÃ©diaire</p>";
+  active = "text"; note = "<p>Ancienne réponse intermédiaire</p>";
   await act(async () => draw());
   assert.equal(noteEditor.innerHTML, "<p>Note saisie</p>");
   await act(async () => {
     textEditor.innerHTML = "<p>Texte saisi</p>";
     textEditor.dispatchEvent(new window.Event("input", { bubbles: true }));
   });
-  text = "<p>Texte ancien reÃ§u en retard</p>";
+  text = "<p>Texte ancien reçu en retard</p>";
   await act(async () => draw());
   assert.equal(textEditor.innerHTML, "<p>Texte saisi</p>");
   note = '<p class="normalized">Note saisie</p>';

@@ -126,6 +126,10 @@ export function createTranslator(language: AppLanguage) {
   return (key: string, params?: TranslationParams, fallback?: string) => translate(language, key, params, fallback);
 }
 
+export function translateArchiveBanks(language: AppLanguage, key: string, params?: TranslationParams): string {
+  return interpolate(dictionaries[language]?.[key] ?? dictionaries.en[key] ?? dictionaries.fr[key] ?? key, params);
+}
+
 export function translateActive(key: string, params?: TranslationParams, fallback?: string): string {
   const storedLanguage = typeof localStorage === "undefined"
     ? null

@@ -367,12 +367,12 @@ export function RichTextToolbar({
                           open={openListPicker === listControl.kind}
                         >
                           <summary
-                            aria-label={`${listControl.label} : choisir le marqueur`}
+                            aria-label={t("richText.chooseListMarker", { label: listControl.label })}
                             onClick={(event) => {
                               event.preventDefault();
                               setOpenListPicker((current) => current === listControl.kind ? null : listControl.kind);
                             }}
-                            title={`${listControl.label} : choisir le marqueur`}
+                            title={t("richText.chooseListMarker", { label: listControl.label })}
                           />
                           <div className={`rich-list-marker-options rich-list-marker-options--${listControl.kind}`} role="group" aria-label={listControl.label}>
                             {listControl.markers.map((marker) => (

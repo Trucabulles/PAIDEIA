@@ -399,6 +399,16 @@ pub fn load(root: &Path, family: Family, bank_id: &str) -> Result<Value, String>
     }
     Ok(bank)
 }
+
+pub fn previous(root: &Path, bank_id: &str) -> Result<Value, String> {
+    let path = directory(root, bank_id).join("bank.previous.json");
+    confined(root, &path)?;
+    let bank = read(&path)?;
+    if id(&bank)? != bank_id {
+        return Err("Identifiant de la version précédente incohérent".into());
+    }
+    Ok(bank)
+}
 pub fn all(root: &Path, family: Family) -> Result<Vec<Value>, String> {
     let catalog = catalog(root, family)?;
     catalog["banks"]

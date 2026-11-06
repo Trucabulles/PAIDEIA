@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { cleanKeyword, keywordKey, keywordSimilarityKey, uniqueKeywords } from "../../app/keywords";
+import { useI18n } from "../../i18n/react";
 import "./KeywordControls.css";
 
 type KeywordPickerProps = {
@@ -11,6 +12,7 @@ type KeywordPickerProps = {
 };
 
 export function KeywordPicker({ catalog, keywords, onChange, disabled = false }: KeywordPickerProps) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState("");
   const available = useMemo(() => catalog.filter((keyword) => !keywords.some((selected) => keywordKey(selected) === keywordKey(keyword))), [catalog, keywords]);
   const suggestions = useMemo(() => {
@@ -30,20 +32,20 @@ export function KeywordPicker({ catalog, keywords, onChange, disabled = false }:
     <div className="keyword-chips">
       {keywords.map((keyword) => <span className="keyword-chip" key={keyword}>
         {keyword}
-        {!disabled && <button aria-label={`Retirer ${keyword}`} onClick={() => onChange(keywords.filter((item) => keywordKey(item) !== keywordKey(keyword)))} type="button">×</button>}
+        {!disabled && <button aria-label={t("keywords.remove", { keyword })} onClick={() => onChange(keywords.filter((item) => keywordKey(item) !== keywordKey(keyword)))} type="button">×</button>}
       </span>)}
-      {keywords.length === 0 && <span className="keyword-empty">Aucun mot-clé affecté.</span>}
+      {keywords.length === 0 && <span className="keyword-empty">{t("keywords.noneAssigned")}</span>}
     </div>
     {!disabled && <>
       <div className="keyword-add-row">
-        <input aria-label="Ajouter un mot-clé" onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); add(draft); } }} placeholder="Saisir ou rechercher un mot-clé" value={draft} />
-        <button disabled={!draft.trim()} onClick={() => add(draft)} type="button">Ajouter</button>
+        <input aria-label={t("keywords.addOne")} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); add(draft); } }} placeholder={t("keywords.input")} value={draft} />
+        <button disabled={!draft.trim()} onClick={() => add(draft)} type="button">{t("observations.addAction")}</button>
       </div>
       {suggestions.length > 0 && <div className="keyword-suggestions" role="listbox">
         {suggestions.map((keyword) => <button key={keyword} onClick={() => add(keyword)} role="option" type="button">{keyword}</button>)}
       </div>}
       {draft.trim() && suggestions.length > 0 && !suggestions.some((item) => keywordKey(item) === keywordKey(draft)) &&
-        <small>Un terme proche existe déjà. Choisissez-le ou créez « {cleanKeyword(draft)} ».</small>}
+        <small>{t("keywords.similar", { keyword: cleanKeyword(draft) })}</small>}
     </>}
   </div>;
 }
@@ -61,22 +63,23 @@ type LessonKeywordsDialogProps = {
 };
 
 export function LessonKeywordsDialog({ title, catalog, keywords, label, labels, editable, busy, onClose, onSave }: LessonKeywordsDialogProps) {
+  const { t } = useI18n();
   const [draftKeywords, setDraftKeywords] = useState(keywords);
   const [draftLabel, setDraftLabel] = useState(label);
   const [labelChoicesOpen, setLabelChoicesOpen] = useState(false);
   return <div className="paideia-modal-backdrop" onKeyDown={(event) => { if (event.key === "Escape") onClose(); }} role="presentation">
-    <section aria-label={`Labels et mots-clés de ${title}`} aria-modal="true" className="paideia-modal keyword-dialog" role="dialog">
+    <section aria-label={t("keywords.lessonAria", { title })} aria-modal="true" className="paideia-modal keyword-dialog" role="dialog">
       <div className="keyword-dialog-scroll">
-      <p className="modal-kicker">Leçon</p><h2>Labels et mots-clés</h2><p>{title}</p>
-      <span className="keyword-field-label">Label de bibliothèque</span>
-      <button aria-expanded={labelChoicesOpen} className="keyword-label-current" disabled={busy} onClick={() => setLabelChoicesOpen((current) => !current)} type="button">{draftLabel || "Aucun label"}<span aria-hidden="true">⌄</span></button>
+      <p className="modal-kicker">{t("keywords.lesson")}</p><h2>{t("keywords.labelsAndKeywords")}</h2><p>{title}</p>
+      <span className="keyword-field-label">{t("keywords.libraryLabel")}</span>
+      <button aria-expanded={labelChoicesOpen} className="keyword-label-current" disabled={busy} onClick={() => setLabelChoicesOpen((current) => !current)} type="button">{draftLabel || t("keywords.noLabel")}<span aria-hidden="true">⌄</span></button>
       {labelChoicesOpen && <div className="keyword-label-choices" role="listbox">
-        {["", ...labels].map((item) => <button aria-selected={draftLabel === item} key={item || "none"} onClick={() => { setDraftLabel(item); setLabelChoicesOpen(false); }} role="option" type="button">{item || "Aucun label"}</button>)}
+        {["", ...labels].map((item) => <button aria-selected={draftLabel === item} key={item || "none"} onClick={() => { setDraftLabel(item); setLabelChoicesOpen(false); }} role="option" type="button">{item || t("keywords.noLabel")}</button>)}
       </div>}
-      <label className="keyword-field-label">Mots-clés de la leçon</label>
+      <label className="keyword-field-label">{t("keywords.lessonKeywords")}</label>
       <KeywordPicker catalog={catalog} disabled={!editable || busy} keywords={draftKeywords} onChange={setDraftKeywords} />
-      {!editable && <p>Cette leçon ne peut pas être modifiée depuis la bibliothèque.</p>}
-      <div className="modal-actions"><button className="ghost-pill" onClick={onClose} type="button">Annuler</button><button className="primary-pill" disabled={busy} onClick={() => onSave(draftKeywords, draftLabel)} type="button">Enregistrer</button></div>
+      {!editable && <p>{t("keywords.lessonReadOnly")}</p>}
+      <div className="modal-actions"><button className="ghost-pill" onClick={onClose} type="button">{t("common.cancel")}</button><button className="primary-pill" disabled={busy} onClick={() => onSave(draftKeywords, draftLabel)} type="button">{t("common.save")}</button></div>
       </div>
     </section>
   </div>;
@@ -95,6 +98,7 @@ type KeywordManagerProps = {
 };
 
 export function KeywordManager({ catalog, counts, pinnedKeywords, onTogglePinned, busy, onAdd, onRename, onDelete, onClose }: KeywordManagerProps) {
+  const { t } = useI18n();
   const [paste, setPaste] = useState("");
   const [allowNearVariants, setAllowNearVariants] = useState(false);
   const [editing, setEditing] = useState<{ from: string; merge: boolean } | null>(null);
@@ -125,51 +129,51 @@ export function KeywordManager({ catalog, counts, pinnedKeywords, onTogglePinned
   return <div className="paideia-modal-backdrop" onKeyDown={(event) => { if (event.key === "Escape") onClose(); }} role="presentation">
     <section aria-labelledby="keyword-manager-title" aria-modal="true" className={`paideia-modal keyword-dialog keyword-manager${editing ? " keyword-manager-editing" : ""}`} role="dialog">
       <div className="keyword-dialog-scroll">
-      <p className="modal-kicker">Bibliothèque</p><h2 id="keyword-manager-title">Mots-clés</h2>
+      <p className="modal-kicker">{t("keywords.library")}</p><h2 id="keyword-manager-title">{t("keywords.title")}</h2>
       <div className="keyword-manager-intro">
-      <p>Préparez des mots-clés, puis affectez-les aux leçons. Le nombre indique les leçons qui utilisent chaque terme.</p>
-      <p>L’étoile ancre le mot-clé dans la liste latérale, même s’il n’est pas encore utilisé.</p>
+      <p>{t("keywords.help")}</p>
+      <p>{t("keywords.pinHelp")}</p>
       </div>
-      <label className="keyword-field-label" htmlFor="keyword-paste">Coller une liste — un mot-clé par ligne</label>
+      <label className="keyword-field-label" htmlFor="keyword-paste">{t("keywords.paste")}</label>
       <textarea id="keyword-paste" onChange={(event) => setPaste(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); applyAdd(); } }} rows={5} value={paste} />
-      {paste.trim() && <p>{newItems.length} nouveau(x) mot(s)-clé(s) ; {pasted.length - newItems.length} déjà présent(s).</p>}
-      {nearItems.length > 0 && <div className="keyword-warning"><p>Variantes proches à vérifier : {nearItems.join(", ")}.</p><label><input checked={allowNearVariants} onChange={(event) => setAllowNearVariants(event.target.checked)} type="checkbox" />Créer quand même ces variantes</label></div>}
-      <button disabled={!canAdd} onClick={applyAdd} type="button">Ajouter à la liste</button>
+      {paste.trim() && <p>{t("keywords.pasteCount", { added: newItems.length, existing: pasted.length - newItems.length })}</p>}
+      {nearItems.length > 0 && <div className="keyword-warning"><p>{t("keywords.similarVariants", { keywords: nearItems.join(", ") })}</p><label><input checked={allowNearVariants} onChange={(event) => setAllowNearVariants(event.target.checked)} type="checkbox" />{t("keywords.keepVariants")}</label></div>}
+      <button disabled={!canAdd} onClick={applyAdd} type="button">{t("keywords.addToList")}</button>
       <div className="keyword-manager-list">
         {catalog.map((keyword) => <div className="keyword-manager-item" key={keywordKey(keyword)}>
           <button
-            aria-label={`${pinnedKeywords.some((item) => keywordKey(item) === keywordKey(keyword)) ? "Désancrer" : "Ancrer"} le mot-clé ${keyword}`}
+            aria-label={t(pinnedKeywords.some((item) => keywordKey(item) === keywordKey(keyword)) ? "keywords.unpin" : "keywords.pin", { keyword })}
             aria-pressed={pinnedKeywords.some((item) => keywordKey(item) === keywordKey(keyword))}
             className="keyword-pin-toggle"
             disabled={busy}
             onClick={() => onTogglePinned(keyword)}
-            title="Ancrer dans la liste des mots-clés"
+            title={t("keywords.pinTitle")}
             type="button"
           >{pinnedKeywords.some((item) => keywordKey(item) === keywordKey(keyword)) ? "★" : "☆"}</button>
-          <strong>{keyword}</strong><span>{counts[keywordKey(keyword)] ?? 0} leçon(s)</span>
-          <button disabled={busy} onClick={() => { setEditing({ from: keyword, merge: false }); setTarget(keyword); setError(""); }} type="button">Renommer</button>
-          <button disabled={busy || catalog.length < 2} onClick={() => { setEditing({ from: keyword, merge: true }); setTarget(""); setError(""); }} type="button">Fusionner</button>
-          <button disabled={busy} onClick={() => { setDeleting(keyword); setEditing(null); setError(""); }} type="button">Supprimer</button>
+          <strong>{keyword}</strong><span>{t(counts[keywordKey(keyword)] === 1 ? "library.lessonCount" : "library.lessonCountPlural", { count: counts[keywordKey(keyword)] ?? 0 })}</span>
+          <button disabled={busy} onClick={() => { setEditing({ from: keyword, merge: false }); setTarget(keyword); setError(""); }} type="button">{t("common.rename")}</button>
+          <button disabled={busy || catalog.length < 2} onClick={() => { setEditing({ from: keyword, merge: true }); setTarget(""); setError(""); }} type="button">{t("keywords.merge")}</button>
+          <button disabled={busy} onClick={() => { setDeleting(keyword); setEditing(null); setError(""); }} type="button">{t("common.delete")}</button>
         </div>)}
-        {catalog.length === 0 && <p>Aucun mot-clé.</p>}
+        {catalog.length === 0 && <p>{t("keywords.empty")}</p>}
       </div>
       {editing && <div className="keyword-edit-box">
-        <label className="keyword-field-label" htmlFor="keyword-target">{editing.merge ? `Fusionner « ${editing.from} » dans` : `Renommer « ${editing.from} »`}</label>
+        <label className="keyword-field-label" htmlFor="keyword-target">{t(editing.merge ? "keywords.mergeInto" : "keywords.renameOne", { keyword: editing.from })}</label>
         {editing.merge ? <div className="keyword-merge-targets" id="keyword-target">{catalog.filter((item) => keywordKey(item) !== keywordKey(editing.from)).map((item) => <button aria-pressed={target === item} key={item} onClick={() => setTarget(item)} type="button">{item}</button>)}</div> : <input id="keyword-target" onChange={(event) => setTarget(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void applyRename(); } }} value={target} />}
-        <div className="keyword-edit-actions"><button disabled={busy || !target.trim()} onClick={() => void applyRename()} type="button">Confirmer</button><button onClick={() => setEditing(null)} type="button">Annuler</button></div>
+        <div className="keyword-edit-actions"><button disabled={busy || !target.trim()} onClick={() => void applyRename()} type="button">{t("keywords.confirm")}</button><button onClick={() => setEditing(null)} type="button">{t("common.cancel")}</button></div>
       </div>}
       {error && <p className="keyword-error" role="alert">{error}</p>}
-      <div className="modal-actions"><button className="primary-pill" onClick={onClose} type="button">Fermer</button></div>
+      <div className="modal-actions"><button className="primary-pill" onClick={onClose} type="button">{t("common.close")}</button></div>
       </div>
     </section>
     {deleting && createPortal(<div className="paideia-modal-backdrop" onKeyDown={(event) => { event.stopPropagation(); if (event.key === "Escape" && !busy) setDeleting(null); }} role="presentation">
       <section aria-labelledby="keyword-delete-title" aria-modal="true" className="paideia-modal" role="alertdialog">
-        <p className="modal-kicker">Mots-clés</p>
-        <h2 id="keyword-delete-title">Supprimer « {deleting} » ?</h2>
-        <p>Ce mot-clé sera retiré de la liste globale et des {counts[keywordKey(deleting)] ?? 0} leçon(s) qui l’utilisent.</p>
+        <p className="modal-kicker">{t("keywords.title")}</p>
+        <h2 id="keyword-delete-title">{t("keywords.deleteQuestion", { keyword: deleting })}</h2>
+        <p>{t("keywords.deleteWarning", { count: counts[keywordKey(deleting)] ?? 0 })}</p>
         <div className="modal-actions">
-          <button autoFocus className="ghost-pill" disabled={busy} onClick={() => setDeleting(null)} type="button">Annuler</button>
-          <button className="danger-pill" disabled={busy} onClick={() => void applyDelete()} type="button">Supprimer</button>
+          <button autoFocus className="ghost-pill" disabled={busy} onClick={() => setDeleting(null)} type="button">{t("common.cancel")}</button>
+          <button className="danger-pill" disabled={busy} onClick={() => void applyDelete()} type="button">{t("common.delete")}</button>
         </div>
       </section>
     </div>, document.body)}

@@ -69,7 +69,7 @@ pub fn run(job_file: &Path) -> Result<(), String> {
             windows.push(tauri::WebviewWindowBuilder::new(app, label, tauri::WebviewUrl::External("about:blank".parse()?))
                 .title("PAIDEIA — PDF").visible(false).focused(false).decorations(false).skip_taskbar(true)
                 .data_directory(job.output.join("profile"))
-                .additional_browser_args("--disable-background-networking --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows")
+                .additional_browser_args("--disable-component-update --disable-background-networking --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows")
                 .build()?);
         }
         let handle = app.handle().clone();

@@ -719,7 +719,7 @@ export function buildLessonPdfModel(
             ? (block.activityItems ?? []).filter((item) => item.transcriptStatus === "validated" && item.transcriptHtml?.trim()).map((item) => item.transcriptHtml!.trim())
             : [options.subtitleHtmlByBlockId?.[block.id]?.trim()].filter((html): html is string => Boolean(html));
           if (!transcripts.length) return [];
-          const label = block.type === "audio" ? "Transcription audio" : "Transcription vidéo";
+          const label = translate(language, block.type === "audio" ? "transcript.kicker" : "transcript.videoTitle");
           return [{
             id: block.id, number: blockIndex + 1, heading: "", label, sourceType: "learner-transcript",
             renderMode: "course-layout" as const, title: label, summary: "", imageAltStatuses: [], style: {},

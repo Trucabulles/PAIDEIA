@@ -265,7 +265,7 @@ export function CharacterResourceManager({
                 onChange={(event) => setSelectedForExport(event.target.checked ? new Set(characters.map((character) => character.id)) : new Set())}
                 type="checkbox"
               />
-              Tout sélectionner
+              {t("common.selectAll")}
             </label>
           <div className="resource-character-transfer-actions">
             <button

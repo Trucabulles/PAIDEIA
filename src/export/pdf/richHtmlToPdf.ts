@@ -1,4 +1,5 @@
 import type { Content } from "pdfmake/interfaces";
+import { translateActive } from "../../i18n";
 import { decodeHtmlEntities } from "./htmlMetadata";
 
 type HtmlTextNode = { kind: "text"; value: string };
@@ -235,7 +236,7 @@ function inlineRuns(nodes: HtmlNode[], inherited: InlineStyle = {}, preserveWhit
       options
     ));
     if (node.attributes["data-paideia-reference-id"] && node.attributes["data-paideia-bookmark-preview"]) {
-      const label = node.attributes["data-paideia-bookmark-label"] || options.bookmarkFallback || "balise";
+      const label = node.attributes["data-paideia-bookmark-label"] || options.bookmarkFallback || translateActive("richText.bookmark");
       runs.push({
         text: ` [${options.referenceLabel ?? "Renvoi"} \u2014 ${label} : ${node.attributes["data-paideia-bookmark-preview"]}]`,
         italics: true,

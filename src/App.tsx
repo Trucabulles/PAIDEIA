@@ -24,7 +24,7 @@ import { convertFileSrc, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { resolveResource } from "@tauri-apps/api/path";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { confirm, message, open as openDialog, save } from "@tauri-apps/plugin-dialog";
+import { message, open as openDialog, save } from "@tauri-apps/plugin-dialog";
 import { openPath, openUrl } from "@tauri-apps/plugin-opener";
 import {
   clearRichTextLineLeadingMetadata,
@@ -273,6 +273,8 @@ import {
   exportPaideiaArchiveTo,
   hasPaideiaSharedBanks,
   importPaideiaSharedBanks,
+  inspectPaideiaSharedBankUpdates,
+  type SharedBankUpdate,
   exportAttachmentFileTo,
   exportScorm12To,
   getActiveUserProjectsRoot,
@@ -461,6 +463,7 @@ import {
   createTranslator,
   detectInitialAppLanguage,
   normalizeAppLanguage,
+  translateArchiveBanks,
   type AppLanguage
 } from "./i18n";
 import { I18nProvider } from "./i18n/react";
@@ -2806,6 +2809,12 @@ export default function App() {
   const [htmlPackageImportPending, setHtmlPackageImportPending] = useState(false);
   const htmlPackageImportInFlightRef = useRef(false);
   const [importDialog, setImportDialog] = useState<ImportDialogState | null>(null);
+  const [archiveBanksDialog, setArchiveBanksDialog] = useState<{
+    mode: "import" | "export" | "update";
+    update?: SharedBankUpdate;
+    resolve: (choice: boolean | null) => void;
+  } | null>(null);
+  const archiveBanksChoiceQueue = useRef<Promise<boolean | null>>(Promise.resolve(null));
   const [characterPackageConflictDialog, setCharacterPackageConflictDialog] = useState<CharacterPackageConflictDialogState | null>(null);
   const [duplicateAssetDialog, setDuplicateAssetDialog] = useState<{
     duplicate: ProjectAssetDuplicate;
@@ -3112,6 +3121,8 @@ export default function App() {
     }
   });
   const t = useMemo(() => createTranslator(appLanguage), [appLanguage]);
+  const archiveText = (key: string, params?: Parameters<typeof translateArchiveBanks>[2]) =>
+    translateArchiveBanks(appLanguage, key, params);
   useEffect(() => {
     const onSaveFailure = (event: Event) => {
       const detail = (event as CustomEvent<{ editorKey: string; message: string }>).detail;
@@ -10981,28 +10992,28 @@ export default function App() {
       const exportedPath = await exportUserSituationalDialogueCharacters(characterIds, destination);
       setImportDialog({
         status: "done",
-        doneTitle: "Personnages exportés",
-        message: `${characterIds.length} personnage${characterIds.length > 1 ? "s" : ""} exporté${characterIds.length > 1 ? "s" : ""} dans ${exportedPath}.`
+        doneTitle: t("resources.charactersExported"),
+        message: t("resources.charactersExportedTo", { count: characterIds.length, path: exportedPath })
       });
     } catch (error) {
-      setImportDialog({ status: "error", doneTitle: "Export impossible", message: error instanceof Error ? error.message : String(error) });
+      setImportDialog({ status: "error", doneTitle: t("resources.exportFailed"), message: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
 
   async function completeResourceCharacterImport(selected: string, conflictPolicy: "update" | "copy" | "skip") {
-    setImportDialog({ status: "running", title: "Importation des personnages…" });
+    setImportDialog({ status: "running", title: t("resources.charactersImporting") });
     try {
       const result = await importUserSituationalDialogueCharacterPackage(selected, conflictPolicy);
       setUsersituationalDialogueCharacters(Array.isArray(result.characters) ? result.characters : []);
       const details = [
-        result.importedCount ? `${result.importedCount} ajouté${result.importedCount > 1 ? "s" : ""}` : "",
-        result.updatedCount ? `${result.updatedCount} mis à jour` : "",
-        result.copiedCount ? `${result.copiedCount} importé${result.copiedCount > 1 ? "s" : ""} comme copie${result.copiedCount > 1 ? "s" : ""}` : ""
+        result.importedCount ? t("resources.charactersAddedCount", { count: result.importedCount }) : "",
+        result.updatedCount ? t("resources.charactersUpdatedCount", { count: result.updatedCount }) : "",
+        result.copiedCount ? t("resources.charactersCopiedCount", { count: result.copiedCount }) : ""
       ].filter(Boolean).join(" · ");
-      setImportDialog({ status: "done", doneTitle: "Import terminé", message: details || "Aucun personnage n’a été importé." });
+      setImportDialog({ status: "done", doneTitle: t("import.complete"), message: details || t("resources.noCharactersImported") });
     } catch (error) {
-      setImportDialog({ status: "error", doneTitle: "Import impossible", message: error instanceof Error ? error.message : String(error) });
+      setImportDialog({ status: "error", doneTitle: t("resources.importFailed"), message: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -11021,7 +11032,7 @@ export default function App() {
       }
       await completeResourceCharacterImport(selected, "update");
     } catch (error) {
-      setImportDialog({ status: "error", doneTitle: "Import impossible", message: error instanceof Error ? error.message : String(error) });
+      setImportDialog({ status: "error", doneTitle: t("resources.importFailed"), message: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -11072,7 +11083,7 @@ export default function App() {
       else removeLibraryProjectCollection(libraryProjectPreferenceKey(entry));
       setLessonKeywordsDialog(null);
     } catch (error) {
-      setImportDialog({ status: "error", doneTitle: "Mots-clés non enregistrés", message: error instanceof Error ? error.message : String(error) });
+      setImportDialog({ status: "error", doneTitle: t("keywords.saveFailed"), message: error instanceof Error ? error.message : String(error) });
     } finally { setKeywordBusy(false); }
   }
 
@@ -11121,7 +11132,7 @@ export default function App() {
       setLibraryRecentKeywords((current) => rememberKeywords(current, [term]));
     });
     keywordDropQueueRef.current = job.catch((error) => {
-      setImportDialog({ status: "error", doneTitle: "Mot-clé non affecté", message: error instanceof Error ? error.message : String(error) });
+      setImportDialog({ status: "error", doneTitle: t("keywords.assignFailed"), message: error instanceof Error ? error.message : String(error) });
     });
   }
 
@@ -11606,7 +11617,7 @@ export default function App() {
         : "";
     const lines = backendMessage.split(/\r?\n/u);
     if (backendMessage.includes("Veuillez mettre à jour PAIDEIA.")) {
-      setImportDialog({ status: "error", doneTitle: "Mise à jour requise", message: backendMessage });
+      setImportDialog({ status: "error", doneTitle: t("paideia.updateRequired"), message: backendMessage });
       return;
     }
     const isSecurityRejection = lines[0] === "PAIDEIA_SECURITY_ARCHIVE_REJECTED";
@@ -11673,23 +11684,41 @@ export default function App() {
     return task;
   }
 
+  function chooseArchiveBanks(mode: "import" | "export" | "update", update?: SharedBankUpdate) {
+    const choice = archiveBanksChoiceQueue.current.then(() =>
+      new Promise<boolean | null>((resolve) => setArchiveBanksDialog({ mode, update, resolve }))
+    );
+    archiveBanksChoiceQueue.current = choice;
+    return choice;
+  }
+
+  function closeArchiveBanksDialog(choice: boolean | null) {
+    if (!archiveBanksDialog) return;
+    setArchiveBanksDialog((current) => current === archiveBanksDialog ? null : current);
+    archiveBanksDialog.resolve(choice);
+  }
+
   async function performPaideiaArchiveImport(importArchive: () => Promise<string>) {
     setImportDialog({ status: "running" });
     try {
       const projectPath = await importArchive();
       await refreshLibraryProjects();
-      setImportDialog({ status: "done" });
       try {
-        if (await hasPaideiaSharedBanks(projectPath) && await confirm(t("paideia.addSharedBanks"), {
-          title: t("topbar.resources"),
-          okLabel: t("common.add"),
-          cancelLabel: t("common.cancel")
-        })) {
-          await importPaideiaSharedBanks(projectPath);
-          await Promise.all([refreshUserQuestionBank(), refreshUserReferenceBank(), refreshUserGlossaryAssistantBank()]);
+        if (await hasPaideiaSharedBanks(projectPath)) {
+          setImportDialog(null);
+          if (await chooseArchiveBanks("import")) {
+            const choices: Record<string, string> = {};
+            for (const update of await inspectPaideiaSharedBankUpdates(projectPath)) {
+              if (await chooseArchiveBanks("update", update)) choices[update.key] = update.fingerprint;
+            }
+            setImportDialog({ status: "running" });
+            await importPaideiaSharedBanks(projectPath, choices);
+            await Promise.all([refreshUserQuestionBank(), refreshUserReferenceBank(), refreshUserGlossaryAssistantBank()]);
+          }
         }
+        setImportDialog({ status: "done" });
       } catch {
-        await message(t("paideia.sharedBanksImportFailed"), { kind: "error" });
+        setImportDialog({ status: "error", message: archiveText("paideia.sharedBanksImportFailed") });
       }
     } catch (error) {
       showPaideiaArchiveImportError(error);
@@ -20448,6 +20477,8 @@ export default function App() {
 
   async function handleExportLibraryProjectPaideia(entry: LibraryProjectEntry) {
     setLibraryActionMenu(null);
+    const includeResources = await chooseArchiveBanks("export");
+    if (includeResources === null) return;
     const defaultPath = `${importDestinationRoot.replace(/\\/g, "/")}/archives/${paideiaArchiveFileName(entry.title)}`;
     const targetPath = await save({
       defaultPath,
@@ -20458,11 +20489,6 @@ export default function App() {
     }
 
     await runAction("export-library-paideia", async () => {
-      const includeResources = await confirm(t("paideia.includeSharedBanks"), {
-        title: t("topbar.resources"),
-        okLabel: t("paideia.includeBanks"),
-        cancelLabel: t("paideia.lessonOnly")
-      });
       await exportPaideiaArchiveTo(entry.archivePath, targetPath, includeResources);
       await refreshLibraryProjects();
     });
@@ -24275,20 +24301,60 @@ export default function App() {
         scormBatchSummary={scormBatchSummary}
       />
 
+      {archiveBanksDialog ? (
+        <div
+          className="paideia-modal-backdrop"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeArchiveBanksDialog(null);
+          }}
+          onKeyDown={(event) => {
+            if (event.key !== "Escape") return;
+            event.preventDefault();
+            event.stopPropagation();
+            closeArchiveBanksDialog(null);
+          }}
+        >
+          <section aria-describedby="archive-banks-question" aria-labelledby="archive-banks-title" aria-modal="true" className="paideia-modal" role="dialog">
+            <h2 id="archive-banks-title">{archiveText("topbar.resources")}</h2>
+            <p id="archive-banks-question">{archiveBanksDialog.update
+              ? archiveText("paideia.updateBankQuestion", archiveBanksDialog.update)
+              : archiveText(archiveBanksDialog.mode === "export" ? "paideia.includeSharedBanks" : "paideia.addSharedBanks")}</p>
+            {archiveBanksDialog.update ? (
+              <>
+                <p>{archiveText("paideia.updateBankChanges", archiveBanksDialog.update)}</p>
+                {archiveBanksDialog.update.imageChanged ? <p>{archiveText("paideia.updateBankImageChanged")}</p> : null}
+              </>
+            ) : null}
+            <div className="modal-actions">
+              {archiveBanksDialog.mode === "export" ? (
+                <button autoFocus className="ghost-pill" onClick={() => closeArchiveBanksDialog(null)} type="button">{archiveText("common.cancel")}</button>
+              ) : null}
+              <button autoFocus={archiveBanksDialog.mode !== "export"} className={archiveBanksDialog.update ? "primary-pill" : "ghost-pill"} onClick={() => closeArchiveBanksDialog(false)} type="button">
+                {archiveText(archiveBanksDialog.mode === "export" ? "paideia.lessonOnly" : archiveBanksDialog.update ? "paideia.copyBank" : "paideia.skipBanks")}
+              </button>
+              <button className={archiveBanksDialog.update ? "ghost-pill" : "primary-pill"} onClick={() => closeArchiveBanksDialog(true)} type="button">
+                {archiveText(archiveBanksDialog.mode === "export" ? "paideia.includeBanks" : archiveBanksDialog.update ? "paideia.updateBank" : "paideia.addBanks")}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
       {pdfProfileDialogEntry ? (
         <div className="paideia-modal-backdrop" role="presentation" onKeyDown={(event) => { if (event.key === "Escape") setPdfProfileDialogEntry(null); }}>
           <section aria-labelledby="pdf-profile-title" aria-modal="true" className="paideia-modal" role="dialog">
-            <p className="modal-kicker">Leçon</p>
-            <h2 id="pdf-profile-title">Générer PDF</h2>
+            <p className="modal-kicker">{t("pdf.kicker")}</p>
+            <h2 id="pdf-profile-title">{t("library.generatePdf")}</h2>
             <p>{pdfProfileDialogEntry.title}</p>
             <fieldset style={{ border: 0, padding: 0, margin: "20px 0", display: "grid", gap: 12 }}>
-              <legend style={{ marginBottom: 12 }}>Type de document</legend>
-              <label style={{ display: "flex", alignItems: "center", gap: 12 }}><input checked={pdfProfileChoice === "review"} name="pdf-profile" onChange={() => setPdfProfileChoice("review")} style={{ appearance: "auto", width: 18, height: 18, margin: 0, flex: "0 0 18px" }} type="radio" /> Document de relecture</label>
-              <label style={{ display: "flex", alignItems: "center", gap: 12 }}><input checked={pdfProfileChoice === "learner"} name="pdf-profile" onChange={() => setPdfProfileChoice("learner")} style={{ appearance: "auto", width: 18, height: 18, margin: 0, flex: "0 0 18px" }} type="radio" /> Support apprenant, sans évaluations</label>
+              <legend style={{ marginBottom: 12 }}>{t("pdf.profileType")}</legend>
+              <label style={{ display: "flex", alignItems: "center", gap: 12 }}><input checked={pdfProfileChoice === "review"} name="pdf-profile" onChange={() => setPdfProfileChoice("review")} style={{ appearance: "auto", width: 18, height: 18, margin: 0, flex: "0 0 18px" }} type="radio" /> {t("pdf.profileReview")}</label>
+              <label style={{ display: "flex", alignItems: "center", gap: 12 }}><input checked={pdfProfileChoice === "learner"} name="pdf-profile" onChange={() => setPdfProfileChoice("learner")} style={{ appearance: "auto", width: 18, height: 18, margin: 0, flex: "0 0 18px" }} type="radio" /> {t("pdf.profileLearner")}</label>
             </fieldset>
             <div className="modal-actions">
               <button className="ghost-pill" onClick={() => setPdfProfileDialogEntry(null)} type="button">{t("common.cancel")}</button>
-              <button className="primary-pill" onClick={() => { const entry = pdfProfileDialogEntry; setPdfProfileDialogEntry(null); void handleGenerateLibraryProjectPdf(entry, pdfProfileChoice); }} type="button">Générer PDF</button>
+              <button className="primary-pill" onClick={() => { const entry = pdfProfileDialogEntry; setPdfProfileDialogEntry(null); void handleGenerateLibraryProjectPdf(entry, pdfProfileChoice); }} type="button">{t("library.generatePdf")}</button>
             </div>
           </section>
         </div>

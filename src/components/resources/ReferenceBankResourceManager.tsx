@@ -222,14 +222,14 @@ export function ReferenceBankResourceManager(props: Props) {
               <span className={`resource-portal-cover ${image ? "" : "resource-portal-cover-empty"}`}>
                 {image ? <img alt="" className="resource-portal-image" src={image} /> : null}
               </span>
-              <span className="resource-portal-body"><span className="resource-portal-title">{bank.name}</span><span className="resource-portal-subtitle">{bank.contentCount ?? bank.entries.length} {(bank.contentCount ?? bank.entries.length) === 1 ? "entrée" : "entrées"}</span></span>
+              <span className="resource-portal-body"><span className="resource-portal-title">{bank.name}</span><span className="resource-portal-subtitle">{t((bank.contentCount ?? bank.entries.length) === 1 ? "assistant.entryCount" : "assistant.entryCountPlural", { count: bank.contentCount ?? bank.entries.length })}</span></span>
             </button>
             <button aria-label={`${t("common.settings")} — ${bank.name}`} aria-expanded={menuId === bank.id} className={`library-card-menu-toggle reference-bank-menu-toggle ${styles.tileMenuToggle}`} onClick={() => setMenuId(menuId === bank.id ? null : bank.id)} type="button">...</button>
             {menuId === bank.id ? <div className={`library-card-menu reference-bank-menu ${styles.tileMenu}`}>
               <button onClick={() => { setMenuId(null); openIndividual(bank); }} type="button">{t("common.configure")}</button>
               <button onClick={() => { setError(""); setMenuId(null); setRenameId(bank.id); setRenameName(bank.name); }} type="button">{t("common.rename")}</button>
               <button onClick={() => { setMenuId(null); void withFeedback(() => exportXlsx(bank)); }} type="button">{t("references.export")}</button>
-              <button onClick={() => { setMenuId(null); void withFeedback(() => exportPdf(bank)); }} type="button">Générer un PDF</button>
+              <button onClick={() => { setMenuId(null); void withFeedback(() => exportPdf(bank)); }} type="button">{t("library.generatePdf")}</button>
               <button onClick={() => { imageBankIdRef.current = bank.id; imageRef.current?.click(); }} type="button">{t("editor.chooseImage")}</button>
               <button onClick={() => { setMenuId(null); void duplicateBank(bank).catch(individual.report); }} type="button">{t("common.duplicate")}</button>
               <button className={`danger ${styles.menuDangerAction}`} onClick={() => { setError(""); setMenuId(null); setDeleteId(bank.id); }} type="button"><span className={styles.buttonIcon}><TrashIcon /></span>{t("common.delete")}</button>
@@ -285,7 +285,7 @@ export function ReferenceBankResourceManager(props: Props) {
         <input ref={importRef} accept=".xlsx" hidden type="file" onChange={(event) => void importXlsx(event)} />
         <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => importRef.current?.click()} type="button"><span className="assistant-resource-button-icon"><ImportIcon /></span>{t("common.import")} XLSX</button>
         <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => void withFeedback(() => exportXlsx(selected))} type="button"><span className="assistant-resource-button-icon"><ExportIcon /></span>{t("references.export")} XLSX</button>
-        <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => void withFeedback(() => exportPdf(selected))} type="button"><span className="assistant-resource-button-icon"><ExportIcon /></span>Générer un PDF</button>
+        <button className="assistant-resource-button assistant-resource-secondary-button" onClick={() => void withFeedback(() => exportPdf(selected))} type="button"><span className="assistant-resource-button-icon"><ExportIcon /></span>{t("library.generatePdf")}</button>
         </div>
         <button className="assistant-resource-button assistant-resource-primary-button" onClick={() => {
           const entryId = id("reference_entry");

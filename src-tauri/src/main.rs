@@ -160,6 +160,14 @@ fn main() {
     }
     #[cfg(windows)]
     let startup_gate = require_startup(StartupGate::acquire());
+    #[cfg(windows)]
+    {
+        // WebView2 adds these to Wry's arguments for both PAIDEIA and Arion.
+        let key = "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS";
+        let mut arguments = std::env::var_os(key).unwrap_or_default();
+        arguments.push(" --disable-component-update --disable-background-networking");
+        std::env::set_var(key, arguments);
+    }
     let distribution = require_startup(distribution::initialize()).clone();
     let portable_webview_root = distribution.webview_root();
     let mut context = tauri::generate_context!();
@@ -323,6 +331,7 @@ fn main() {
             open_paideia_archive_bytes,
             open_paideia_archive_path,
             commands::has_paideia_shared_banks,
+            commands::inspect_paideia_shared_bank_updates,
             commands::import_paideia_shared_banks,
             export_scorm_12,
             export_scorm_12_to,

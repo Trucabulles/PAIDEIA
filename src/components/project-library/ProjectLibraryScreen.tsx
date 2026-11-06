@@ -174,55 +174,55 @@ export function ProjectLibraryScreen({
             type="search"
             value={draftSearch}
           />
-          <button aria-expanded={filtersOpen} aria-label={`Filtres de recherche${appliedFilterCount > 0 ? ` (${appliedFilterCount} actif${appliedFilterCount > 1 ? "s" : ""})` : ""}`} className={`library-search-filter-toggle${appliedFilterCount > 0 ? " active" : ""}`} onClick={() => filtersOpen ? setFiltersOpen(false) : openFilters()} type="button">⋯</button>
+          <button aria-expanded={filtersOpen} aria-label={appliedFilterCount > 0 ? t("library.filterActive", { count: appliedFilterCount }) : t("library.filters")} className={`library-search-filter-toggle${appliedFilterCount > 0 ? " active" : ""}`} onClick={() => filtersOpen ? setFiltersOpen(false) : openFilters()} type="button">⋯</button>
         </div>
         {filtersOpen && createPortal(
           <div className="library-search-filter-backdrop" onPointerDown={(event) => { if (event.target === event.currentTarget) setFiltersOpen(false); }} role="presentation">
             <section aria-labelledby="library-filter-title" aria-modal="true" className="library-search-filters" role="dialog">
               <header className="library-filter-header">
-                <h2 id="library-filter-title">Recherche avancée par filtre</h2>
-                <button aria-label="Fermer les filtres" className="library-filter-close" onClick={() => setFiltersOpen(false)} type="button">×</button>
+                <h2 id="library-filter-title">{t("library.advancedFilters")}</h2>
+                <button aria-label={t("library.closeFilters")} className="library-filter-close" onClick={() => setFiltersOpen(false)} type="button">×</button>
               </header>
               <div className="library-filter-group">
                 <div className="library-filter-heading">
                   <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h10l8 8-9 9-9-9V4Z" /><circle cx="8" cy="9" r="1.3" /></svg>
-                  <div><h3>Labels</h3><p>Filtrer les leçons par leurs labels.</p></div>
+                  <div><h3>{t("library.labels")}</h3><p>{t("library.filterByLabels")}</p></div>
                 </div>
-                {draftLabels.length > 0 && <div className="library-filter-chips">{draftLabels.map((label) => <button aria-label={`Retirer le label ${label}`} key={label} onClick={() => setDraftLabels((current) => current.filter((item) => item !== label))} type="button">{label}<span aria-hidden="true">×</span></button>)}</div>}
+                {draftLabels.length > 0 && <div className="library-filter-chips">{draftLabels.map((label) => <button aria-label={t("library.removeFilterLabel", { label })} key={label} onClick={() => setDraftLabels((current) => current.filter((item) => item !== label))} type="button">{label}<span aria-hidden="true">×</span></button>)}</div>}
                 <div className="library-filter-search-field">
                   <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
-                  <input aria-label="Chercher un label" id="library-label-filter" onChange={(event) => setLabelQuery(event.target.value)} placeholder="Rechercher un label…" type="search" value={labelQuery} />
+                  <input aria-label={t("library.findLabel")} id="library-label-filter" onChange={(event) => setLabelQuery(event.target.value)} placeholder={t("library.findLabelPlaceholder")} type="search" value={labelQuery} />
                 </div>
                 <div className="library-filter-suggestions">
-                  {availableLabels.length > 0 && <small>Suggestions</small>}
-                  <div>{availableLabels.map((label) => <button key={label} onClick={() => { setDraftLabels((current) => [...current, label]); setLabelQuery(""); }} type="button">{label}</button>)}{availableLabels.length === 0 && <span>Aucun label trouvé.</span>}</div>
+                  {availableLabels.length > 0 && <small>{t("library.filterSuggestions")}</small>}
+                  <div>{availableLabels.map((label) => <button key={label} onClick={() => { setDraftLabels((current) => [...current, label]); setLabelQuery(""); }} type="button">{label}</button>)}{availableLabels.length === 0 && <span>{t("library.noLabelsFound")}</span>}</div>
                 </div>
               </div>
               <div className="library-filter-group">
                 <div className="library-filter-heading">
                   <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5" /><path d="m12 12 9 9m-4-4 2-2m-4 0 2-2" /></svg>
-                  <div><h3>Mots-clés</h3><p>Filtrer les leçons par leurs mots-clés.</p></div>
+                  <div><h3>{t("keywords.title")}</h3><p>{t("library.filterByKeywords")}</p></div>
                 </div>
-                {draftKeywords.length > 0 && <div className="library-filter-chips">{draftKeywords.map((keyword) => <button aria-label={`Retirer le mot-clé ${keyword}`} key={keywordKey(keyword)} onClick={() => setDraftKeywords((current) => current.filter((item) => keywordKey(item) !== keywordKey(keyword)))} type="button">{keyword}<span aria-hidden="true">×</span></button>)}</div>}
+                {draftKeywords.length > 0 && <div className="library-filter-chips">{draftKeywords.map((keyword) => <button aria-label={t("keywords.remove", { keyword })} key={keywordKey(keyword)} onClick={() => setDraftKeywords((current) => current.filter((item) => keywordKey(item) !== keywordKey(keyword)))} type="button">{keyword}<span aria-hidden="true">×</span></button>)}</div>}
                 <div className="library-filter-search-field">
                   <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
-                  <input aria-label="Chercher un mot-clé" id="library-keyword-filter" onChange={(event) => setKeywordQuery(event.target.value)} placeholder="Rechercher un mot-clé…" ref={keywordInputRef} type="search" value={keywordQuery} />
+                  <input aria-label={t("library.findKeyword")} id="library-keyword-filter" onChange={(event) => setKeywordQuery(event.target.value)} placeholder={t("library.findKeywordPlaceholder")} ref={keywordInputRef} type="search" value={keywordQuery} />
                 </div>
                 <div className="library-filter-suggestions">
-                  {availableKeywords.length > 0 && <small>Suggestions</small>}
-                  <div>{availableKeywords.map((keyword) => <button key={keywordKey(keyword)} onClick={() => { setDraftKeywords((current) => [...current, keyword]); setKeywordQuery(""); }} type="button">{keyword}</button>)}{availableKeywords.length === 0 && <span>Aucun mot-clé trouvé.</span>}</div>
+                  {availableKeywords.length > 0 && <small>{t("library.filterSuggestions")}</small>}
+                  <div>{availableKeywords.map((keyword) => <button key={keywordKey(keyword)} onClick={() => { setDraftKeywords((current) => [...current, keyword]); setKeywordQuery(""); }} type="button">{keyword}</button>)}{availableKeywords.length === 0 && <span>{t("library.noKeywordsFound")}</span>}</div>
                 </div>
-                {draftKeywords.length > 1 && <fieldset className="library-filter-keyword-mode"><legend>Combiner les mots-clés</legend><label><input checked={draftKeywordMode === "all"} onChange={() => setDraftKeywordMode("all")} type="radio" />Tous</label><label><input checked={draftKeywordMode === "any"} onChange={() => setDraftKeywordMode("any")} type="radio" />Au moins un</label></fieldset>}
+                {draftKeywords.length > 1 && <fieldset className="library-filter-keyword-mode"><legend>{t("library.combineKeywords")}</legend><label><input checked={draftKeywordMode === "all"} onChange={() => setDraftKeywordMode("all")} type="radio" />{t("library.allKeywords")}</label><label><input checked={draftKeywordMode === "any"} onChange={() => setDraftKeywordMode("any")} type="radio" />{t("library.anyKeyword")}</label></fieldset>}
               </div>
               <fieldset className="library-filter-mode" disabled={draftLabels.length === 0 || draftKeywords.length === 0}>
-                <legend><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2" /><circle cx="5" cy="19" r="2" /><circle cx="19" cy="19" r="2" /><path d="M12 6v5M5 17l7-6 7 6" /></svg>Opérateur de recherche</legend>
-                <p>Choisir comment combiner les labels et les mots-clés.</p>
+                <legend><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2" /><circle cx="5" cy="19" r="2" /><circle cx="19" cy="19" r="2" /><path d="M12 6v5M5 17l7-6 7 6" /></svg>{t("library.filterOperator")}</legend>
+                <p>{t("library.combineCriteria")}</p>
                 <div className="library-filter-mode-options">
-                  <label title="OU : au moins un des critères sélectionnés."><input checked={draftFilterOperator === "or"} onChange={() => setDraftFilterOperator("or")} type="radio" /><span>OU<small>Au moins un critère</small></span></label>
-                  <label title="ET : tous les critères sélectionnés."><input checked={draftFilterOperator === "and"} onChange={() => setDraftFilterOperator("and")} type="radio" /><span>ET<small>Tous les critères</small></span></label>
+                  <label title={t("library.orHint")}><input checked={draftFilterOperator === "or"} onChange={() => setDraftFilterOperator("or")} type="radio" /><span>{t("library.filterOr")}<small>{t("library.anyCriterion")}</small></span></label>
+                  <label title={t("library.andHint")}><input checked={draftFilterOperator === "and"} onChange={() => setDraftFilterOperator("and")} type="radio" /><span>{t("library.filterAnd")}<small>{t("library.allCriteria")}</small></span></label>
                 </div>
               </fieldset>
-              <div className="library-filter-actions"><button onClick={clearFilters} type="button">Effacer</button><button onClick={applyFilters} type="button">Rechercher</button></div>
+              <div className="library-filter-actions"><button onClick={clearFilters} type="button">{t("library.clearFilters")}</button><button onClick={applyFilters} type="button">{t("library.runSearch")}</button></div>
             </section>
           </div>, document.body
         )}
@@ -249,7 +249,7 @@ export function ProjectLibraryScreen({
                 <button onClick={() => onSortCollections("desc")} type="button">Z-A</button>
               </div>
             ) : null}
-            <button aria-label="Gérer les labels" className="project-library-add-collection" onClick={onCreateCollection} title="Gérer les labels" type="button">
+            <button aria-label={t("library.manageLabels")} className="project-library-add-collection" onClick={onCreateCollection} title={t("library.manageLabels")} type="button">
               +
             </button>
           </div>
@@ -362,10 +362,10 @@ export function ProjectLibraryScreen({
             )}
           </div>
         </section>
-        <section className="project-library-keywords-nav" aria-label="Mots-clés">
+        <section className="project-library-keywords-nav" aria-label={t("keywords.title")}>
           <div className="project-library-sidebar-heading">
-            <strong className="project-library-sidebar-title"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5" /><path d="m12 12 9 9m-4-4 2-2m-4 0 2-2" /></svg>Mots-clés</strong>
-            <button aria-label="Gérer les mots-clés" className="project-library-add-collection" onClick={onOpenKeywordManager} title="Gérer les mots-clés" type="button">+</button>
+            <strong className="project-library-sidebar-title"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5" /><path d="m12 12 9 9m-4-4 2-2m-4 0 2-2" /></svg>{t("keywords.title")}</strong>
+            <button aria-label={t("library.manageKeywords")} className="project-library-add-collection" onClick={onOpenKeywordManager} title={t("library.manageKeywords")} type="button">+</button>
           </div>
           <div className="project-library-keyword-list">
             {sidebarKeywords.map((keyword) => {
@@ -385,13 +385,13 @@ export function ProjectLibraryScreen({
                   onSearchApply({ text: "", labels: [], keywords: selected ? [] : [keyword], keywordMode: "all", filterOperator: "or" });
                   setFiltersOpen(false);
                 }}
-                title={`Filtrer par ${keyword} ou glisser sur une leçon pour l’ajouter`}
+                title={t("library.keywordFilterOrDrag", { keyword })}
                 type="button"
               ><span>{keyword}</span><strong>{keywordCounts[keywordKey(keyword)] ?? 0}</strong></button>;
             })}
-            {sidebarKeywords.length === 0 && <p className="muted">Aucun mot-clé affecté ou ancré.</p>}
+            {sidebarKeywords.length === 0 && <p className="muted">{t("library.noSidebarKeywords")}</p>}
           </div>
-          {sortedUsedKeywords.some((keyword) => !sidebarKeywords.some((shown) => keywordKey(shown) === keywordKey(keyword))) && <button className="project-library-keywords-more" onClick={() => openFilters(true)} type="button">Chercher un mot-clé</button>}
+          {sortedUsedKeywords.some((keyword) => !sidebarKeywords.some((shown) => keywordKey(shown) === keywordKey(keyword))) && <button className="project-library-keywords-more" onClick={() => openFilters(true)} type="button">{t("library.findKeyword")}</button>}
         </section>
       </aside>
 

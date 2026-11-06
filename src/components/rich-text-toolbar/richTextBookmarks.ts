@@ -1,4 +1,5 @@
 import type { PaideiaProject } from "../../types/project";
+import { translateActive } from "../../i18n";
 
 export const RICH_BOOKMARK_ATTR = "data-paideia-bookmark-id";
 export const RICH_REFERENCE_ATTR = "data-paideia-reference-id";
@@ -48,7 +49,7 @@ export function collectRichTextBookmarks(project: PaideiaProject | null | undefi
             const excerpt = (node.textContent ?? "").replace(/\s+/g, " ").trim();
             result.push({
               id,
-              label: node.getAttribute("data-paideia-bookmark-label")?.trim() || excerpt.slice(0, 80) || "Balise",
+              label: node.getAttribute("data-paideia-bookmark-label")?.trim() || excerpt.slice(0, 80) || translateActive("richText.bookmark"),
               excerpt,
               html: node.innerHTML,
               chapterTitle: chapter.title,
@@ -85,10 +86,10 @@ export function collectRichTextBookmarksFromEditor(editor: HTMLElement | null): 
     const excerpt = (node.textContent ?? "").replace(/\s+/g, " ").trim();
     return {
       id: node.getAttribute(RICH_BOOKMARK_ATTR)?.trim() ?? "",
-      label: node.getAttribute("data-paideia-bookmark-label")?.trim() || excerpt.slice(0, 80) || "Balise",
+      label: node.getAttribute("data-paideia-bookmark-label")?.trim() || excerpt.slice(0, 80) || translateActive("richText.bookmark"),
       excerpt,
       html: node.innerHTML,
-      chapterTitle: "Champ en cours",
+      chapterTitle: translateActive("richText.currentField"),
       blockTitle: ""
     };
   }).filter((item) => Boolean(item.id));

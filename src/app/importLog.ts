@@ -204,7 +204,7 @@ export function buildLocalizedImportReportRows(
   });
   for (const issue of report.issues.filter((issue) => issue.severity === "error" && issue.message.startsWith("Média manquant"))) {
     rows.push({
-      title: "Média manquant",
+      title: t("importLog.missingMedia"),
       location: cleanSourceValue(issue.location) || "—",
       result: cleanSourceValue(issue.message),
       details: [],

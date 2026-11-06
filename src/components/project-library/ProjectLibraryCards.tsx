@@ -109,7 +109,7 @@ export function ProjectLibraryCard({
       />
       <button
         aria-label={t("library.openLessonAria", { title: entry.title })}
-        title={(entry.keywords ?? []).length ? `Mots-clés : ${entry.keywords!.join(", ")}` : "Aucun mot-clé"}
+        title={(entry.keywords ?? []).length ? t("keywords.cardList", { keywords: entry.keywords!.join(", ") }) : t("keywords.empty")}
         className="library-project-open"
         onDragOver={(event) => {
           if (canDropCollection(event)) {
@@ -181,7 +181,7 @@ export function ProjectLibraryCard({
           {onGeneratePdf ? <button onClick={() => onGeneratePdf(entry)} type="button">{t("library.generatePdf")}</button> : null}
           {isFolderProject && onExportPaideia ? <button onClick={() => onExportPaideia(entry)} type="button">{t("menu.exportPaideia")}</button> : null}
           {onExportScorm12 ? <button onClick={() => onExportScorm12(entry)} type="button">{t("library.exportScorm")}</button> : null}
-          <button onClick={() => onManageLabelsKeywords(entry)} type="button">Labels et mots-clés…</button>
+          <button onClick={() => onManageLabelsKeywords(entry)} type="button">{t("keywords.manageLesson")}</button>
           {onDelete ? <button className="danger" onClick={() => onDelete(entry)} type="button">{t("library.deleteLesson")}</button> : null}
         </div>
       ) : null}

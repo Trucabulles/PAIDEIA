@@ -5,6 +5,9 @@
 - PAIDEIA fonctionne en local, sans compte ni service distant. Les fonctions collaboratives ne font pas partie de cette édition.
 - Nouvelle licence « PAIDEIA — sources ouvertes », consultable en français et en anglais.
 - La fenêtre Informations présente les liens vers le guide, le journal des modifications et les notices de licence.
+- Les commandes de fenêtre, les filtres, la gestion des mots-clés et les messages d’import et d’export suivent la langue choisie.
+- À l’import d’une leçon avec ses banques, PAIDEIA rattache la leçon aux banques retenues. Une mise à jour de la banque locale est proposée lorsque la version de départ correspond et reste soumise à confirmation.
+- L’éditeur et l’aperçu LMS signalent les contenus intégrés distants bloqués dans PAIDEIA. Les adresses restent disponibles dans le SCORM exporté.
 
 ## 1.0.26308 - 4 novembre 2026
 

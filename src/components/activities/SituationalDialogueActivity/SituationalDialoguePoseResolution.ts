@@ -10,6 +10,8 @@ import type {
   DefaultSituationalDialogueCharacterPoseDefinition
 } from "./types";
 
+import { translateActive } from "../../../i18n";
+
 const DEFAULT_SITUATIONAL_DIALOGUE_CHARACTER_ASSET_ROOT = "default-characters/";
 const SITUATIONAL_DIALOGUE_POSE_STATE_ORDER = ["introduction", "question", "neutral", "positive", "negative", "conclusion"] as const;
 const IMAGE_ASSET_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "tif", "tiff"]);
@@ -41,12 +43,13 @@ export function createDefaultSituationalDialogueCharacterPose(
             : "neutral";
   return {
     id: `situational_dialogue_character_pose_${Date.now()}_${order}`,
-    label:
+    label: translateActive("situationalDialogue.poseLabel", { detail: translateActive(
       usage === "question"
-        ? "Pose question"
+        ? "resources.poseQuestion"
         : usage === "response"
-          ? "Pose réponse"
-          : "Pose neutre",
+          ? "situationalDialogue.response"
+          : "resources.poseNeutral"
+    ) }),
     state,
     usage,
     emotion: usage === "question" ? "neutral" : null,
@@ -275,7 +278,7 @@ export function normalizeSituationalDialogueCharacters(characters: SituationalDi
     defaultPoseId: character.defaultPoseId ?? null,
     poses: (character.poses ?? []).map((pose, poseIndex) => ({
       id: pose.id || `situational_dialogue_character_pose_${character.id || index + 1}_${poseIndex + 1}`,
-      label: pose.label || `Pose ${poseIndex + 1}`,
+      label: pose.label || translateActive("situationalDialogue.poseLabel", { detail: poseIndex + 1 }),
       state: pose.state ?? null,
       usage: pose.usage ?? null,
       emotion: pose.emotion ?? null,
