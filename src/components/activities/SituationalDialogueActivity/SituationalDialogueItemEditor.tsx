@@ -73,6 +73,16 @@ export function SituationalDialogueItemEditor({
   if (isIntroduction || isConclusion) {
     return (
       <div className={styles.conclusionEditor}>
+        {isIntroduction && (
+          <label className={styles.introductionCheckbox}>
+            <input
+              checked={item.situationalDialogueIntroductionVisible !== false}
+              onChange={(event) => onUpdateItem({ situationalDialogueIntroductionVisible: event.target.checked })}
+              type="checkbox"
+            />
+            {t("situationalDialogue.showIntroduction", undefined, "Show introduction")}
+          </label>
+        )}
         <div className={`style-grid ${styles.metaGrid}`}>
           <label>
             <span>{t("situationalDialogue.bankCharacter", undefined, "Personnage de la banque")}</span>
@@ -102,13 +112,7 @@ export function SituationalDialogueItemEditor({
           minRows: "large",
           placeholder: isIntroduction ? t("situationalDialogue.introductionPlaceholder", undefined, "Saisissez le texte d'introduction") : t("situationalDialogue.conclusionPlaceholder", undefined, "Saisissez le texte de conclusion")
         })}
-        <p className="editor-helper">
-          {isIntroduction ? (
-            t("situationalDialogue.introductionHelp")
-          ) : (
-            t("situationalDialogue.conclusionHelp")
-          )}
-        </p>
+        {isConclusion && <p className="editor-helper">{t("situationalDialogue.conclusionHelp")}</p>}
       </div>
     );
   }

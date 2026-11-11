@@ -81,6 +81,7 @@ import {
 } from "./AdvancedInlineBlockEditors";
 import { InlineBlockEditorActions } from "./InlineBlockEditorActions";
 import { ActivityBackgroundAppearance } from "./ActivityBackgroundAppearance";
+import { DialogueAppearance } from "../activities/SituationalDialogueActivity/SituationalDialogueAppearance";
 import { ActivityEditorTabs } from "./ActivityEditorTabs";
 import { QuizInlineBlockEditor } from "./QuizInlineBlockEditor";
 import { ImageGridActivityEditor } from "../activities/ImageGridActivity";
@@ -143,6 +144,7 @@ type InlineBlockEditorModel = {
   blockFormRef: MutableRefObject<BlockFormState>;
   busyAction: string | null;
   courseBackgroundColor: string;
+  courseShadows: boolean;
   courseTextColor: string;
   currentProjectPath: string;
   htmlCodeScrollTop: number;
@@ -321,6 +323,7 @@ type InlineBlockEditorRichText = {
   }) => ReactNode;
   renderQuizRichTextField: (params: QuizRichTextFieldParams) => ReactNode;
   renderQuoteAuthorEditorRichTextFieldForBlock: (block: PaideiaBlock, html: string) => ReactNode;
+  renderDialogueBannerTitleField: (block: PaideiaBlock, html: string) => ReactNode;
   renderCourseExitRichTextFieldForBlock: (block: PaideiaBlock, html: string) => ReactNode;
   renderTabsEditorRichTextFieldForBlock: (options: {
     block: PaideiaBlock;
@@ -474,6 +477,7 @@ export function InlineBlockEditor({
     blockImageAnnotationSourceRefs,
     busyAction,
     courseBackgroundColor,
+    courseShadows,
     courseTextColor,
     htmlPackageImportPending,
     cancelActivityItemCrop,
@@ -539,6 +543,7 @@ export function InlineBlockEditor({
     renderPointOfInterestMarkerRichTextFieldForBlock,
     renderQuizRichTextField,
     renderQuoteAuthorEditorRichTextFieldForBlock,
+    renderDialogueBannerTitleField,
     renderCourseExitRichTextFieldForBlock,
     renderTabsEditorRichTextFieldForBlock,
     richEditorRef,
@@ -779,6 +784,7 @@ export function InlineBlockEditor({
         overlay: number;
         darkOverlay: boolean;
         rounded: boolean;
+        shadow: boolean;
         wide: boolean;
       }>
     ) => {
@@ -798,6 +804,7 @@ export function InlineBlockEditor({
             selectedBlock.type === "situational-dialogue"
               ? patch.rounded ?? current.panelRounded
               : current.panelRounded,
+          sectionBackgroundShadow: patch.shadow === undefined ? current.sectionBackgroundShadow : patch.shadow ? "on" : "off",
           sectionBackgroundWide: isActivityBackgroundAlwaysWide(selectedBlock.type)
             ? true
             : patch.wide ?? current.sectionBackgroundWide,
@@ -830,6 +837,7 @@ export function InlineBlockEditor({
           removeImage: t("situationalDialogue.removeBackgroundImage"),
           reset: t("common.reset"),
           roundedCorners: t("common.roundedCorners"),
+          shadow: t("editor.shadow"),
           strong: t("common.strong"),
           title: t("situationalDialogue.activityBackground"),
           wideBackground: t("situationalDialogue.wideBackground")
@@ -846,7 +854,7 @@ export function InlineBlockEditor({
         onReset={() => {
           setBlockForm((current) => {
             const supportsBackgroundImage = supportsActivityBackgroundProperty(selectedBlock.type, "image");
-            const next = {
+            const next: BlockFormState = {
               ...current,
               sectionBackgroundColor: "",
               sectionBackgroundImageRef: supportsBackgroundImage ? "" : current.sectionBackgroundImageRef,
@@ -854,6 +862,7 @@ export function InlineBlockEditor({
               sectionBackgroundOverlayDark: supportsBackgroundImage ? true : current.sectionBackgroundOverlayDark,
               sectionBackgroundBlur: supportsBackgroundImage ? 0 : current.sectionBackgroundBlur,
               sectionBackgroundRounded: true,
+              sectionBackgroundShadow: "inherit",
               panelRounded: selectedBlock.type === "situational-dialogue" ? true : current.panelRounded,
               sectionBackgroundWide: activityBackgroundWideDefault(selectedBlock.type),
               sectionBackgroundHeight: "medium" as const
@@ -874,11 +883,15 @@ export function InlineBlockEditor({
           rounded: selectedBlock.type === "situational-dialogue"
             ? blockForm.panelRounded
             : blockForm.sectionBackgroundRounded,
+          shadow: blockForm.sectionBackgroundShadow === "inherit"
+            ? courseShadows && Boolean(selectedBlock.type === "situational-dialogue" || blockForm.sectionBackgroundColor || blockForm.sectionBackgroundImageRef)
+            : blockForm.sectionBackgroundShadow === "on",
           wide: isActivityBackgroundAlwaysWide(selectedBlock.type) ? true : blockForm.sectionBackgroundWide
         }}
         showHeight={supportsActivityBackgroundProperty(selectedBlock.type, "height")}
         showImage={supportsActivityBackgroundProperty(selectedBlock.type, "image")}
         showRounded={!isActivityBackgroundAlwaysWide(selectedBlock.type)}
+        showShadow={selectedBlock.type === "situational-dialogue"}
         showWide={!isActivityBackgroundAlwaysWide(selectedBlock.type)}
       />
     ) : null;
@@ -1664,6 +1677,7 @@ export function InlineBlockEditor({
               activityPanel={
                 <SituationalDialogueInlineBlockEditor
                   block={selectedBlock}
+                  titleEditor={renderDialogueBannerTitleField(selectedBlock, blockForm.situationalDialogueTitleHtml ?? "")}
                   characterBankProps={{
                 characters: blockForm.situationalDialogueCharacters,
                 defaultCharacters: [],
@@ -1714,7 +1728,16 @@ export function InlineBlockEditor({
                 />
               }
               appearanceLabel={t("editor.appearanceTab")}
-              appearancePanel={activityBackgroundAppearance}
+              appearancePanel={<>
+                <DialogueAppearance layout={blockForm.mediaLayout} color={blockForm.buttonBackgroundColor}
+                  bannerColor={blockForm.situationalDialogueBannerColor}
+                  onChange={patch => setBlockForm(current => {
+                    const next = { ...current, ...patch };
+                    blockFormRef.current = next;
+                    return next;
+                  })} />
+                {activityBackgroundAppearance}
+              </>}
               sessionKey={selectedBlock.id}
             />
           )}

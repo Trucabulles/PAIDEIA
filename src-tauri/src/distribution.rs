@@ -149,6 +149,30 @@ pub fn current() -> &'static DistributionContext {
     initialize().expect("failed to resolve PAIDEIA distribution context")
 }
 
+pub(crate) fn user_assistant_bank_root() -> Result<PathBuf, String> {
+    if let Some(root) = current().resources_root() {
+        return Ok(root.join("assistants"));
+    }
+    let documents = std::env::var_os("USERPROFILE")
+        .map(PathBuf::from)
+        .map(|profile| profile.join("Documents"))
+        .ok_or_else(|| "Impossible de trouver le dossier Documents utilisateur".to_string())?;
+    Ok(documents.join("PAIDEIA").join("assistants"))
+}
+
+pub(crate) fn legacy_glossary_avatar(reference: &str) -> Option<PathBuf> {
+    let filename = reference.strip_prefix("avatars/")?;
+    let mut components = Path::new(filename).components();
+    if !matches!(components.next(), Some(std::path::Component::Normal(_)))
+        || components.next().is_some()
+    {
+        return None;
+    }
+    let bank = user_assistant_bank_root().ok()?.canonicalize().ok()?;
+    let file = bank.join(reference).canonicalize().ok()?;
+    (file.starts_with(&bank) && file.is_file()).then_some(file)
+}
+
 pub fn app_config_root(app: &AppHandle) -> Result<PathBuf, String> {
     if let Some(root) = current().config_root() {
         return Ok(root);

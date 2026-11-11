@@ -1,5 +1,12 @@
 # Changelog PAIDEIA
 
+## 1.1.26315 - 11 novembre 2026
+
+- Ajout de deux personnages à la banque par défaut, Noor et Véronique.
+- Ajout de trois modèles de mise en page pour l’activité Mise en situation.
+- Arion peut ouvrir directement une activité à partir de son identifiant unique (ID). Cette fonctionnalité est disponible en français. Les autres langues sont en préparation.
+- Correctifs divers.
+
 ## 1.1.26310 - 6 novembre 2026
 
 - PAIDEIA fonctionne en local, sans compte ni service distant. Les fonctions collaboratives ne font pas partie de cette édition.

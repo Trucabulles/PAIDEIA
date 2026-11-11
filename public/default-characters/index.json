@@ -69,5 +69,79 @@
         "assetRef": "default-characters/axel/negative/negative.png"
       }
     ]
+  },
+  {
+    "id": "Noor",
+    "name": "Noor",
+    "previewRef": "default-characters/Noor/preview.png",
+    "poses": [
+      {
+        "state": "introduction",
+        "label": "Introduction",
+        "assetRef": "default-characters/Noor/introduction/introduction.png"
+      },
+      {
+        "state": "question",
+        "label": "Question / situation",
+        "assetRef": "default-characters/Noor/question/question.png"
+      },
+      {
+        "state": "neutral",
+        "label": "Neutre",
+        "assetRef": "default-characters/Noor/neutral/neutral.png"
+      },
+      {
+        "state": "positive",
+        "label": "Réponse positive",
+        "assetRef": "default-characters/Noor/positive/positive.png"
+      },
+      {
+        "state": "negative",
+        "label": "Réponse négative",
+        "assetRef": "default-characters/Noor/negative/negative.png"
+      },
+      {
+        "state": "conclusion",
+        "label": "Conclusion",
+        "assetRef": "default-characters/Noor/conclusion/conclusion.png"
+      }
+    ]
+  },
+  {
+    "id": "Véronique",
+    "name": "Véronique",
+    "previewRef": "default-characters/Véronique/preview.png",
+    "poses": [
+      {
+        "state": "introduction",
+        "label": "Introduction",
+        "assetRef": "default-characters/Véronique/introduction/introduction.png"
+      },
+      {
+        "state": "question",
+        "label": "Question / situation",
+        "assetRef": "default-characters/Véronique/question/question.png"
+      },
+      {
+        "state": "neutral",
+        "label": "Neutre",
+        "assetRef": "default-characters/Véronique/neutral/neutral.png"
+      },
+      {
+        "state": "positive",
+        "label": "Réponse positive",
+        "assetRef": "default-characters/Véronique/positive/positive.png"
+      },
+      {
+        "state": "negative",
+        "label": "Réponse négative",
+        "assetRef": "default-characters/Véronique/negative/negative.png"
+      },
+      {
+        "state": "conclusion",
+        "label": "Conclusion",
+        "assetRef": "default-characters/Véronique/conclusion/conclusion.png"
+      }
+    ]
   }
 ]

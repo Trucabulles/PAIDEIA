@@ -56,6 +56,7 @@ type DesignerActionOperationCore =
   | { kind: "reset-activity-background"; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }
   | { kind: "set-activity-frame-background-color"; color: string; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }
   | { kind: "set-activity-frame-border-color"; color: string; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }
+  | { kind: "set-situational-dialogue-color"; part: "banner" | "buttons"; color: string; target: "type"; activityType: "situational-dialogue" }
   | { kind: "set-activity-frame-accent-color"; color: string; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }
   | { kind: "set-activity-frame-border-width"; width: ActivityFrameBorderWidth; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }
   | { kind: "set-activity-frame-border-style"; style: ActivityFrameBorderStyle; target: AppearanceActivityTarget; activityReference?: string; activityType?: string }

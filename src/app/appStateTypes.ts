@@ -19,6 +19,8 @@ import type { RichTextToolbarProfile } from "../components/rich-text-toolbar/Ric
 import type { ChapterEntry } from "./projectSelectors";
 
 export type BlockFormState = {
+  situationalDialogueTitleHtml?: string;
+  situationalDialogueBannerColor?: string;
   title: string;
   summary: string;
   blockType: string;
@@ -84,6 +86,7 @@ export type BlockFormState = {
   sectionBackgroundBlur: number;
   sectionBackgroundPositionY: number;
   sectionBackgroundRounded: boolean;
+  sectionBackgroundShadow: "inherit" | "on" | "off";
   sectionBackgroundWide: boolean;
   sectionBackgroundHeight: "minimum" | "medium" | "large";
   dividerColor: string;

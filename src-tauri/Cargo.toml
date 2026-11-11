@@ -1,6 +1,6 @@
 [package]
 name = "paideia"
-version = "1.1.26310"
+version = "1.1.26315"
 description = "PAIDEIA desktop shell"
 authors = ["Cyril GREGOIRE"]
 license-file = "../LICENSE"

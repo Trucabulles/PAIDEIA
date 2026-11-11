@@ -1,4 +1,4 @@
-<!-- arion:meta {"sections":{"Mise en situation":{"aliases":["situation","scénario","dialogue","jeu de rôle"],"keywords":["personnage","séquence","choix","feedback"]},"Banque de personnages":{"aliases":["personnages","poses","avatar"],"keywords":["importer","image","rôle","métier"]},"Introduction et conclusion":{"aliases":["texte d’introduction","feedback général","fin du scénario"],"keywords":["début","fin","présenter","résumer"]},"Séquences et choix":{"aliases":["question","réponses","propositions","feedback"],"keywords":["situation","dialogue","valider","continuer"]},"Arrière-plan":{"aliases":["fond","décor","image de fond"],"keywords":["couleur","voile","flou","position"]},"Utilisation par l’apprenant":{"aliases":["jouer la situation","répondre au scénario"],"keywords":["choisir","réponse","corriger","recommencer"]},"Activité Mise en situation":{"aliases":[],"keywords":[]},"Structure de l’activité":{"aliases":[],"keywords":[]},"Préparer les personnages":{"aliases":[],"keywords":[]},"Configurer l’introduction":{"aliases":[],"keywords":[]},"Créer une séquence":{"aliases":[],"keywords":[]},"Configurer la conclusion":{"aliases":[],"keywords":[]},"Personnage et poses utilisés dans le parcours":{"aliases":[],"keywords":[]},"Personnaliser l’arrière-plan":{"aliases":[],"keywords":[]},"Conseils de conception":{"aliases":[],"keywords":[]},"Aperçu, SCORM et PDF":{"aliases":[],"keywords":[]},"En cas de problème":{"aliases":[],"keywords":[]}}} -->
+<!-- arion:meta {"sections":{"Mise en situation":{"aliases":["situation","scénario","dialogue","jeu de rôle"],"keywords":["personnage","séquence","choix","feedback"]},"Banque de personnages":{"aliases":["personnages","poses","avatar"],"keywords":["importer","image","rôle","métier"]},"Introduction et conclusion":{"aliases":["texte d’introduction","feedback général","fin du scénario"],"keywords":["début","fin","présenter","résumer"]},"Séquences et choix":{"aliases":["question","réponses","propositions","feedback"],"keywords":["situation","dialogue","valider","continuer"]},"Arrière-plan":{"aliases":["fond","décor","image de fond"],"keywords":["couleur","voile","flou","position"]},"Utilisation par l’apprenant":{"aliases":["jouer la situation","répondre au scénario"],"keywords":["choisir","réponse","corriger","recommencer"]},"Activité Mise en situation":{"aliases":[],"keywords":[]},"Structure de l’activité":{"aliases":[],"keywords":[]},"Préparer les personnages":{"aliases":[],"keywords":[]},"Configurer l’introduction":{"aliases":[],"keywords":[]},"Créer une séquence":{"aliases":[],"keywords":[]},"Configurer la conclusion":{"aliases":[],"keywords":[]},"Personnage et poses utilisés dans le parcours":{"aliases":[],"keywords":[]},"Personnaliser l’arrière-plan":{"aliases":[],"keywords":[]},"Conseils de conception":{"aliases":[],"keywords":[]},"Aperçu, SCORM et PDF":{"aliases":[],"keywords":[]},"En cas de problème":{"aliases":[],"keywords":[]},"Choisir un modèle et personnaliser le rendu":{"aliases":["mise en page","thème de scénario","portrait compact","réponses en bas","cadrage du personnage"],"keywords":["panoramique","bandeau","couleur","pose","zoom","pleine largeur"]}}} -->
 
 # Activité Mise en situation
 
@@ -27,14 +27,16 @@ séquence` pour insérer une nouvelle étape après la dernière séquence.
 
 Dans la `Banque de personnages`, vous pouvez utiliser un personnage proposé par
 PAIDEIA, importer un personnage disponible dans la banque ou ajouter un
-personnage personnel.
+personnage personnel. Noor et Véronique sont disponibles dans la banque par défaut.
 
 Pour chaque personnage, vous pouvez renseigner :
 
 - son nom ;
 - son rôle ou son métier ;
 - une description utile pour l’accessibilité ;
-- l’affichage ou non du nom et du rôle sous son image.
+- l’affichage du nom, du rôle ou des deux dans le cartouche au bord de la bulle.
+
+Le cartouche apparaît si la bulle est affichée et que le nom ou le rôle est renseigné.
 
 Une pose correspond à une image du personnage dans un état donné. Les états
 peuvent notamment être `Introduction`, `Question / situation`, `Neutre`,
@@ -114,6 +116,20 @@ l’étape et le résultat du choix.
 Si aucune pose spécifique n’est choisie pour une étape, PAIDEIA utilise la
 pose compatible disponible dans la banque. Si aucun personnage n’est associé,
 la scène peut être affichée sans personnage.
+
+## Choisir un modèle et personnaliser le rendu
+
+Dans **Apparence**, choisissez un modèle à l’aide des vignettes.
+
+- **Classique** place le personnage en pied à gauche, avec la bulle et les réponses à droite.
+- **Réponses en bas** cadre le personnage à la taille. Le décor s’arrête au bord de la scène et les réponses apparaissent dessous, sur un fond neutre. Les cartes s’empilent si la largeur manque.
+- **Portrait compact** affiche un portrait rond à côté de la bulle, puis les réponses empilées.
+
+Changer de modèle conserve le contenu et les embranchements. Une nouvelle activité commence en largeur normale. Dans **Activité**, le champ **Titre du bandeau**, au-dessus de la banque de personnages, utilise la barre de mise en forme habituelle et reste sur une seule ligne. Le compteur et les points incluent l’introduction et la conclusion.
+
+Dans **Apparence**, réglez séparément la couleur du bandeau et celle des boutons et du cartouche. Le texte et les icônes s’adaptent au contraste du fond. **Couleur par défaut** rétablit les couleurs du thème.
+
+Pour ajuster le cadrage en **Réponses en bas** ou **Portrait compact**, double-cliquez sur le personnage dans l’éditeur, puis faites glisser l’image horizontalement ou verticalement. En **Portrait compact**, utilisez aussi la molette pour zoomer ou dézoomer. Le réglage est mémorisé pour la pose et le modèle.
 
 ## Personnaliser l’arrière-plan
 

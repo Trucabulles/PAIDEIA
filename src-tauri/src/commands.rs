@@ -1,5 +1,5 @@
 use crate::block_ids::new_block_id_candidate;
-use crate::distribution;
+use crate::distribution::{self, user_assistant_bank_root};
 use crate::importer::import_scorm_zip_with_details;
 use crate::models::{
     ActivityItem, AppOverview, AttachmentFile, CourseAppearance, CourseCoverStyle,
@@ -1683,8 +1683,13 @@ pub fn list_user_glossary_assistants() -> Result<Vec<GlossaryAssistantResource>,
 }
 
 #[tauri::command]
-pub fn get_user_glossary_assistant_bank_path() -> Result<String, String> {
-    Ok(user_assistant_bank_root()?.to_string_lossy().to_string())
+pub fn get_user_glossary_assistant_bank_path(app: AppHandle) -> Result<String, String> {
+    let root = user_assistant_bank_root()?;
+    let avatars = root.join("avatars");
+    if avatars.is_dir() {
+        allow_library_asset_root(&app, &avatars)?;
+    }
+    Ok(root.to_string_lossy().to_string())
 }
 
 fn normalize_question_bank_points(question_banks: &mut [QuestionBankResource]) {
@@ -3561,17 +3566,6 @@ pub fn upload_user_glossary_assistant_avatar(
     write_user_assistant_bank_metadata(&root, &metadata)?;
     remove_replaced_user_image(&root, previous_ref.as_deref(), &target);
     Ok(metadata.assistants)
-}
-
-fn user_assistant_bank_root() -> Result<PathBuf, String> {
-    if let Some(root) = distribution::current().resources_root() {
-        return Ok(root.join("assistants"));
-    }
-    let documents = std::env::var_os("USERPROFILE")
-        .map(PathBuf::from)
-        .map(|profile| profile.join("Documents"))
-        .ok_or_else(|| "Impossible de trouver le dossier Documents utilisateur".to_string())?;
-    Ok(documents.join("PAIDEIA").join("assistants"))
 }
 
 fn ensure_user_assistant_bank() -> Result<PathBuf, String> {
@@ -7440,6 +7434,7 @@ pub fn create_block(
     section_background_blur: Option<f64>,
     section_background_position_y: Option<f64>,
     section_background_rounded: Option<bool>,
+    section_background_shadow: Option<String>,
     section_background_wide: Option<bool>,
     section_background_height: Option<String>,
     divider_color: Option<String>,
@@ -7463,6 +7458,7 @@ pub fn create_block(
     padding_offset: Option<i32>,
     asset_refs: Option<Vec<String>>,
     subtitle_refs: Option<Vec<String>>,
+    situational_dialogue_banner_color: Option<String>,
 ) -> Result<PaideiaWorkspaceState, String> {
     let mut project = load_project_from_path(&project_path)?;
     let html_duplicate_source = match duplicate_source_block_id {
@@ -7605,8 +7601,11 @@ pub fn create_block(
         section_background_position_y: section_background_position_y
             .map(|value| value.clamp(0.0, 100.0)),
         section_background_rounded,
+        section_background_shadow: section_background_shadow.filter(|value| {
+            block_type == "situational-dialogue" && matches!(value.as_str(), "on" | "off")
+        }),
         section_background_wide: if supports_activity_background(&block_type) {
-            Some(section_background_wide.unwrap_or(true))
+            Some(section_background_wide.unwrap_or(block_type != "situational-dialogue"))
         } else {
             section_background_wide
         },
@@ -7625,6 +7624,11 @@ pub fn create_block(
         image360_hotspots: image360_hotspots.unwrap_or_default(),
         activity_items: next_activity_items,
         situational_dialogue_characters: situational_dialogue_characters.unwrap_or_default(),
+        situational_dialogue_title_html: None,
+        situational_dialogue_banner_color: situational_dialogue_banner_color
+            .map(|color| safe_css_color(&color, ""))
+            .filter(|color| !color.is_empty()),
+        situational_dialogue_framing: Vec::new(),
         attachment_files: next_attachment_files,
         quiz,
         find_elements: if block_type == "find-elements" {
@@ -8538,6 +8542,7 @@ pub fn update_block(
     section_background_blur: Option<f64>,
     section_background_position_y: Option<f64>,
     section_background_rounded: Option<bool>,
+    section_background_shadow: Option<String>,
     section_background_wide: Option<bool>,
     section_background_height: Option<String>,
     divider_color: Option<String>,
@@ -8561,6 +8566,8 @@ pub fn update_block(
     padding_offset: Option<i32>,
     asset_refs: Option<Vec<String>>,
     subtitle_refs: Option<Vec<String>>,
+    situational_dialogue_title_html: Option<String>,
+    situational_dialogue_banner_color: Option<String>,
 ) -> Result<PaideiaWorkspaceState, String> {
     let mut project = load_project_from_path(&project_path)?;
     let page = project
@@ -8682,6 +8689,11 @@ pub fn update_block(
         section_background_wide,
         section_background_height,
     );
+    if block_type != "situational-dialogue" {
+        block.section_background_shadow = None;
+    } else if let Some(value) = section_background_shadow {
+        block.section_background_shadow = matches!(value.as_str(), "on" | "off").then_some(value);
+    }
     block.divider_color = divider_color.or_else(|| block.divider_color.clone());
     block.divider_width = divider_width.or_else(|| block.divider_width.clone());
     block.divider_style = divider_style.or_else(|| block.divider_style.clone());
@@ -8704,6 +8716,13 @@ pub fn update_block(
     }
     if let Some(characters) = situational_dialogue_characters {
         block.situational_dialogue_characters = characters;
+    }
+    if let Some(title) = situational_dialogue_title_html {
+        block.situational_dialogue_title_html = Some(safe_situational_dialogue_title(&title));
+    }
+    if let Some(value) = situational_dialogue_banner_color {
+        let color = safe_css_color(&value, "");
+        block.situational_dialogue_banner_color = (!color.is_empty()).then_some(color);
     }
     if let Some(files) = attachment_files {
         block.attachment_files = files;
@@ -8794,6 +8813,58 @@ pub fn update_block(
     )?;
 
     workspace_state_from_saved_project(&project_path, project)
+}
+
+#[tauri::command]
+pub fn update_situational_dialogue_framing(
+    project_path: String,
+    page_id: String,
+    block_id: String,
+    mut framing: crate::models::SituationalDialogueFraming,
+) -> Result<PaideiaWorkspaceState, String> {
+    if !matches!(framing.layout.as_str(), "responses-below" | "compact-portrait")
+        || ![framing.x, framing.y, framing.zoom].iter().all(|value| value.is_finite())
+    {
+        return Err("Cadrage invalide".to_string());
+    }
+    framing.asset = validate_scorm_asset_ref(&framing.asset)?;
+    framing.x = framing.x.clamp(-50.0, 50.0);
+    framing.y = framing.y.clamp(-50.0, 50.0);
+    framing.zoom = if framing.layout == "compact-portrait" {
+        framing.zoom.clamp(0.65, 1.6)
+    } else {
+        1.0
+    };
+
+    let mut project = load_project_from_path(&project_path)?;
+    let block = project
+        .course.modules.iter_mut()
+        .flat_map(|module| module.chapters.iter_mut())
+        .flat_map(|chapter| chapter.pages.iter_mut())
+        .find(|page| page.id == page_id)
+        .and_then(|page| page.blocks.iter_mut().find(|block| block.id == block_id))
+        .filter(|block| block.block_type == "situational-dialogue")
+        .ok_or_else(|| "Mise en situation introuvable".to_string())?;
+    let same_asset = |asset: &str| normalize_scorm_asset_ref(asset) == framing.asset;
+    let is_pose = block.situational_dialogue_characters.iter().any(|character| {
+        character.background_ref.as_deref().is_some_and(same_asset)
+            || character.poses.iter().any(|pose| pose.asset_ref.as_deref().is_some_and(same_asset))
+    }) || block.activity_items.iter().any(|item| item.asset_refs.iter().any(|asset| same_asset(asset)));
+    if !is_pose {
+        return Err("Pose introuvable dans cette activité".to_string());
+    }
+
+    if let Some(saved) = block.situational_dialogue_framing.iter_mut()
+        .find(|saved| saved.layout == framing.layout && saved.asset == framing.asset)
+    {
+        *saved = framing;
+    } else {
+        block.situational_dialogue_framing.push(framing);
+    }
+
+    touch_project(&mut project);
+    save_project_to_path(&project_path, &project)?;
+    load_workspace_state_from_path(&project_path)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -8906,6 +8977,9 @@ pub fn apply_designer_block_changes(
                 | "slidesActivityBackgroundColor"
                 | "slidesActivityRounded"
                 | "slidesActivityShadow"
+                | "sectionBackgroundShadow"
+                | "situationalDialogueBannerColor"
+                | "situationalDialogueButtonsColor"
                 | "cardSortCardRounded"
                 | "dividerColor"
                 | "dividerWidth"
@@ -9053,13 +9127,14 @@ pub fn apply_designer_block_changes(
                 | "slidesActivityRounded"
                 | "slidesActivityShadow"
                 | "cardSortCardRounded"
+                | "sectionBackgroundShadow"
         ) && !matches!(change.value.as_str(), "true" | "false")
         {
             return Err("Unsupported activity background boolean value".to_string());
         }
         if matches!(
             change.property.as_str(),
-            "continueButtonBackgroundColor" | "continueButtonTextColor" | "panelBackgroundColor" | "panelBorderColor" | "activityAccentColor" | "dividerColor" | "markerTextColor" | "headerBackgroundColor" | "headerTextColor" | "matchingLabelBackgroundColor" | "slidesActivityBackgroundColor"
+            "continueButtonBackgroundColor" | "continueButtonTextColor" | "panelBackgroundColor" | "panelBorderColor" | "activityAccentColor" | "dividerColor" | "markerTextColor" | "headerBackgroundColor" | "headerTextColor" | "matchingLabelBackgroundColor" | "slidesActivityBackgroundColor" | "situationalDialogueBannerColor" | "situationalDialogueButtonsColor"
         ) && !change.unset
             && !regex::Regex::new(r"^#[0-9A-Fa-f]{6}$")
             .unwrap()
@@ -9238,6 +9313,7 @@ pub fn apply_designer_block_changes(
             "findElementsImageRounded" | "findElementsImageShadow" => Some("find-elements"),
             "slidesActivityBackgroundColor" | "slidesActivityRounded" | "slidesActivityShadow" => Some("slides"),
             "cardSortCardRounded" => Some("card-sort"),
+            "sectionBackgroundShadow" | "situationalDialogueBannerColor" | "situationalDialogueButtonsColor" => Some("situational-dialogue"),
             _ => None,
         };
         if let Some(expected_type) = expected_special_type {
@@ -9337,6 +9413,9 @@ pub fn apply_designer_block_changes(
                 "slidesActivityBackgroundColor" => block.slides_activity_background_color.clone().unwrap_or_else(|| "#ffffff".to_string()),
                 "slidesActivityRounded" => block.slides_activity_rounded.unwrap_or(true).to_string(),
                 "slidesActivityShadow" => block.slides_activity_shadow.unwrap_or(true).to_string(),
+                "sectionBackgroundShadow" => (block.section_background_shadow.as_deref() == Some("on")).to_string(),
+                "situationalDialogueBannerColor" => block.situational_dialogue_banner_color.clone().unwrap_or_default(),
+                "situationalDialogueButtonsColor" => block.button_background_color.clone().unwrap_or_default(),
                 "cardSortCardRounded" => block.card_sort.as_ref().map(|data| data.card_appearance.rounded).unwrap_or(true).to_string(),
                 "dividerColor" => block.divider_color.clone().unwrap_or_else(|| "#123a7a".to_string()),
                 "dividerWidth" => block.divider_width.clone().unwrap_or_else(|| "2px".to_string()),
@@ -9385,6 +9464,9 @@ pub fn apply_designer_block_changes(
                 "slidesActivityBackgroundColor" => block.slides_activity_background_color.is_none(),
                 "slidesActivityRounded" => block.slides_activity_rounded.is_none(),
                 "slidesActivityShadow" => block.slides_activity_shadow.is_none(),
+                "sectionBackgroundShadow" => !matches!(block.section_background_shadow.as_deref(), Some("on" | "off")),
+                "situationalDialogueBannerColor" => block.situational_dialogue_banner_color.is_none(),
+                "situationalDialogueButtonsColor" => block.button_background_color.is_none(),
                 "dividerColor" => block.divider_color.is_none(),
                 "dividerWidth" => block.divider_width.is_none(),
                 "dividerStyle" => block.divider_style.is_none(),
@@ -9542,6 +9624,13 @@ pub fn apply_designer_block_changes(
             "slidesActivityBackgroundColor" => block.slides_activity_background_color = (!change.unset).then(|| change.value.clone()),
             "slidesActivityRounded" => block.slides_activity_rounded = (!change.unset).then_some(change.value == "true"),
             "slidesActivityShadow" => block.slides_activity_shadow = (!change.unset).then_some(change.value == "true"),
+            "sectionBackgroundShadow" => {
+                block.section_background_shadow = (!change.unset).then(|| {
+                    if change.value == "true" { "on" } else { "off" }.to_string()
+                });
+            }
+            "situationalDialogueBannerColor" => block.situational_dialogue_banner_color = (!change.unset).then(|| change.value.clone()),
+            "situationalDialogueButtonsColor" => block.button_background_color = (!change.unset).then(|| change.value.clone()),
             "cardSortCardRounded" => block.card_sort.as_mut().ok_or_else(|| "Card-sort appearance data is missing".to_string())?.card_appearance.rounded = change.value == "true",
             "dividerColor" => block.divider_color = (!change.unset).then(|| change.value.clone()),
             "dividerWidth" => block.divider_width = (!change.unset).then(|| change.value.clone()),
@@ -15559,7 +15648,7 @@ fn write_scorm_archive(
         .map_err(|err| err.to_string())?;
 
     write_scorm_schema_files(&mut zip, options)?;
-    add_used_scorm_assets_to_zip(app, &root, &asset_hrefs, &mut zip, options)?;
+    add_used_scorm_assets_to_zip(app, &root, project, &asset_hrefs, &mut zip, options)?;
 
     zip.finish().map_err(|err| err.to_string())?;
     Ok(())
@@ -15640,6 +15729,7 @@ fn collect_used_scorm_asset_hrefs(
             }
         }
     }
+    let glossary_avatars = scorm_glossary_avatar_refs(project);
     for assistant in &project.glossary_assistants {
         if let Some(avatar_ref) = assistant
             .avatar_ref
@@ -15758,6 +15848,8 @@ fn collect_used_scorm_asset_hrefs(
         let normalized = validate_scorm_asset_ref(&asset)?;
         let exists = if is_default_situational_dialogue_character_asset_ref(&normalized) {
             default_situational_dialogue_character_asset_source(app, &normalized).is_some()
+        } else if glossary_avatars.contains(&normalized) {
+            resolve_scorm_glossary_avatar(&assets_dir, &normalized)?.is_some()
         } else {
             resolve_project_asset_ref(&assets_dir, &normalized)?.is_some()
         };
@@ -15900,18 +15992,38 @@ fn default_situational_dialogue_character_asset_source(
         .find(|path| path.exists())
 }
 
+fn scorm_glossary_avatar_refs(project: &PaideiaProject) -> HashSet<String> {
+    project.glossary_assistants.iter()
+        .filter_map(|assistant| assistant.avatar_ref.as_deref())
+        .map(normalize_scorm_asset_ref)
+        .collect()
+}
+
+fn resolve_scorm_glossary_avatar(assets: &Path, reference: &str) -> Result<Option<PathBuf>, String> {
+    let local = if assets.is_dir() {
+        resolve_project_asset_ref(assets, reference)?
+    } else {
+        None
+    };
+    Ok(local.or_else(|| distribution::legacy_glossary_avatar(reference)))
+}
+
 fn add_used_scorm_assets_to_zip<W: Write + Seek>(
     app: Option<&tauri::AppHandle>,
     project_root: &Path,
+    project: &PaideiaProject,
     asset_hrefs: &[String],
     zip: &mut ZipWriter<W>,
     options: SimpleFileOptions,
 ) -> Result<(), String> {
+    let glossary_avatars = scorm_glossary_avatar_refs(project);
     for href in asset_hrefs {
         let relative = href.strip_prefix("assets/").unwrap_or(href);
         let source = if is_default_situational_dialogue_character_asset_ref(relative) {
             validate_scorm_asset_ref(relative)?;
             default_situational_dialogue_character_asset_source(app, relative)
+        } else if glossary_avatars.contains(relative) {
+            resolve_scorm_glossary_avatar(&project_root.join("assets"), relative)?
         } else {
             resolve_project_asset_ref(&project_root.join("assets"), relative)?
         };
@@ -16078,7 +16190,7 @@ fn build_scorm_course_json(project: &PaideiaProject) -> String {
 fn build_scorm_export_metadata(project: &PaideiaProject) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "generator": "PAIDEIA",
-        "generator_version": "1.1.26310",
+        "generator_version": "1.1.26315",
         "exported_at": Utc::now().to_rfc3339(),
         "source_project_id": project.id,
         "source_project_title": project.title,
@@ -16099,7 +16211,7 @@ fn build_scorm_project_snapshot(project: &PaideiaProject) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "schemaVersion": 2,
         "generator": "PAIDEIA",
-        "generatorVersion": "1.1.26310",
+        "generatorVersion": "1.1.26315",
         "createdWith": "PAIDEIA",
         "exportDate": Utc::now().to_rfc3339(),
         "payloadType": "PaideiaProject",
@@ -16429,7 +16541,8 @@ fn build_scorm_runtime() -> String {
   function closeImageLightbox(){var lightbox=imageLightbox();if(!lightbox)return;lightbox.hidden=true;document.body.classList.remove("lightbox-open");var image=lightbox.querySelector("img");if(image){image.removeAttribute("src");image.removeAttribute("alt");image.className="";}delete lightbox.__paideiaViewer;}
   function openImageLightbox(src,alt,rounded){var lightbox=imageLightbox();if(!lightbox||!src)return;var image=lightbox.querySelector("img");if(!image)return;image.onload=function(){fitImageViewer(lightbox);};image.src=src;image.alt=alt||"";image.className=rounded?"rounded":"";lightbox.hidden=false;document.body.classList.add("lightbox-open");if(image.complete)fitImageViewer(lightbox);}
   function setupImageZoom(){document.querySelectorAll("[data-paideia-lightbox-src]").forEach(function(node){node.addEventListener("click",function(event){event.preventDefault();event.stopPropagation();openImageLightbox(node.getAttribute("data-paideia-lightbox-src")||"",node.getAttribute("data-paideia-lightbox-alt")||"",node.getAttribute("data-paideia-lightbox-rounded")==="true");});});document.querySelectorAll('img.rich-inline-image[data-paideia-inline-zoom="true"]').forEach(function(image){image.tabIndex=0;image.setAttribute("role","button");function open(event){event.preventDefault();event.stopPropagation();openImageLightbox(image.currentSrc||image.src,image.alt,image.dataset.paideiaInlineRounded==="true");}image.addEventListener("click",open);image.addEventListener("keydown",function(event){if(event.key==="Enter"||event.key===" ")open(event);});});var lightbox=imageLightbox();if(lightbox){var viewport=lightbox.querySelector(".image-lightbox-viewport");lightbox.addEventListener("click",function(event){if(event.target===lightbox||event.target.classList.contains("image-lightbox-close"))closeImageLightbox();});viewport.addEventListener("wheel",function(event){event.preventDefault();var state=imageViewerState(lightbox);scaleImageViewer(lightbox,state.scale*Math.exp(-event.deltaY*.0015),event.clientX,event.clientY);},{passive:false});viewport.addEventListener("dblclick",function(){fitImageViewer(lightbox);});viewport.addEventListener("pointerdown",function(event){var state=imageViewerState(lightbox);if(state.scale<=state.fit+.001)return;viewport.setPointerCapture(event.pointerId);state.drag={id:event.pointerId,x:event.clientX,y:event.clientY,panX:state.x,panY:state.y};});viewport.addEventListener("pointermove",function(event){var state=imageViewerState(lightbox),drag=state.drag;if(!drag||drag.id!==event.pointerId)return;state.x=drag.panX+event.clientX-drag.x;state.y=drag.panY+event.clientY-drag.y;clampImageViewer(lightbox);});viewport.addEventListener("pointerup",function(event){var state=imageViewerState(lightbox);if(state.drag&&state.drag.id===event.pointerId)state.drag=null;});lightbox.querySelectorAll("[data-image-viewer-action]").forEach(function(button){button.addEventListener("click",function(event){event.stopPropagation();var action=button.getAttribute("data-image-viewer-action"),state=imageViewerState(lightbox);if(action==="fit")fitImageViewer(lightbox);else if(action==="actual")scaleImageViewer(lightbox,1);else scaleImageViewer(lightbox,state.scale*(action==="in"?1.25:.8));});});window.addEventListener("resize",function(){if(!lightbox.hidden)fitImageViewer(lightbox);});}window.addEventListener("keydown",function(event){if(event.key==="Escape")closeImageLightbox();});}
-  function setupRichReferences(){var tooltip=document.createElement("aside");tooltip.id="paideia-rich-reference-tooltip-active";tooltip.className="paideia-rich-reference-tooltip";tooltip.setAttribute("role","tooltip");tooltip.hidden=true;document.body.appendChild(tooltip);var activeTrigger=null;var pinnedTrigger=null;function setExpanded(trigger,expanded){if(!trigger)return;trigger.setAttribute("aria-expanded",expanded?"true":"false");if(expanded)trigger.setAttribute("aria-describedby",tooltip.id);else if(trigger.getAttribute("aria-describedby")===tooltip.id)trigger.removeAttribute("aria-describedby");}function close(){setExpanded(activeTrigger,false);tooltip.hidden=true;tooltip.style.visibility="";activeTrigger=null;pinnedTrigger=null;}function position(trigger){if(!trigger||tooltip.hidden)return;tooltip.style.visibility="hidden";tooltip.style.maxHeight="";tooltip.style.overflowY="visible";var rect=trigger.getBoundingClientRect();var margin=16;var gap=8;var tooltipWidth=tooltip.offsetWidth;var naturalHeight=Math.max(tooltip.scrollHeight,tooltip.offsetHeight);var belowTop=rect.bottom+gap;var aboveBottom=rect.top-gap;var availableBelow=Math.max(0,window.innerHeight-margin-belowTop);var availableAbove=Math.max(0,aboveBottom-margin);var placeBelow=naturalHeight<=availableBelow||(naturalHeight>availableAbove&&availableBelow>=availableAbove);var availableHeight=Math.max(0,placeBelow?availableBelow:availableAbove);var renderedHeight=Math.min(naturalHeight,availableHeight);var maxLeft=Math.max(margin,window.innerWidth-margin-tooltipWidth);var left=Math.min(Math.max(rect.left,margin),maxLeft);var top=placeBelow?belowTop:aboveBottom-renderedHeight;tooltip.style.left=left+"px";tooltip.style.top=Math.max(margin,top)+"px";tooltip.style.maxHeight=availableHeight+"px";tooltip.style.overflowY=naturalHeight>availableHeight?"auto":"visible";tooltip.style.visibility="";}function open(trigger){if(activeTrigger&&activeTrigger!==trigger)setExpanded(activeTrigger,false);var target=trigger.getAttribute("data-paideia-bookmark-target")||"";var source=Array.prototype.find.call(document.querySelectorAll("[data-paideia-bookmark-id]"),function(node){return node.getAttribute("data-paideia-bookmark-id")===target;});var embeddedDefinition=trigger.getAttribute("data-paideia-reference-definition")||"";tooltip.innerHTML=source?"<div class=\"rich-content\">"+source.innerHTML+"</div>":embeddedDefinition?"<div class=\"rich-content\">"+embeddedDefinition+"</div>":"Renvoi cass\u00e9 : balise introuvable.";activeTrigger=trigger;tooltip.hidden=false;setExpanded(trigger,true);position(trigger);}function pin(trigger){if(pinnedTrigger===trigger){close();return;}pinnedTrigger=trigger;open(trigger);}document.querySelectorAll("[data-paideia-reference-id]").forEach(function(trigger){trigger.setAttribute("role","button");trigger.setAttribute("tabindex","0");trigger.addEventListener("pointerenter",function(event){if(pinnedTrigger||event.pointerType==="touch"||event.pointerType==="pen")return;open(trigger);});trigger.addEventListener("pointerleave",function(event){if(pinnedTrigger||event.pointerType==="touch"||event.pointerType==="pen")return;var related=event.relatedTarget;if(related&&tooltip.contains&&tooltip.contains(related))return;if(activeTrigger===trigger)close();});trigger.addEventListener("focus",function(){if(!pinnedTrigger)open(trigger);});trigger.addEventListener("blur",function(){if(!pinnedTrigger&&activeTrigger===trigger)close();});trigger.addEventListener("click",function(event){event.preventDefault();event.stopPropagation();pin(trigger);});trigger.addEventListener("keydown",function(event){if(event.key==="Escape")close();else if(event.key==="Enter"||event.key===" "){event.preventDefault();pin(trigger);}});});tooltip.addEventListener("pointerleave",function(event){if(pinnedTrigger)return;var related=event.relatedTarget;if(related&&activeTrigger&&activeTrigger.contains&&activeTrigger.contains(related))return;close();});tooltip.addEventListener("click",function(event){event.stopPropagation();});document.addEventListener("click",function(event){if(!activeTrigger)return;var target=event.target;if(target&&target.closest&&target.closest("[data-paideia-reference-id]"))return;if(target&&tooltip.contains(target))return;close();});function reposition(){if(activeTrigger&&!tooltip.hidden)position(activeTrigger);}window.addEventListener("resize",reposition);window.addEventListener("scroll",reposition,true);}function positionPointOfInterestCard(root,marker,card){var stage=root.querySelector(".point-of-interest-stage");if(!stage||!marker||!card)return;card.hidden=false;card.style.visibility="hidden";card.style.right="auto";card.style.transform="none";card.style.height="auto";card.style.minHeight="min(50px, calc(100% - 24px))";card.style.maxHeight="calc(100% - 24px)";var stageRect=stage.getBoundingClientRect();var markerRect=marker.getBoundingClientRect();var cardWidth=card.offsetWidth;var cardHeight=card.offsetHeight;var margin=12;var gap=12;var anchorX=(markerRect.left+markerRect.right)/2;var belowTop=markerRect.bottom+gap;var aboveBottom=markerRect.top-gap;var stageLeft=stageRect.left+margin;var stageRight=stageRect.right-margin;var stageTop=stageRect.top+margin;var stageBottom=stageRect.bottom-margin;var viewportLeft=Math.min(Math.max(anchorX-cardWidth/2,stageLeft),Math.max(stageLeft,stageRight-cardWidth));var preferredTop=belowTop+cardHeight<=stageBottom?belowTop:aboveBottom-cardHeight;var viewportTop=Math.min(Math.max(preferredTop,stageTop),Math.max(stageTop,stageBottom-cardHeight));card.style.left=(viewportLeft-stageRect.left)+"px";card.style.top=(viewportTop-stageRect.top)+"px";card.style.visibility="";}
+  __PAIDEIA_RICH_REFERENCES__
+  function positionPointOfInterestCard(root,marker,card){var stage=root.querySelector(".point-of-interest-stage");if(!stage||!marker||!card)return;card.hidden=false;card.style.visibility="hidden";card.style.right="auto";card.style.transform="none";card.style.height="auto";card.style.minHeight="min(50px, calc(100% - 24px))";card.style.maxHeight="calc(100% - 24px)";var stageRect=stage.getBoundingClientRect();var markerRect=marker.getBoundingClientRect();var cardWidth=card.offsetWidth;var cardHeight=card.offsetHeight;var margin=12;var gap=12;var anchorX=(markerRect.left+markerRect.right)/2;var belowTop=markerRect.bottom+gap;var aboveBottom=markerRect.top-gap;var stageLeft=stageRect.left+margin;var stageRight=stageRect.right-margin;var stageTop=stageRect.top+margin;var stageBottom=stageRect.bottom-margin;var viewportLeft=Math.min(Math.max(anchorX-cardWidth/2,stageLeft),Math.max(stageLeft,stageRight-cardWidth));var preferredTop=belowTop+cardHeight<=stageBottom?belowTop:aboveBottom-cardHeight;var viewportTop=Math.min(Math.max(preferredTop,stageTop),Math.max(stageTop,stageBottom-cardHeight));card.style.left=(viewportLeft-stageRect.left)+"px";card.style.top=(viewportTop-stageRect.top)+"px";card.style.visibility="";}
   function setupPointOfInterestBlocks(){document.querySelectorAll(".block.point-of-interest").forEach(function(root){function closeCard(card){if(!card)return;card.querySelectorAll("video,audio").forEach(function(media){media.pause();});card.hidden=true;}function repositionActiveCard(){var marker=root.querySelector("[data-point-of-interest-marker].active");if(!marker)return;var id=marker.getAttribute("data-point-of-interest-marker")||"";var card=root.querySelector('[data-point-of-interest-marker-card="'+id+'"]');if(card&&!card.hidden)positionPointOfInterestCard(root,marker,card);}root.querySelectorAll("[data-point-of-interest-marker]").forEach(function(marker){marker.addEventListener("click",function(event){event.preventDefault();event.stopPropagation();var id=marker.getAttribute("data-point-of-interest-marker")||"";var isActive=marker.classList.contains("active");root.querySelectorAll("[data-point-of-interest-marker]").forEach(function(node){node.classList.remove("active");});root.querySelectorAll("[data-point-of-interest-marker-card]").forEach(closeCard);if(isActive)return;marker.classList.add("active");var card=root.querySelector('[data-point-of-interest-marker-card="'+id+'"]');if(card){positionPointOfInterestCard(root,marker,card);requestAnimationFrame(repositionActiveCard);}});});document.addEventListener("click",function(event){var target=event.target;if(target&&target.closest){var markerTarget=target.closest("[data-point-of-interest-marker]");var cardTarget=target.closest("[data-point-of-interest-marker-card]");if((markerTarget&&root.contains(markerTarget))||(cardTarget&&root.contains(cardTarget)))return;}root.querySelectorAll("[data-point-of-interest-marker]").forEach(function(node){node.classList.remove("active");});root.querySelectorAll("[data-point-of-interest-marker-card]").forEach(closeCard);});window.addEventListener("resize",repositionActiveCard);window.addEventListener("scroll",repositionActiveCard,true);});}
   function setupImage360(){function applyInitialView(camera){if(!camera)return;var yaw=Number(camera.getAttribute("data-initial-yaw")||"0");var pitch=Number(camera.getAttribute("data-initial-pitch")||"0");if(!Number.isFinite(yaw))yaw=0;if(!Number.isFinite(pitch))pitch=0;pitch=Math.max(-89,Math.min(89,pitch));camera.setAttribute("rotation",pitch+" "+yaw+" 0");if(camera.object3D&&camera.object3D.rotation)camera.object3D.rotation.set(pitch*Math.PI/180,yaw*Math.PI/180,0);var lookControls=camera.components&&camera.components["look-controls"];if(lookControls&&lookControls.pitchObject&&lookControls.yawObject){lookControls.pitchObject.rotation.x=pitch*Math.PI/180;lookControls.yawObject.rotation.y=yaw*Math.PI/180;}}if(window.AFRAME&&!window.AFRAME.components["paideia-look-at-camera"]){window.AFRAME.registerComponent("paideia-look-at-camera",{tick:function(){var camera=this.el.sceneEl&&this.el.sceneEl.camera;if(camera)this.el.object3D.lookAt(camera.position);}});}document.querySelectorAll(".block.image-360").forEach(function(root){var panel=root.querySelector("[data-image360-panel]");var shell=root.querySelector(".image360-shell");var camera=root.querySelector("[data-image360-camera]");var lastHotspotClick=0;if(camera){applyInitialView(camera);camera.addEventListener("loaded",function(){applyInitialView(camera);});camera.addEventListener("componentinitialized",function(){applyInitialView(camera);});requestAnimationFrame(function(){applyInitialView(camera);requestAnimationFrame(function(){applyInitialView(camera);});});}root.querySelectorAll("[data-image360-hotspot]").forEach(function(node){node.addEventListener("click",function(event){event.stopPropagation();lastHotspotClick=performance.now();var id=node.getAttribute("data-image360-hotspot")||"";if(!panel)return;var source=root.querySelector('[data-image360-hotspot-content="'+id+'"]');if(!source){panel.hidden=true;return;}panel.innerHTML=source.innerHTML;panel.hidden=false;});});if(shell&&panel){shell.addEventListener("click",function(event){if(performance.now()-lastHotspotClick<160)return;var target=event.target;if(target&&target.closest&&(target.closest("[data-image360-hotspot]")||target.closest("[data-image360-panel]")))return;panel.hidden=true;});}});}
   function activities(){return Array.prototype.slice.call(document.querySelectorAll("[data-paideia-activity]"));}
@@ -16448,7 +16561,7 @@ fn build_scorm_runtime() -> String {
   function restoreLocation(){var lesson=chapterFromLocation(progress.location);if(!lesson&&isComplete()){var list=Array.prototype.slice.call(document.querySelectorAll(".chapter"));lesson=list.length?list[list.length-1]:null;}if(lesson){var id=lesson.getAttribute("id");if(id)window.location.hash=id;progress.location=chapterLocation(lesson)||progress.location;}}
     window.addEventListener("load",function(){call("LMSInitialize");try{totalTimeMs=readTotalTime();var raw=get("cmi.suspend_data");if(raw){var parsed=JSON.parse(raw);if(Array.isArray(parsed.c))parsed.c.forEach(function(id){progress.completed[id]=1;});if(Array.isArray(parsed.q))parsed.q.forEach(function(id){progress.startedQuizzes[id]=1;});if(parsed.l&&parsed.l!=="complete")progress.location=parsed.l;else if(Array.isArray(parsed.c)&&parsed.c.length){var lastId=parsed.c[parsed.c.length-1];var activity=document.querySelector('[data-paideia-activity="'+lastId+'"]');progress.location=chapterLocation(activity&&activity.closest(".chapter"));}}}catch(e){}restoreLocation();prepareImageTextMedia(document);setupLegacyRichInlineImages(document);setupAuthoredTextBreakOpportunities(document);setupNavigationButtonLabels(document);setupResponsiveRichTables(document);setupRichTextLineLeading(document);setupContentProtection(document);setupEmbeddedContentProtection();setupImageZoom();setupRichReferences();setupPointOfInterestBlocks();setupImage360();syncContinueBreaks();persist(false);});
   window.addEventListener("beforeunload",function(){persist(true);});
-})();"##.to_string().replace("__PAIDEIA_IMAGE_TEXT_MEDIA__", &include_str!("../../src/components/activities/ImageTextActivity/ImageTextActivity.media.js").replace("export function", "function"))
+})();"##.replace("__PAIDEIA_RICH_REFERENCES__", include_str!("scorm_rich_references.js")).replace("__PAIDEIA_IMAGE_TEXT_MEDIA__", &include_str!("../../src/components/activities/ImageTextActivity/ImageTextActivity.media.js").replace("export function", "function"))
 }
 
 fn ensure_no_unresolved_scorm_placeholders(asset_name: &str, content: &str) -> Result<(), String> {
@@ -17422,6 +17535,11 @@ fn resolve_scorm_course_appearance(
     appearance: &CourseAppearance,
 ) -> PaideiaBlock {
     let mut resolved = block.clone();
+    if resolved.block_type == "situational-dialogue"
+        && !matches!(resolved.section_background_shadow.as_deref(), Some("on" | "off"))
+    {
+        resolved.section_background_shadow = Some(if appearance.shadows { "on" } else { "off" }.to_string());
+    }
     if resolved.block_type == "image" && resolved.media_layout.as_deref() == Some("page-width") {
         resolved.image_rounded = Some(false);
     } else if resolved.image_rounded.is_none() {
@@ -17477,7 +17595,13 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
         "#chapter-1"
     };
     let progress_nav = build_scorm_chapter_progress_nav(project, &chapters);
-    let assistant_markup = build_scorm_assistant_markup(project);
+    let assistant_markup = build_scorm_assistant_markup(project, project_root);
+    let dialogue_styles = concat!(
+        include_str!("scorm_situational_dialogue.css"),
+        include_str!("../../src/components/activities/SituationalDialogueActivity/dialogueBanner.css")
+    );
+    let reference_runtime = include_str!("scorm_rich_references.js");
+    let reference_styles = include_str!("../../src/components/rich-text-toolbar/referenceScroll.css");
     let chapter_links = chapters
         .iter()
         .enumerate()
@@ -17962,6 +18086,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     @media (max-width:820px) {{ .block.rich.quote {{ grid-template-columns:minmax(0,1fr); padding:32px; }} .block.rich.quote .quote-avatar, .block.rich.quote.has-avatar:not(.image-center) .quote-avatar {{ max-width:320px; justify-self:center; margin-top:0; }} .block.rich.quote.image-right .quote-avatar, .block.rich.quote.image-right .quote-copy {{ grid-column:1; grid-row:auto; }} }}
     .block.attachment {{ width:min(100%,700px); }}
     .block-section-style {{ position:relative; width:min(100%,var(--activity-content-width)); max-width:100%; margin:0 auto; overflow:hidden; isolation:isolate; border-radius:var(--activity-section-radius,0); background:var(--activity-section-color,var(--situational-dialogue-section-color,transparent)); }}
+    .block-section-style.activity-section-shadow {{ box-shadow:0 16px 34px rgba(18,58,122,.14); }}
     .block-section-style.activity-section-image {{ display:grid; }}
     .block-section-style.activity-section-height {{ padding-block:0; }}
     .block-section-style.situational-dialogue-section-wide {{ width:calc(100vw + (2 * var(--shell-pad-right))); max-width:none; margin-left:calc(50% - 50vw - var(--shell-pad-right)); margin-right:calc(50% - 50vw - var(--shell-pad-right)); }}
@@ -17999,6 +18124,9 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     .block.image.page-width {{ position:relative; box-sizing:border-box; min-width:0; width:100vw; max-width:none; margin:var(--activity-spacing) calc(50% - 50vw); padding:0; overflow:hidden; border-radius:0 !important; }}
     .block.image.page-width img, .block.image.page-width .media-crop-frame {{ width:100%; max-width:none; height:auto; max-height:none; border:0; border-radius:0 !important; object-fit:contain; background:transparent; }}
     .block.image.page-width .image-copy {{ display:none; }}
+    .block-section-style.page-width-image-section {{ width:100vw; max-width:none; margin-inline:calc(50% - 50vw); border-radius:0; }}
+    .block-section-style.page-width-image-section .block-section-style-inner {{ width:100%; max-width:none; }}
+    .page-width-image-section .block.image.page-width {{ width:100%; margin-inline:0; }}
     .block.image.image-full {{ display:grid; position:relative; box-sizing:border-box; min-width:0; width:100vw; max-width:none; margin:var(--activity-spacing) calc(50% - 50vw); justify-items:center; }}
     .block.image.image-full img, .block.image.image-full .media-crop-frame {{ width:auto; max-width:100%; height:auto; max-height:none; object-fit:contain; }}
     .block.custom-html {{ padding:0; }}
@@ -18194,38 +18322,30 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     .situational-dialogue-character-backdrop {{ position:absolute; left:34%; top:45%; z-index:0; width:clamp(500px,150%,600px); aspect-ratio:1.52/1; transform:translate(-50%,-50%); background:radial-gradient(circle at 40% 55%,var(--situational-dialogue-decor-soft) 0 29%,transparent 27.5%),radial-gradient(circle at 67% 50%,var(--situational-dialogue-decor-soft) 0 40%,transparent 40.5%); pointer-events:none; }}
     .situational-dialogue-character::after {{ content:""; position:absolute; left:18%; top:35%; z-index:1; width:145px; height:145px; opacity:.45; background-image:radial-gradient(circle,var(--situational-dialogue-decor-dots) 2px,transparent 2px); background-size:15px 15px; }}
     .block.situational-dialogue.has-background-image .situational-dialogue-character-backdrop, .block.situational-dialogue.has-background-image .situational-dialogue-character::after {{ display:none !important; visibility:hidden; }}
-    .situational-dialogue-character figcaption {{ position:relative; z-index:2; display:flex; flex-direction:column; gap:1px; align-items:center; min-width:min(100px,100%); padding:8px 12px; border-radius:12px; background:rgba(255,255,255,.92); box-shadow:0 16px 40px rgba(15,35,76,.1); text-align:center; transform:translateX(-30px); }}
-    .situational-dialogue-character figcaption strong {{ color:var(--blue); font-size:1.18rem; line-height:1.2; }}
-    .situational-dialogue-character figcaption span {{ color:#4198f0; font-size:.82rem; font-style:italic; font-weight:700; }}
     .situational-dialogue-character img {{ position:relative; z-index:2; width:auto; max-width:none; height:min(600px,70vh); max-height:none; object-fit:contain; background:transparent; }}
-    .situational-dialogue-card {{ position:relative; display:grid; gap:16px; min-height:182px; min-width:0; padding:30px 32px; border:1px solid rgba(18,58,122,.14); border-radius:18px; background:rgba(255,255,255,.96); box-shadow:0 18px 52px rgba(15,35,76,.08); overflow-wrap:anywhere; word-break:break-word; }}
+    .situational-dialogue-card {{ position:relative; display:grid; gap:16px; min-height:182px; min-width:0; padding:30px 32px; border:1px solid var(--dialogue-bubble-line); border-radius:18px; background:var(--dialogue-bubble-fill); box-shadow:0 18px 52px rgba(15,35,76,.08); overflow-wrap:anywhere; word-break:break-word; }}
     .situational-dialogue-card .situational-dialogue-content {{ color:#222222; }}
-    .situational-dialogue-stage.has-character .situational-dialogue-card::before {{ content:""; position:absolute; left:-17px; top:104px; width:34px; height:34px; transform:rotate(45deg); border-left:1px solid rgba(18,58,122,.12); border-bottom:1px solid rgba(18,58,122,.12); background:rgba(255,255,255,.96); }}
     .situational-dialogue-decision {{ display:grid; gap:12px; width:min(100%,570px); margin-left:64px; }}
     .situational-dialogue-stage.no-character .situational-dialogue-decision {{ width:100%; margin-left:0; }}
     .situational-dialogue-choice-list, .situational-dialogue-actions {{ display:flex; flex-wrap:wrap; gap:12px; }}
     .situational-dialogue-choice-list {{ display:grid; }}
     .situational-dialogue-choice-group {{ display:grid; gap:12px; width:100%; }}
     .situational-dialogue-choice-actions {{ display:flex; justify-content:flex-end; width:100%; }}
-    .situational-dialogue-choice {{ display:grid; grid-template-columns:44px minmax(0,1fr) 34px; align-items:center; gap:12px; width:100%; min-height:70px; padding:12px 14px 12px 18px; border:1px solid rgba(18,58,122,.2); border-radius:18px; background:rgba(255,255,255,.96); color:var(--blue); box-shadow:0 12px 24px rgba(15,35,76,.05); }}
+    .situational-dialogue-choice {{ display:grid; grid-template-columns:44px minmax(0,1fr) 34px; align-items:center; gap:12px; width:100%; min-height:70px; padding:12px 14px 12px 18px; border:1px solid rgba(18,58,122,.2); border-radius:18px; background:#fff; color:var(--blue); box-shadow:0 12px 24px rgba(15,35,76,.05); }}
     .situational-dialogue-choice.selected {{ border-color:rgba(51,102,204,.35); background:linear-gradient(180deg, rgba(244,248,255,1), rgba(255,255,255,1)); }}
     .situational-dialogue-choice-radio {{ appearance:none; -webkit-appearance:none; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:1px solid rgba(18,58,122,.24); border-radius:50%; background:#fff; color:var(--blue); font-weight:850; cursor:pointer; box-shadow:none; }}
     .situational-dialogue-choice-radio-dot {{ width:17px; height:17px; border-radius:50%; border:2px solid rgba(18,58,122,.55); background:transparent; }}
     .situational-dialogue-choice.selected .situational-dialogue-choice-radio-dot {{ border-color:var(--blue); background:var(--blue); }}
     .situational-dialogue-choice-label {{ display:inline-flex; align-items:center; justify-content:flex-start; min-height:44px; min-width:0; padding:0; border:0; background:transparent; color:var(--blue); font-weight:850; font-size:1rem; line-height:1.28; text-align:left; cursor:pointer; overflow-wrap:anywhere; word-break:break-word; }}
     .situational-dialogue-choice-label p {{ margin:0; }}
-    .situational-dialogue-choice-validate {{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border:0; background:transparent; color:#1f8f4d; font-size:2rem; font-weight:850; line-height:1; visibility:hidden; cursor:default; }}
-    .situational-dialogue-choice.selected .situational-dialogue-choice-validate {{ visibility:visible; cursor:pointer; }}
     .situational-dialogue-feedback {{ display:grid; gap:12px; padding:20px 22px; border:1px solid rgba(18,58,122,.14); border-radius:22px; background:linear-gradient(180deg, rgba(237,244,255,.95), rgba(248,251,255,.98)); box-shadow:0 12px 32px rgba(15,35,76,.06); }}
     .situational-dialogue-feedback-head {{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }}
-    .situational-dialogue-feedback-head strong {{ color:var(--blue); font-size:.95rem; letter-spacing:.08em; text-transform:uppercase; }}
     .situational-dialogue-feedback-badge {{ display:inline-flex; align-items:center; justify-content:center; min-height:30px; padding:4px 12px; border-radius:999px; background:rgba(18,58,122,.08); color:var(--blue); font-size:.8rem; font-weight:850; }}
-    .situational-dialogue-feedback[data-response-action=\"tryAgain\"] .situational-dialogue-feedback-badge {{ background:rgba(184,66,44,.1); color:var(--red); }}
-    .situational-dialogue-feedback-summary {{ margin:0; color:var(--muted); font-size:.95rem; line-height:1.5; }}
+    .situational-dialogue-feedback[data-response-action="tryAgain"] .situational-dialogue-feedback-badge {{ background:rgba(184,66,44,.1); color:#8d271c; }}
     .situational-dialogue-feedback .rich-content {{ color:#222222; }}
     .situational-dialogue-feedback-actions {{ justify-content:flex-end; }}
-    @media (max-width:900px) {{ .block.situational-dialogue {{ padding:28px 20px; }} .situational-dialogue-stage {{ grid-template-columns:minmax(0,1fr); }} .situational-dialogue-character img {{ height:min(500px,70vh); max-height:none; }} .situational-dialogue-decision {{ width:100%; margin-left:0; }} .situational-dialogue-stage.has-character .situational-dialogue-card::before {{ display:none; }} }}
-    .situational-dialogue-node[hidden], .situational-dialogue-feedback[hidden], .situational-dialogue-choice-list[hidden] {{ display:none !important; }}
+    @media (max-width:900px) {{ .block.situational-dialogue {{ padding:28px 20px; }} .situational-dialogue-stage {{ grid-template-columns:minmax(0,1fr); }} .situational-dialogue-character img {{ height:min(500px,70vh); max-height:none; }} .situational-dialogue-decision {{ width:100%; margin-left:0; }} }}
+    .situational-dialogue-node[hidden], .situational-dialogue-choice-group[hidden], [data-dialogue-result][hidden] {{ display:none !important; }}
     img:not(.rich-inline-image), video {{ display:block; width:100%; max-height:620px; object-fit:cover; border-radius:0; background:transparent; }}
     .paideia-video-player .plyr {{ width:100%; max-width:100%; background:#000; container-type:inline-size; }}
     .paideia-video-player .plyr video {{ width:100%; height:100%; max-height:none; object-fit:contain; background:#000; }}
@@ -18317,7 +18437,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     .audio-body {{ display:grid; gap:18px; min-width:0; }}
     .audio-body h3 {{ margin:0; color:var(--blue); font-size:clamp(1.4rem,2.4vw,2.1rem); line-height:1.16; }}
     .audio-description.rich-content {{ color:var(--activity-content-text,var(--content-text,#222222)); }}
-    .paideia-assistant-widget {{ position:fixed; z-index:90; bottom:24px; left:24px; display:grid; gap:10px; width:min(360px,calc(100vw - 32px)); pointer-events:none; }}
+    .paideia-assistant-widget {{ position:fixed; z-index:90; bottom:24px; left:24px; display:grid; gap:10px; width:min(380px,calc(100vw - 32px)); pointer-events:none; }}
     .paideia-assistant-widget.bottom-right {{ right:24px; left:auto; }}
     .paideia-assistant-widget[hidden] {{ display:none; }}
     .paideia-assistant-panel[hidden], .paideia-assistant-toggle[hidden], .paideia-assistant-search button[hidden] {{ display:none; }}
@@ -18326,7 +18446,11 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     .paideia-assistant-search {{ display:flex; align-items:center; gap:10px; }}
     .paideia-assistant-search input {{ width:100%; min-width:0; min-height:40px; padding:0 12px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--blue); font:inherit; }}
     .paideia-assistant-input-wrap {{ position:relative; flex:1; min-width:0; }}
-    .paideia-assistant-search img {{ width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid rgba(18,58,122,.16); background:#edf4ff; }}
+    .paideia-assistant-search img {{ width:60px; height:60px; flex:0 0 60px; border-radius:50%; object-fit:cover; border:1px solid rgba(18,58,122,.16); background:#edf4ff; }}
+    @media (max-width:411px) {{
+      .paideia-assistant-search:has(> img:not([hidden])) {{ display:grid; grid-template-columns:minmax(0,1fr) auto; }}
+      .paideia-assistant-search > img {{ grid-column:1 / -1; }}
+    }}
     .paideia-assistant-search button, .paideia-assistant-toggle {{ min-height:40px; padding:0 12px; border:1px solid rgba(18,58,122,.18); border-radius:8px; background:var(--blue); color:#fff; font-weight:850; cursor:pointer; }}
     .paideia-assistant-search button {{ display:inline-grid; place-items:center; width:28px; height:28px; min-height:28px; padding:0; border:0; border-radius:0; background:transparent; color:var(--blue); line-height:1; }}
     .paideia-assistant-search .paideia-assistant-reset {{ position:absolute; top:-7px; right:-7px; width:18px; height:18px; min-height:18px; padding:0; border:1px solid rgba(112,128,160,.62); border-radius:50%; background:#fff; color:#d12f2f; font-size:15px; font-weight:850; line-height:1; }}
@@ -18880,103 +19004,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
       card.style.top = (viewportTop - stageRect.top) + "px";
       card.style.visibility = "";
     }}
-    function setupRichReferences() {{
-      var tooltip = document.createElement("aside");
-      tooltip.id = "paideia-rich-reference-tooltip-active";
-      tooltip.className = "paideia-rich-reference-tooltip";
-      tooltip.setAttribute("role", "tooltip");
-      tooltip.hidden = true;
-      document.body.appendChild(tooltip);
-      var activeTrigger = null;
-      var pinnedTrigger = null;
-      function setExpanded(trigger, expanded) {{
-        if (!trigger) return;
-        trigger.setAttribute("aria-expanded", expanded ? "true" : "false");
-        if (expanded) trigger.setAttribute("aria-describedby", tooltip.id);
-        else if (trigger.getAttribute("aria-describedby") === tooltip.id) trigger.removeAttribute("aria-describedby");
-      }}
-      function close() {{
-        setExpanded(activeTrigger, false);
-        tooltip.hidden = true;
-        tooltip.style.visibility = "";
-        activeTrigger = null;
-        pinnedTrigger = null;
-      }}
-      function position(trigger) {{
-        if (!trigger || tooltip.hidden) return;
-        tooltip.style.visibility = "hidden";
-        tooltip.style.maxHeight = "";
-        tooltip.style.overflowY = "visible";
-        var rect = trigger.getBoundingClientRect();
-        var margin = 16;
-        var gap = 8;
-        var tooltipWidth = tooltip.offsetWidth;
-        var naturalHeight = Math.max(tooltip.scrollHeight, tooltip.offsetHeight);
-        var belowTop = rect.bottom + gap;
-        var aboveBottom = rect.top - gap;
-        var availableBelow = Math.max(0, window.innerHeight - margin - belowTop);
-        var availableAbove = Math.max(0, aboveBottom - margin);
-        var placeBelow = naturalHeight <= availableBelow || (naturalHeight > availableAbove && availableBelow >= availableAbove);
-        var availableHeight = Math.max(0, placeBelow ? availableBelow : availableAbove);
-        var renderedHeight = Math.min(naturalHeight, availableHeight);
-        var maxLeft = Math.max(margin, window.innerWidth - margin - tooltipWidth);
-        var left = Math.min(Math.max(rect.left, margin), maxLeft);
-        var top = placeBelow ? belowTop : aboveBottom - renderedHeight;
-        tooltip.style.left = left + "px";
-        tooltip.style.top = Math.max(margin, top) + "px";
-        tooltip.style.maxHeight = availableHeight + "px";
-        tooltip.style.overflowY = naturalHeight > availableHeight ? "auto" : "visible";
-        tooltip.style.visibility = "";
-      }}
-      function open(trigger) {{
-        if (activeTrigger && activeTrigger !== trigger) setExpanded(activeTrigger, false);
-        var target = trigger.getAttribute("data-paideia-bookmark-target") || "";
-        var source = Array.prototype.find.call(document.querySelectorAll("[data-paideia-bookmark-id]"), function(node) {{ return node.getAttribute("data-paideia-bookmark-id") === target; }});
-        var embeddedDefinition = trigger.getAttribute("data-paideia-reference-definition") || "";
-        tooltip.innerHTML = source ? "<div class=\"rich-content\">" + source.innerHTML + "</div>" : embeddedDefinition ? "<div class=\"rich-content\">" + embeddedDefinition + "</div>" : "Renvoi cass\u00e9 : balise introuvable.";
-        activeTrigger = trigger;
-        tooltip.hidden = false;
-        setExpanded(trigger, true);
-        position(trigger);
-      }}
-      function pin(trigger) {{
-        if (pinnedTrigger === trigger) {{ close(); return; }}
-        pinnedTrigger = trigger;
-        open(trigger);
-      }}
-      document.querySelectorAll("[data-paideia-reference-id]").forEach(function(trigger) {{
-        trigger.setAttribute("role", "button");
-        trigger.setAttribute("tabindex", "0");
-        trigger.addEventListener("pointerenter", function(event) {{ if (pinnedTrigger || event.pointerType === "touch" || event.pointerType === "pen") return; open(trigger); }});
-        trigger.addEventListener("pointerleave", function(event) {{
-          if (pinnedTrigger || event.pointerType === "touch" || event.pointerType === "pen") return;
-          var related = event.relatedTarget;
-          if (related && tooltip.contains && tooltip.contains(related)) return;
-          if (activeTrigger === trigger) close();
-        }});
-        trigger.addEventListener("focus", function() {{ if (!pinnedTrigger) open(trigger); }});
-        trigger.addEventListener("blur", function() {{ if (!pinnedTrigger && activeTrigger === trigger) close(); }});
-        trigger.addEventListener("click", function(event) {{ event.preventDefault(); event.stopPropagation(); pin(trigger); }});
-        trigger.addEventListener("keydown", function(event) {{ if (event.key === "Escape") close(); else if (event.key === "Enter" || event.key === " ") {{ event.preventDefault(); pin(trigger); }} }});
-      }});
-      tooltip.addEventListener("pointerleave", function(event) {{
-        if (pinnedTrigger) return;
-        var related = event.relatedTarget;
-        if (related && activeTrigger && activeTrigger.contains && activeTrigger.contains(related)) return;
-        close();
-      }});
-      tooltip.addEventListener("click", function(event) {{ event.stopPropagation(); }});
-      document.addEventListener("click", function(event) {{
-        if (!activeTrigger) return;
-        var target = event.target;
-        if (target && target.closest && target.closest("[data-paideia-reference-id]")) return;
-        if (target && tooltip.contains(target)) return;
-        close();
-      }});
-      function reposition() {{ if (activeTrigger && !tooltip.hidden) position(activeTrigger); }}
-      window.addEventListener("resize", reposition);
-      window.addEventListener("scroll", reposition, true);
-    }}
+    {reference_runtime}
     function setupPointOfInterestBlocks() {{
       document.querySelectorAll(".block.point-of-interest").forEach(function(root) {{
         function closeCard(card) {{
@@ -21084,7 +21112,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
             var selected = poses.find(function(pose) {{
               return pose && pose.assetRef === selectedRef && normalizeSituationalDialoguePoseState(pose.state) === targetState;
             }});
-            if (selected && selected.src) return selected.src;
+            if (selected && selected.src) return selected;
           }}
           var fallbackStates = targetState === "positive" || targetState === "negative"
             ? [targetState, "neutral", "question"]
@@ -21105,14 +21133,34 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
           if (!match) {{
             match = poses[0];
           }}
-          return match && match.src ? match.src : null;
+          return match && match.src ? match : null;
         }}
+        var dialogueFraming = [];
+        try {{
+          var parsedFraming = JSON.parse(situationalDialogue.getAttribute("data-dialogue-framing") || "[]");
+          if (Array.isArray(parsedFraming)) dialogueFraming = parsedFraming;
+        }} catch (_error) {{}}
         function updateSituationalDialogueCharacterPose(node, state) {{
           var img = node && node.querySelector(".situational-dialogue-character img");
           if (!img) return;
-          var source = SituationalDialogueCharacterPoseSource(node, state);
-          if (source) {{
-            img.src = source;
+          var layout = situationalDialogue.getAttribute("data-dialogue-layout");
+          if (layout === "compact-portrait" || layout === "responses-below") {{
+            function updatePortraitCrop() {{
+              var cropRatio = layout === "responses-below" ? 1 : 1.25;
+              img.toggleAttribute("data-portrait-crop", img.naturalHeight > img.naturalWidth * cropRatio);
+            }}
+            img.onload = updatePortraitCrop;
+            if (img.complete) updatePortraitCrop();
+          }}
+          var pose = SituationalDialogueCharacterPoseSource(node, state);
+          if (layout === "compact-portrait" || layout === "responses-below") {{
+            var asset = (pose && pose.assetRef) || img.getAttribute("data-dialogue-asset");
+            var framing = dialogueFraming.find(function(value) {{ return value && value.asset === asset; }});
+            img.style.translate = framing ? framing.x + "% " + framing.y + "%" : "";
+            img.style.scale = framing && layout === "compact-portrait" ? String(framing.zoom) : "";
+          }}
+          if (pose && img.getAttribute("src") !== pose.src) {{
+            img.src = pose.src;
           }}
         }}
         function getSituationalDialoguePendingResponseId(node) {{
@@ -21128,7 +21176,41 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
             if (radio) radio.setAttribute("aria-pressed", isSelected ? "true" : "false");
           }});
           node.querySelectorAll("[data-situational-dialogue-choice-confirm-main]").forEach(function(button) {{
-            button.disabled = !getSituationalDialoguePendingResponseId(node);
+            button.disabled = node.hasAttribute("data-dialogue-validated") || !getSituationalDialoguePendingResponseId(node);
+          }});
+        }}
+        function resetSituationalDialogueDecision(node) {{
+          node.removeAttribute("data-dialogue-validated");
+          node.querySelectorAll("[data-dialogue-result]").forEach(function(result) {{ result.hidden = true; }});
+          var group = node.querySelector("[data-dialogue-choices]");
+          if (group) group.hidden = false;
+          setSituationalDialoguePendingResponseId(node, "");
+        }}
+        function measureSituationalDialogue() {{
+          if (!situationalDialogue.getClientRects().length) return;
+          // Keep the scroll range intact while the visible stage is measured without its minimum height.
+          var previousMinHeight = situationalDialogue.style.minHeight;
+          situationalDialogue.style.minHeight = situationalDialogue.getBoundingClientRect().height + "px";
+          var height = 0;
+          nodes.forEach(function(node) {{
+            var stage = node.querySelector("[data-dialogue-stage]:not([data-dialogue-endpoint])");
+            if (!stage) return;
+            var decision = node.querySelector("[data-dialogue-action-area]:has(> [data-dialogue-choices])");
+            node.setAttribute("data-dialogue-measure-node", "");
+            if (decision) decision.setAttribute("data-dialogue-measuring", "");
+            height = Math.max(height, Math.ceil(stage.getBoundingClientRect().height));
+            if (decision) decision.removeAttribute("data-dialogue-measuring");
+            node.removeAttribute("data-dialogue-measure-node");
+          }});
+          if (height) situationalDialogue.style.setProperty("--dialogue-reference-height", height + "px");
+          situationalDialogue.style.minHeight = previousMinHeight;
+        }}
+        var dialogueMeasurementFrame = 0;
+        function scheduleSituationalDialogueMeasurement() {{
+          if (dialogueMeasurementFrame) return;
+          dialogueMeasurementFrame = window.requestAnimationFrame(function() {{
+            dialogueMeasurementFrame = 0;
+            measureSituationalDialogue();
           }});
         }}
         function showNode(id) {{
@@ -21138,9 +21220,13 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
             else node.setAttribute("hidden", "");
           }});
           if (target) {{
-            target.querySelectorAll(".situational-dialogue-feedback").forEach(function(feedback) {{ feedback.setAttribute("hidden", ""); }});
-            target.querySelectorAll(".situational-dialogue-choice-group").forEach(function(group) {{ group.removeAttribute("hidden"); }});
-            setSituationalDialoguePendingResponseId(target, "");
+            var index = nodes.indexOf(target);
+            var counter = situationalDialogue.querySelector("[data-dialogue-counter]");
+            if (counter) counter.textContent = String(index + 1) + " / " + nodes.length;
+            situationalDialogue.querySelectorAll(".situational-dialogue-dots i").forEach(function(dot, position) {{
+              dot.toggleAttribute("data-reached", position <= index);
+            }});
+            resetSituationalDialogueDecision(target);
             updateSituationalDialogueCharacterPose(
               target,
               target.getAttribute("data-situational-dialogue-node-type") || "question"
@@ -21156,10 +21242,23 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
           }}
         }}
         if (nodes.length) showNode(nodes[0].getAttribute("data-node-id"));
+        if (typeof ResizeObserver !== "undefined") {{
+          var decisionWidth = 0;
+          new ResizeObserver(function(entries) {{
+            var width = entries[0].contentRect.width;
+            if (!width || width === decisionWidth) return;
+            decisionWidth = width;
+            scheduleSituationalDialogueMeasurement();
+          }}).observe(situationalDialogue);
+        }}
+        window.addEventListener("resize", scheduleSituationalDialogueMeasurement);
+        situationalDialogue.addEventListener("load", scheduleSituationalDialogueMeasurement, true);
+        if (document.fonts) document.fonts.ready.then(scheduleSituationalDialogueMeasurement);
+        scheduleSituationalDialogueMeasurement();
         situationalDialogue.querySelectorAll("[data-situational-dialogue-choice-select]").forEach(function(button) {{
           button.addEventListener("click", function() {{
             var node = button.closest(".situational-dialogue-node");
-            if (!node) return;
+            if (!node || node.hidden || node.hasAttribute("data-dialogue-validated")) return;
             var responseId = button.getAttribute("data-response-id");
             setSituationalDialoguePendingResponseId(node, responseId);
           }});
@@ -21167,29 +21266,34 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
         situationalDialogue.querySelectorAll("[data-situational-dialogue-choice-confirm]").forEach(function(button) {{
           button.addEventListener("click", function() {{
             var node = button.closest(".situational-dialogue-node");
-            if (!node || button.disabled) return;
-            var responseId = button.getAttribute("data-response-id") || getSituationalDialoguePendingResponseId(node);
+            if (!node || node.hidden || node.hasAttribute("data-dialogue-validated") || button.disabled) return;
+            var responseId = getSituationalDialoguePendingResponseId(node);
             if (!responseId) return;
             var choice = Array.from(node.querySelectorAll(".situational-dialogue-choice")).find(function(candidate) {{
               return candidate.getAttribute("data-response-id") === responseId;
             }});
-            var responseState = choice ? (choice.getAttribute("data-response-state") || "") : "";
-            var feedback = node.querySelector('.situational-dialogue-feedback[data-response-id="' + responseId + '"]');
-            var group = node.querySelector(".situational-dialogue-choice-group");
-            if (group) group.setAttribute("hidden", "");
-            updateSituationalDialogueCharacterPose(node, responseState);
-            if (feedback) feedback.removeAttribute("hidden");
+            var result = Array.from(node.querySelectorAll("[data-dialogue-result]")).find(function(candidate) {{
+              return candidate.getAttribute("data-response-id") === responseId;
+            }});
+            if (!choice || !result) return;
+            node.setAttribute("data-dialogue-validated", "");
+            button.disabled = true;
+            var group = node.querySelector("[data-dialogue-choices]");
+            if (group) group.hidden = true;
+            result.hidden = false;
+            updateSituationalDialogueCharacterPose(node, choice.getAttribute("data-response-state") || "");
+            var next = result.querySelector("[data-situational-dialogue-retry], [data-situational-dialogue-continue]");
+            if (next) next.focus({{ preventScroll: true }});
           }});
         }});
         situationalDialogue.querySelectorAll("[data-situational-dialogue-retry]").forEach(function(button) {{
           button.addEventListener("click", function() {{
             var node = button.closest(".situational-dialogue-node");
-            if (!node) return;
-            node.querySelectorAll(".situational-dialogue-feedback").forEach(function(feedback) {{ feedback.setAttribute("hidden", ""); }});
-            var group = node.querySelector(".situational-dialogue-choice-group");
-            if (group) group.removeAttribute("hidden");
-            setSituationalDialoguePendingResponseId(node, "");
+            if (!node || node.hidden || button.closest("[hidden]")) return;
+            resetSituationalDialogueDecision(node);
             updateSituationalDialogueCharacterPose(node, "question");
+            var firstChoice = node.querySelector("[data-situational-dialogue-choice-select]");
+            if (firstChoice) firstChoice.focus({{ preventScroll: true }});
           }});
         }});
         situationalDialogue.querySelectorAll("[data-situational-dialogue-restart]").forEach(function(button) {{
@@ -21199,6 +21303,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
         }});
         situationalDialogue.querySelectorAll("[data-situational-dialogue-continue]").forEach(function(button) {{
           button.addEventListener("click", function() {{
+            if (button.closest("[hidden]")) return;
             var target = button.getAttribute("data-next-node-id");
             if (target) {{
               showNode(target);
@@ -21266,6 +21371,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
   <script src="vendor/aframe/aframe.min.js"></script>
   <script src="vendor/plyr/plyr.min.js"></script>
   <script src="js/plyr-init.js"></script>
+<style>{dialogue_styles}{reference_styles}</style>
 </head>
 <body class="scorm-export course-home is-booting">{progress_nav}<main class="shell">{body}<section class="course-finished-message" id="course-finished-message" hidden><p>Le&ccedil;on termin&eacute;e, vous allez revenir au cours.</p></section></main>{assistant_markup}<div class="image-lightbox" hidden id="image-lightbox" role="dialog" aria-modal="true"><button aria-label="Fermer" class="image-lightbox-close" title="Fermer" type="button"></button><div class="image-lightbox-viewport"><img alt="" draggable="false" src="" /></div><div class="image-lightbox-controls"><button aria-label="R&eacute;duire" data-image-viewer-action="out" type="button">&minus;</button><button data-image-viewer-action="actual" type="button">100 %</button><button aria-label="Agrandir" data-image-viewer-action="in" type="button">+</button><button data-image-viewer-action="fit" type="button">Ajuster</button></div></div></body>
 </html>
@@ -21306,7 +21412,7 @@ fn build_scorm_chapter_progress_nav(
     )
 }
 
-fn build_scorm_assistant_markup(project: &PaideiaProject) -> String {
+fn build_scorm_assistant_markup(project: &PaideiaProject, project_root: Option<&Path>) -> String {
     let assistants = project
         .glossary_assistants
         .iter()
@@ -21315,6 +21421,16 @@ fn build_scorm_assistant_markup(project: &PaideiaProject) -> String {
     if assistants.is_empty() {
         return String::new();
     }
+    let assets_root = project_root.map(|root| root.join("assets"));
+    let assistants = assistants.into_iter().map(|assistant| {
+        let mut assistant = assistant.clone();
+        assistant.avatar_ref = assistant.avatar_ref.as_deref()
+            .and_then(|value| validate_scorm_asset_ref(value).ok())
+            .filter(|value| assets_root.as_ref().is_none_or(|root| {
+                resolve_scorm_glossary_avatar(root, value).is_ok_and(|path| path.is_some())
+            }));
+        assistant
+    }).collect::<Vec<_>>();
     let payload = serde_json::to_string(&assistants)
         .unwrap_or_else(|_| "[]".to_string())
         .replace("</", "<\\/");
@@ -21344,7 +21460,7 @@ fn build_scorm_assistant_markup(project: &PaideiaProject) -> String {
   var widget = document.getElementById("paideia-assistant-widget");
   var panel = document.getElementById("paideia-assistant-panel");
   var toggle = document.getElementById("paideia-assistant-toggle");
-      <button aria-label="R&eacute;duire l'assistant" id="paideia-assistant-close" type="button"><span aria-hidden="true"></span></button>
+  var close = document.getElementById("paideia-assistant-close");
   var reset = document.getElementById("paideia-assistant-reset");
   var form = document.getElementById("paideia-assistant-form");
   var input = document.getElementById("paideia-assistant-query");
@@ -21391,7 +21507,7 @@ fn build_scorm_assistant_markup(project: &PaideiaProject) -> String {
     return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }}
   function words(value) {{
-    return String(value || "").match(/[\\p{{L}}\\p{{N}}]+/gu) || [];
+    return String(value || "").match(/[\p{{L}}\p{{N}}]+/gu) || [];
   }}
   function distance(left, right) {{
     var previous = Array.from({{ length: right.length + 1 }}, function(_, index) {{ return index; }});
@@ -21490,8 +21606,13 @@ fn build_scorm_assistant_markup(project: &PaideiaProject) -> String {
     widget.classList.toggle("bottom-right", assistant.position === "bottom-right");
     widget.classList.toggle("bottom-left", assistant.position !== "bottom-right");
     if (assistant.avatarRef) {{
-      avatar.hidden = false;
-      avatar.src = "assets/" + assistant.avatarRef;
+      var avatarSource = "assets/" + assistant.avatarRef.split("/").map(encodeURIComponent).join("/");
+      if (avatar.getAttribute("src") !== avatarSource) {{
+        avatar.hidden = true;
+        avatar.onload = function() {{ avatar.hidden = false; }};
+        avatar.onerror = function() {{ avatar.hidden = true; }};
+        avatar.src = avatarSource;
+      }}
     }} else {{
       avatar.hidden = true;
       avatar.removeAttribute("src");
@@ -25478,8 +25599,23 @@ fn render_scorm_block(
             )
         }
         "situational-dialogue" => {
-            let items = block
+            let layout = match block.media_layout.as_deref() {
+                Some("responses-below") => "responses-below",
+                Some("compact-portrait") => "compact-portrait",
+                _ => "classic",
+            };
+            let is_introduction = |item: &ActivityItem| {
+                item.node_type.as_deref() == Some("introduction")
+                    || item.title.trim().eq_ignore_ascii_case("introduction")
+            };
+            let visible_items = block
                 .activity_items
+                .iter()
+                .filter(|item| {
+                    !is_introduction(item) || item.situational_dialogue_introduction_visible != Some(false)
+                })
+                .collect::<Vec<_>>();
+            let items = visible_items
                 .iter()
                 .enumerate()
                 .map(|(index, item)| {
@@ -25491,65 +25627,64 @@ fn render_scorm_block(
                         .as_deref()
                         .is_some_and(|value| value == "conclusion")
                         || item.title.trim().eq_ignore_ascii_case("conclusion");
-                    let is_introduction = item
-                        .node_type
-                        .as_deref()
-                        .is_some_and(|value| value == "introduction")
-                        || item.title.trim().eq_ignore_ascii_case("introduction");
+                    let is_introduction = is_introduction(item);
                     let character = character_asset
                         .as_ref()
                         .map(|asset| {
                             let asset_path = escape_attr(&scorm_asset_href(asset));
-                            let character_name = item
-                                .character_name
-                                .as_deref()
-                                .filter(|value| !value.trim().is_empty())
-                                .unwrap_or("");
-                            let character_role = item
-                                .character_role
-                                .as_deref()
-                                .filter(|value| !value.trim().is_empty())
-                                .unwrap_or("");
-                            let show_name_role = situational_dialogue_character
-                                .and_then(|character| character.show_name_role)
-                                .unwrap_or(true);
-                            let caption = if !show_name_role || (character_name.is_empty() && character_role.is_empty()) {
-                                String::new()
-                            } else if character_role.is_empty() {
-                                format!("<figcaption><strong>{}</strong></figcaption>", escape_html(character_name))
-                            } else {
-                                format!(
-                                    "<figcaption><strong>{}</strong><span>{}</span></figcaption>",
-                                    escape_html(character_name),
-                                    escape_html(character_role)
-                                )
-                            };
                             let character_alt = situational_dialogue_character
                                 .and_then(|character| character.description.as_deref())
                                 .map(str::trim)
                                 .unwrap_or("");
                             format!(
-                                r#"<figure class="situational-dialogue-character" data-situational-dialogue-character-poses='{}'><span aria-hidden="true" class="situational-dialogue-character-backdrop"></span><img src="{}" alt="{}" />{}</figure>"#,
-                                escape_attr(&character_pose_data),
-                                asset_path,
-                                escape_attr(character_alt),
-                                caption
+                                r#"<figure class="situational-dialogue-character" data-situational-dialogue-character-poses='{}'><span aria-hidden="true" class="situational-dialogue-character-backdrop"></span><img src="{}" alt="{}" data-dialogue-asset="{}" /></figure>"#,
+                                escape_attr(&character_pose_data), asset_path, escape_attr(character_alt), escape_attr(&normalize_scorm_asset_ref(asset))
                             )
                         })
                         .unwrap_or_default();
+                    let character_name = item
+                        .character_name
+                        .as_deref()
+                        .filter(|value| !value.trim().is_empty())
+                        .filter(|value| !situational_dialogue_placeholder_name(value))
+                        .or_else(|| {
+                            situational_dialogue_character
+                                .map(|character| character.name.as_str())
+                                .filter(|value| !situational_dialogue_placeholder_name(value))
+                        })
+                        .unwrap_or("")
+                        .trim();
+                    let character_role = item
+                        .character_role
+                        .as_deref()
+                        .filter(|value| !value.trim().is_empty())
+                        .or_else(|| {
+                            situational_dialogue_character.and_then(|character| character.role.as_deref())
+                        })
+                        .unwrap_or("")
+                        .trim();
+                    let show_name_role = situational_dialogue_character
+                        .and_then(|character| character.show_name_role)
+                        .unwrap_or(true);
+                    let caption = if show_name_role && (!character_name.is_empty() || !character_role.is_empty()) {
+                        let name = if character_name.is_empty() { String::new() } else { format!("<strong>{}</strong>", escape_html(character_name)) };
+                        let role = if character_role.is_empty() { String::new() } else { format!("<span>{}</span>", escape_html(character_role)) };
+                        format!(r#"<div class="situational-dialogue-caption">{name}{role}</div>"#)
+                    } else {
+                        String::new()
+                    };
                     let choices = item
                         .responses
                         .iter()
                         .map(|response| {
                             let response_state = situational_dialogue_pose_state(item, Some(response));
                             format!(
-                                r#"<div class="situational-dialogue-choice" data-response-id="{}" data-response-state="{}"><button aria-pressed="false" class="situational-dialogue-choice-radio" data-response-id="{}" data-situational-dialogue-choice-select type="button"><span aria-hidden="true" class="situational-dialogue-choice-radio-dot"></span></button><button class="situational-dialogue-choice-label" data-response-id="{}" data-situational-dialogue-choice-select type="button">{}</button><span aria-hidden="true" class="situational-dialogue-choice-validate" data-response-id="{}" data-situational-dialogue-choice-confirm>&#10003;</span></div>"#,
+                                r#"<div class="situational-dialogue-choice" data-response-id="{}" data-response-state="{}"><button aria-pressed="false" class="situational-dialogue-choice-radio" data-response-id="{}" data-situational-dialogue-choice-select type="button"><span aria-hidden="true" class="situational-dialogue-choice-radio-dot"></span></button><button class="situational-dialogue-choice-label" data-response-id="{}" data-situational-dialogue-choice-select type="button"><span>{}</span></button></div>"#,
                                 escape_attr(&response.id),
                                 escape_attr(&response_state),
                                 escape_attr(&response.id),
                                 escape_attr(&response.id),
-                                response.label,
-                                escape_attr(&response.id)
+                                response.label
                             )
                         })
                         .collect::<Vec<_>>()
@@ -25568,11 +25703,13 @@ fn render_scorm_block(
                                 )
                             };
                             format!(
-                                r#"<div class="situational-dialogue-feedback" data-response-id="{}" data-response-action="{}" hidden><div class="situational-dialogue-feedback-head"><strong>Feedback</strong><span class="situational-dialogue-feedback-badge">{}</span></div><p class="situational-dialogue-feedback-summary">{}</p><div class="rich-content">{}</div><div class="situational-dialogue-actions situational-dialogue-feedback-actions">{}</div></div>"#,
+                                r#"<div data-dialogue-result data-response-id="{}" hidden><div class="situational-dialogue-choice" data-dialogue-confirmed-answer><div>{}</div><span aria-hidden="true" data-dialogue-verdict="{}">{}</span></div><div class="situational-dialogue-feedback" data-dialogue-feedback data-response-action="{}"><div class="situational-dialogue-feedback-head"><span class="situational-dialogue-feedback-badge">{}</span></div><div class="rich-content">{}</div><div class="situational-dialogue-actions situational-dialogue-feedback-actions">{}</div></div></div>"#,
                                 escape_attr(&response.id),
-                                action,
+                                response.label,
+                                if action == "tryAgain" { "incorrect" } else { "correct" },
+                                if action == "tryAgain" { "&#10005;" } else { "&#10003;" },
+                                escape_attr(action),
                                 if action == "tryAgain" { "&Agrave; corriger" } else { "&Agrave; retenir" },
-                                if action == "tryAgain" { "Cette r&eacute;ponse appelle une nouvelle tentative." } else { "Cette r&eacute;ponse peut servir de point d&rsquo;appui pour continuer." },
                                 response.feedback_html.as_deref().unwrap_or("<p></p>"),
                                 action_button
                             )
@@ -25588,18 +25725,20 @@ fn render_scorm_block(
                         String::new()
                     } else {
                         format!(
-                            r#"<div class="situational-dialogue-choice-group"><div class="situational-dialogue-choice-list">{}</div><div class="situational-dialogue-choice-actions"><button class="continue" data-situational-dialogue-choice-confirm data-situational-dialogue-choice-confirm-main disabled type="button">Valider</button></div></div>"#,
+                            r#"<div class="situational-dialogue-choice-group" data-dialogue-choices><div class="situational-dialogue-choice-list">{}</div><div class="situational-dialogue-choice-actions"><button class="continue" data-situational-dialogue-choice-confirm data-situational-dialogue-choice-confirm-main disabled type="button">Valider</button></div></div>"#,
                             choices
                         )
                     };
-                    let decision = if is_conclusion {
-                        r#"<div class="situational-dialogue-decision"><div class="situational-dialogue-actions"><button class="continue" data-situational-dialogue-restart type="button">Recommencer</button></div></div>"#
+                    let decision = if is_introduction {
+                        r#"<div class="situational-dialogue-decision" data-dialogue-action-area data-dialogue-decisions><div class="situational-dialogue-actions"><button class="continue" data-situational-dialogue-continue type="button">Commencer</button></div></div>"#.to_string()
+                    } else if is_conclusion {
+                        r#"<div class="situational-dialogue-decision" data-dialogue-action-area data-dialogue-decisions><div class="situational-dialogue-actions"><button class="continue" data-situational-dialogue-restart type="button">Recommencer</button></div></div>"#
                             .to_string()
                     } else if choices.is_empty() && feedbacks.is_empty() && fallback_continue.is_empty() {
                         String::new()
                     } else {
                         format!(
-                            r#"<div class="situational-dialogue-decision">{}{}{}</div>"#,
+                            r#"<div class="situational-dialogue-decision" data-dialogue-action-area data-dialogue-decisions>{}{}{}</div>"#,
                             choice_group,
                             feedbacks,
                             fallback_continue
@@ -25612,19 +25751,24 @@ fn render_scorm_block(
                     };
                     let pose_refs_json = serde_json::to_string(&item.situational_dialogue_pose_refs)
                         .unwrap_or_else(|_| "{}".to_string());
-                    let content_card = if (is_introduction || is_conclusion)
+                    let content_card = if is_conclusion
                         && scorm_plain_text_from_html(&item.content_html).is_empty()
                         && !item.content_html.to_ascii_lowercase().contains("<img")
                     {
                         String::new()
                     } else {
                         format!(
-                            r#"<div class="situational-dialogue-card"><div class="rich-content situational-dialogue-content">{}</div></div>"#,
+                            r#"<div class="situational-dialogue-card" data-dialogue-card>{caption}<div class="rich-content situational-dialogue-content">{}</div></div>"#,
                             item.content_html
                         )
                     };
+                    let stage_content = if layout == "responses-below" {
+                        format!(r#"<div data-dialogue-scene><span aria-hidden="true" data-dialogue-decor></span>{character}{content_card}</div>{decision}"#)
+                    } else {
+                        format!(r#"{character}<div class="situational-dialogue-right" data-dialogue-content>{content_card}{decision}</div>"#)
+                    };
                     format!(
-                        r#"<article class="situational-dialogue-node" data-node-id="{}" data-situational-dialogue-node-type="{}" data-situational-dialogue-pose-refs='{}'{}><div class="{}">{}<div class="situational-dialogue-right">{}{}</div></div></article>"#,
+                        r#"<article class="situational-dialogue-node" data-node-id="{}" data-situational-dialogue-node-type="{}" data-situational-dialogue-pose-refs='{}'{}><div class="{}" data-dialogue-stage{}>{stage_content}</div></article>"#,
                         escape_attr(&item.id),
                         escape_attr(if is_conclusion {
                             "conclusion"
@@ -25636,9 +25780,7 @@ fn render_scorm_block(
                         escape_attr(&pose_refs_json),
                         if index == 0 { "" } else { " hidden" },
                         node_class,
-                        character,
-                        content_card,
-                        decision
+                        if is_introduction || is_conclusion { " data-dialogue-endpoint" } else { "" }
                     )
                 })
                 .collect::<Vec<_>>()
@@ -25677,14 +25819,54 @@ fn render_scorm_block(
             } else {
                 "0px"
             };
+            let button_color = block.button_background_color.as_deref()
+                .filter(|value| value.len() == 7 && value.starts_with('#') && value[1..].bytes().all(|byte| byte.is_ascii_hexdigit()));
+            let button_style = button_color.map(|color| format!(
+                ";--dialogue-action-bg:{color};--dialogue-action-text:{}",
+                if resolve_contrasting_text_color("#ffffff", color).eq_ignore_ascii_case("#ffffff") { "#ffffff" } else { "#000000" }
+            )).unwrap_or_default();
+            let banner_color = safe_css_color(block.situational_dialogue_banner_color.as_deref().unwrap_or(""), "");
+            let (banner_style, banner_custom) = if banner_color.is_empty() {
+                (String::new(), "")
+            } else {
+                (
+                    format!(
+                        ";--dialogue-banner-background:{banner_color};--dialogue-banner-text:{}",
+                        resolve_contrasting_text_color("#000000", &banner_color)
+                    ),
+                    " data-dialogue-banner-custom",
+                )
+            };
+            let title = safe_situational_dialogue_title(block.situational_dialogue_title_html.as_deref().unwrap_or(""));
+            let title = if scorm_plain_text_from_html(&title).is_empty() { String::new() } else {
+                format!(r#"<h3 class="situational-dialogue-banner-title">{title}</h3>"#)
+            };
+            let count = visible_items.len();
+            let dots = (0..count).map(|index| {
+                if index == 0 { r#"<i data-reached="true"></i>"# } else { "<i></i>" }
+            }).collect::<String>();
+            let first = usize::from(count > 0);
+            let banner = format!(
+                r#"<header class="situational-dialogue-banner" data-dialogue-banner{banner_custom}>{title}<div class="situational-dialogue-progress" role="status"><span data-dialogue-counter>{first} / {count}</span><span class="situational-dialogue-dots" data-dialogue-dots aria-hidden="true">{dots}</span></div></header>"#
+            );
+            let surface_shadow = if block.section_background_shadow.as_deref() == Some("on")
+                && custom_background_class.is_empty()
+            {
+                ";--activity-section-shadow:0 16px 34px rgba(18,58,122,.14)"
+            } else {
+                ""
+            };
+            let framing = block.situational_dialogue_framing.iter()
+                .filter(|value| value.layout == layout)
+                .collect::<Vec<_>>();
+            let framing_attr = if framing.is_empty() {
+                String::new()
+            } else {
+                format!(" data-dialogue-framing='{}'", escape_attr(&serde_json::to_string(&framing).unwrap_or_default()))
+            };
             format!(
-                r#"<article {} class="block situational-dialogue{}{}{}" data-paideia-situational-dialogue style="--situational-dialogue-radius:{}">{}</article>"#,
-                tracking_attrs,
-                custom_background_class,
-                background_image_class,
-                wide_class,
-                situational_dialogue_radius,
-                items
+                r#"<article {} class="block situational-dialogue{}{}{}" data-paideia-situational-dialogue data-dialogue-layout="{layout}"{framing_attr} style="--situational-dialogue-radius:{}{button_style}{banner_style}{surface_shadow}">{banner}{items}</article>"#,
+                tracking_attrs, custom_background_class, background_image_class, wide_class, situational_dialogue_radius
             )
         }
         "continue" | "course-exit" => {
@@ -25897,6 +26079,12 @@ fn render_scorm_block(
         _ => render_scorm_fallback_block(&tracking_attrs, &title, &summary),
     };
 
+    if block.block_type == "situational-dialogue"
+        && block.media_layout.as_deref() != Some("responses-below")
+    {
+        let surface = wrap_scorm_section_style(block, rendered);
+        return wrap_scorm_block_spacing(block, surface, activity_spacing_px);
+    }
     let spaced = wrap_scorm_block_spacing(block, rendered, activity_spacing_px);
     wrap_scorm_section_style(block, spaced)
 }
@@ -25923,6 +26111,17 @@ fn wrap_scorm_section_style(block: &PaideiaBlock, content: String) -> String {
 
     let mut style = String::new();
     let mut classes = vec!["block-section-style"];
+    if block.block_type == "image" && scorm_media_layout(block) == "page-width" {
+        classes.push("page-width-image-section");
+    }
+    if is_situational_dialogue {
+        if block.section_background_shadow.as_deref() == Some("on") {
+            classes.push("activity-section-shadow");
+        }
+        if block.panel_rounded.unwrap_or(true) && !block.section_background_wide.unwrap_or(false) {
+            style.push_str("--activity-section-radius:12px;");
+        }
+    }
     if block.block_type == "image-text" { classes.push("paideia-image-text-shell"); }
     if !is_situational_dialogue {
         if block.block_type == "image-text" && scorm_media_layout(block) == "image-center" {
@@ -26341,7 +26540,7 @@ fn situational_dialogue_character_pose_data_json(
                     "state": pose.state,
                     "usage": pose.usage,
                     "emotion": pose.emotion,
-                    "assetRef": asset_ref,
+                    "assetRef": normalize_scorm_asset_ref(asset_ref),
                     "src": scorm_asset_href(asset_ref)
                 }));
             }
@@ -26357,6 +26556,7 @@ fn situational_dialogue_character_pose_data_json(
                 "state": "question",
                 "usage": "question",
                 "emotion": item.emotion,
+                "assetRef": normalize_scorm_asset_ref(&asset_ref),
                 "src": scorm_asset_href(&asset_ref)
             }));
         }
@@ -26708,6 +26908,29 @@ fn normalize_scorm_course_exit_layout(value: Option<&str>) -> &'static str {
         "text-top-button-bottom" => "text-top-button-bottom",
         _ => "button-only",
     }
+}
+
+fn situational_dialogue_placeholder_name(value: &str) -> bool {
+    let value = value.trim().to_ascii_lowercase();
+    value.strip_prefix("personnage ").is_some_and(|suffix| {
+        let suffix = suffix.trim();
+        !suffix.is_empty() && suffix.bytes().all(|byte| byte.is_ascii_digit())
+    })
+}
+
+fn safe_situational_dialogue_title(value: &str) -> String {
+    ammonia::Builder::default()
+        .tags(["b", "strong", "i", "em", "u", "s", "span"].into_iter().collect())
+        .tag_attributes(HashMap::new())
+        .generic_attributes(["style", "data-paideia-font-id"].into_iter().collect())
+        .filter_style_properties([
+            "color", "font-family", "font-size", "font-style", "font-weight",
+            "line-height", "text-decoration", "text-decoration-line", "text-decoration-color",
+        ].into_iter().collect())
+        .clean(value)
+        .to_string()
+        .trim()
+        .to_string()
 }
 
 fn scorm_plain_text_from_html(value: &str) -> String {
@@ -28271,6 +28494,7 @@ mod html_package_tests {
             section_background_blur: None,
             section_background_position_y: None,
             section_background_rounded: None,
+            section_background_shadow: None,
             section_background_wide: None,
             section_background_height: None,
             divider_color: None,
@@ -28283,6 +28507,9 @@ mod html_package_tests {
             image360_hotspots: Vec::new(),
             activity_items: Vec::new(),
             situational_dialogue_characters: Vec::new(),
+            situational_dialogue_title_html: None,
+            situational_dialogue_banner_color: None,
+            situational_dialogue_framing: Vec::new(),
             attachment_files: Vec::new(),
             quiz: Some(QuizActivityData {
                 title_html: "<p>Quiz</p>".to_string(),
@@ -30412,6 +30639,7 @@ mod html_package_tests {
             None, // section_background_blur
             None, // section_background_position_y
             None, // section_background_rounded
+            None, // section_background_shadow
             None, // section_background_wide
             None, // section_background_height
             None, // divider_color
@@ -30435,6 +30663,7 @@ mod html_package_tests {
             None, // padding_offset
             Some(Vec::new()), // asset_refs
             None, // subtitle_refs
+            None, // situational_dialogue_banner_color
         ).expect("duplicate imported HTML");
         let copy = duplicated.project.course.modules[0].chapters[0].pages[0].blocks[1].clone();
         assert_ne!(copy.id, source_id);
@@ -31769,7 +31998,7 @@ mod html_package_tests {
     }
 
     #[test]
-    fn scorm_situational_dialogue_keeps_the_selected_tick_and_uses_one_primary_validate_button() {
+    fn scorm_situational_dialogue_separates_validated_result_and_question_controls() {
         let mut situational_dialogue = sample_quiz_block();
         situational_dialogue.block_type = "situational-dialogue".to_string();
         situational_dialogue.quiz = None;
@@ -31797,11 +32026,12 @@ mod html_package_tests {
             None,
         );
 
-        assert!(html.contains("class=\"situational-dialogue-choice-group\""));
-        assert!(html.contains("class=\"situational-dialogue-choice-validate\""));
-        assert!(html.contains("data-situational-dialogue-choice-confirm>&#10003;</span>"));
+        assert!(html.contains("class=\"situational-dialogue-choice-group\" data-dialogue-choices"));
+        assert!(html.contains("data-dialogue-result data-response-id=\"response-1\" hidden"));
+        assert!(html.contains("data-dialogue-verdict=\"correct\">&#10003;</span>"));
         assert!(html.contains("data-situational-dialogue-choice-confirm-main disabled type=\"button\">Valider</button>"));
-        assert!(html.contains("button.disabled = !getSituationalDialoguePendingResponseId(node)"));
+        assert!(html.contains(".situational-dialogue-choice-group[hidden], [data-dialogue-result][hidden]"));
+        assert!(html.contains(r#"[data-response-action="tryAgain"] .situational-dialogue-feedback-badge { background:rgba(184,66,44,.1); color:#8d271c; }"#));
         assert!(!html.contains("&rsaquo;"));
     }
 

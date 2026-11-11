@@ -247,6 +247,24 @@ const backgroundResolver: DesignerIntentResolver = {
   }
 };
 
+const situationalDialogueColorResolver: DesignerIntentResolver = {
+  id: "situational-dialogue-color",
+  capabilityIds: ["situational-dialogue-banner-color", "situational-dialogue-buttons-color"],
+  resolve: (context) => {
+    const { command, normalized, scope, chapterReference } = context;
+    const target = extractBackgroundActivityTarget(normalized);
+    if (target?.target !== "type" || target.activityType !== "situational-dialogue" || (target.activityTypes?.length ?? 0) > 1 || target.excludedActivityTypes?.length) return null;
+    if (!/\b(couleur|fond)\b/.test(normalized)) return null;
+    const banner = /\bbandeau\b/.test(normalized);
+    const buttons = /\b(boutons?|etiquettes?|cartouche)\b/.test(normalized);
+    if (!banner && !buttons) return null;
+    const color = extractSingleColor(command);
+    if ((banner && buttons) || color === "ambiguous") return { status: "ambiguous" };
+    const operations: DesignerActionOperation[] = [{ kind: "set-situational-dialogue-color", part: banner ? "banner" : "buttons", color: color ?? "", target: "type", activityType: "situational-dialogue" }];
+    return color ? ready(context, operations) : incomplete({ context: "activity-frame-appearance", scope, chapterReference, operations, pendingSlots: ["situational-dialogue-color"] });
+  }
+};
+
 const frameAppearanceResolver: DesignerIntentResolver = {
   id: "activity-frame-appearance",
   capabilityIds: [
@@ -277,7 +295,7 @@ const frameAppearanceResolver: DesignerIntentResolver = {
       && !/\b(voile|flou|large|image|hauteur)\b/.test(normalized)
       && (explicitlyNamesFrame || specializedBackgroundTarget);
     const requestsReset = /\b(reinitialise|reinitialiser|remets|remettre|retablis|retablir)\b/.test(normalized);
-    const reset = requestsReset && explicitlyNamesFrameObject;
+    const reset = requestsReset && (explicitlyNamesFrameObject || (target?.target === "type" && target.activityType === "situational-dialogue" && explicitlyNamesFrame));
     if (requestsReset && !reset) return null;
     if (!mentionsBorder && !mentionsAccent && !mentionsShadow && !mentionsRounded && !mentionsFrameBackground && !reset) return null;
 
@@ -589,7 +607,7 @@ const conceptResolver: DesignerIntentResolver = {
   }
 };
 
-export const DESIGNER_INTENT_RESOLVERS: DesignerIntentResolver[] = [resetResolver, navigationStyleCopyResolver, continueResolver, headerAppearanceResolver, dividerAppearanceResolver, frameAppearanceResolver, backgroundResolver, activityFontResolver, textAndSpacingResolver, videoResolver, conceptResolver];
+export const DESIGNER_INTENT_RESOLVERS: DesignerIntentResolver[] = [resetResolver, navigationStyleCopyResolver, situationalDialogueColorResolver, continueResolver, headerAppearanceResolver, dividerAppearanceResolver, frameAppearanceResolver, backgroundResolver, activityFontResolver, textAndSpacingResolver, videoResolver, conceptResolver];
 
 export function resolveDesignerIntentWithTrace(command: string, normalized: string, fallbackScope: DesignerActionScope) {
   const context: DesignerIntentContext = { command, normalized, ...scopeFrom(normalized, fallbackScope) };

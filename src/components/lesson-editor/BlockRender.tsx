@@ -69,7 +69,7 @@ import {
   isSupportedImageAsset,
   isSupportedVideoAsset
 } from "../../app/mediaAssets";
-import type { ActivityItem, AttachmentFile, PaideiaBlock, QuizActivityData } from "../../types/project";
+import type { ActivityItem, AttachmentFile, PaideiaBlock, QuizActivityData, SituationalDialogueFraming } from "../../types/project";
 import { buildAssetUrl, buildHtmlAssetBaseUrl } from "../../app/assetUrls";
 import { imageAltAttributes } from "../../lib/imageAccessibility";
 import { normalizeHexColor, resolveContextualTextColor } from "../../app/textContrast";
@@ -144,6 +144,7 @@ export function BlockRender({
   onImageOpen,
   onHeaderImagePositionChange,
   onSituationalDialogueBackgroundPositionChange,
+  onSituationalDialogueCharacterFramingChange,
   onAttachmentDownload,
   onActivityComplete,
   onQuizStart,
@@ -179,6 +180,7 @@ export function BlockRender({
   onCourseExit?: () => void;
   onImageOpen?: (src: string, alt: string, rounded?: boolean) => void;
   onHeaderImagePositionChange?: (blockId: string, value: number) => void;
+  onSituationalDialogueCharacterFramingChange?: (blockId: string, framing: SituationalDialogueFraming) => void;
   onSituationalDialogueBackgroundPositionChange?: (blockId: string, value: number) => void;
   onAttachmentDownload?: (block: PaideiaBlock, file: AttachmentFile) => void;
   onActivityComplete?: (blockId: string, result?: QuizResult) => void;
@@ -768,7 +770,9 @@ export function BlockRender({
         />
       );
     case "situational-dialogue": {
-      const SituationalDialogueItems = normalizeSituationalDialogueActivityItems(activityItems);
+      const SituationalDialogueItems = normalizeSituationalDialogueActivityItems(activityItems).filter(
+        (item) => item.nodeType !== "introduction" || item.situationalDialogueIntroductionVisible !== false
+      );
       const activeNode =
         SituationalDialogueItems.find((item) => item.id === activeSituationalDialogueNodeId) ??
         SituationalDialogueItems[0] ??
@@ -777,12 +781,11 @@ export function BlockRender({
       const responses = activeNode ? normalizeSituationalDialogueResponses(activeNode) : [];
       const pendingResponse = responses.find((response) => response.id === pendingSituationalDialogueResponseId) ?? null;
       const selectedResponse = responses.find((response) => response.id === selectedSituationalDialogueResponseId) ?? null;
-      const characterImageRef = resolveSituationalDialogueCharacterAssetRef(block, activeNode, selectedResponse);
-      const characterImage = buildAssetUrl(projectPath, characterImageRef);
       const hasSituationalDialogueCardContent = Boolean(stripHtmlForEditor(activeNode?.contentHtml || "").trim());
       const sectionStyle = blockSectionStyle(block, projectPath);
-      const SituationalDialogueStyle = hasBlockSectionStyle(block)
-        ? {
+      const SituationalDialogueStyle = {
+        "--activity-section-shadow": block.sectionBackgroundShadow === "on" ? "0 16px 34px rgba(18, 58, 122, 0.14)" : "none",
+        ...(hasBlockSectionStyle(block) ? {
             ...sectionStyle,
             ...situationalDialogueDecorStyle(block.sectionBackgroundColor),
             ["--situational-dialogue-background" as const]: block.sectionBackgroundColor || undefined,
@@ -795,8 +798,8 @@ export function BlockRender({
               ? "0, 0, 0"
               : "247, 249, 252",
             ["--situational-dialogue-bg-blur" as const]: `${Math.max(0, block.sectionBackgroundBlur ?? 0)}px`
-          }
-        : undefined;
+        } : {})
+      };
       const hasCustomSituationalDialogueBackground = Boolean(
         block.sectionBackgroundImageRef?.trim() || block.sectionBackgroundColor?.trim()
       );
@@ -805,10 +808,20 @@ export function BlockRender({
           authoringMode={authoringMode}
           activeNode={activeNode}
           activeNodeIndex={activeNodeIndex}
-          characterImage={characterImage}
+          resolveCharacterImage={(node, response) => {
+            const imageRef = resolveSituationalDialogueCharacterAssetRef(block, node, response) ?? null;
+            return { image: buildAssetUrl(projectPath, imageRef), imageRef };
+          }}
+          characterFraming={block.situationalDialogueFraming}
+          onCharacterFramingChange={onSituationalDialogueCharacterFramingChange
+            ? (value) => onSituationalDialogueCharacterFramingChange(block.id, value)
+            : undefined}
           situationalDialogueCharacters={block.situationalDialogueCharacters ?? []}
           displaySummary={displaySummary}
-          displayTitle={displayTitle}
+          bannerTitleHtml={block.situationalDialogueTitleHtml ?? ""}
+          bannerBackgroundColor={block.situationalDialogueBannerColor}
+          layout={block.mediaLayout ?? "classic"}
+          buttonBackgroundColor={block.buttonBackgroundColor}
           hasBackgroundImage={Boolean(block.sectionBackgroundImageRef)}
           backgroundPositionY={block.sectionBackgroundPositionY}
           hasCustomBackground={hasCustomSituationalDialogueBackground}

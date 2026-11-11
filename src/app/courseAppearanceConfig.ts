@@ -88,6 +88,9 @@ export function resolveBlockCourseAppearance(
       : block.imageRounded ?? appearance.roundedCorners,
     panelRounded: inheritedPanelValue(block, block.panelRounded, appearance.roundedCorners, "rounded"),
     panelShadow: inheritedPanelValue(block, block.panelShadow, appearance.shadows, "shadow"),
+    sectionBackgroundShadow: block.sectionBackgroundShadow === "on" || block.sectionBackgroundShadow === "off"
+      ? block.sectionBackgroundShadow
+      : appearance.shadows ? "on" : "off",
     activityItems: (block.activityItems ?? []).map((item) => ({
       ...item,
       imageRounded: item.imageRounded ?? appearance.roundedCorners

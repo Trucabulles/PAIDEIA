@@ -401,7 +401,13 @@
         "entraînement comportemental",
         "mise en contexte"
       ],
-      "howItWorks": "Les choix de l’apprenant déterminent la suite du dialogue et les retours affichés."
+      "howItWorks": "Les choix de l’apprenant déterminent la suite du dialogue et les retours affichés.",
+      "howTo": [
+        "Dans Activité, renseignez le titre du bandeau sur une ligne et choisissez les personnages. Noor et Véronique sont disponibles dans la banque par défaut.",
+        "Dans Apparence, choisissez Classique, Réponses en bas ou Portrait compact. Le choix conserve le contenu et les embranchements.",
+        "Personnalisez séparément le fond du bandeau et le fond commun des boutons et du cartouche. Couleur par défaut rétablit les couleurs du thème.",
+        "En Réponses en bas et Portrait compact, double-cliquez sur le personnage et faites glisser sa pose pour ajuster le cadrage. En Portrait compact, la molette permet aussi de zoomer ou dézoomer."
+      ]
     },
     {
       "id": "activity.quiz",

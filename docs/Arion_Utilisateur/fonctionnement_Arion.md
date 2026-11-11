@@ -1,4 +1,4 @@
-<!-- arion:meta {"sections":{"Arion — Aidant de PAIDEIA":{"aliases":[],"keywords":[]},"Ouvrir Arion":{"aliases":[],"keywords":[]},"Formuler une demande":{"aliases":[],"keywords":[]},"Changer de contexte par une commande":{"aliases":["commandes de base d'Arion","contexte d'Arion"],"keywords":["aide","help","actions en masse","commandes","modifications"]},"Suggestions et validation":{"aliases":[],"keywords":[]},"Enchaîner plusieurs actions":{"aliases":[],"keywords":[]},"Annuler une modification":{"aliases":[],"keywords":[]},"Demander de l’aide":{"aliases":[],"keywords":[]},"Actions fréquentes":{"aliases":[],"keywords":[]},"Échanges simples avec Arion":{"aliases":[],"keywords":[]},"En cas de demande non reconnue":{"aliases":[],"keywords":[]},"Résumé du fonctionnement":{"aliases":[],"keywords":[]}}} -->
+<!-- arion:meta {"sections":{"Arion — Aidant de PAIDEIA":{"aliases":[],"keywords":[]},"Ouvrir Arion":{"aliases":[],"keywords":[]},"Formuler une demande":{"aliases":[],"keywords":[]},"Changer de contexte par une commande":{"aliases":["commandes de base d'Arion","contexte d'Arion"],"keywords":["aide","help","actions en masse","commandes","modifications"]},"Suggestions et validation":{"aliases":[],"keywords":[]},"Enchaîner plusieurs actions":{"aliases":[],"keywords":[]},"Annuler une modification":{"aliases":[],"keywords":[]},"Demander de l’aide":{"aliases":[],"keywords":[]},"Actions fréquentes":{"aliases":[],"keywords":[]},"Échanges simples avec Arion":{"aliases":[],"keywords":[]},"En cas de demande non reconnue":{"aliases":[],"keywords":[]},"Résumé du fonctionnement":{"aliases":[],"keywords":[]},"Aller à une activité par son identifiant":{"aliases":["ouvrir une activité par ID","aller à un ID","ouvrir l’identifiant d’une activité","naviguer depuis le PDF de relecture"],"keywords":["activité","identifiant unique","navigation","relecture"]}}} -->
 
 # Arion — Aidant de PAIDEIA
 
@@ -247,6 +247,12 @@ la réutiliser.
 
 Les actions fréquentes servent de raccourcis : elles ne sont pas exécutées
 automatiquement et passent toujours par l’aperçu et la confirmation habituels.
+
+## Aller à une activité par son identifiant
+
+Dans la leçon ouverte, saisissez « Ouvre l’ID abc12345 » ou « Va à abc12345 » dans Arion en remplaçant l’exemple par l’identifiant de l’activité. Vous pouvez le retrouver dans le PDF de relecture. PAIDEIA ouvre le chapitre correspondant et se place sur l’activité, comme depuis une observation.
+
+Cette commande est disponible en français.
 
 ## Échanges simples avec Arion
 

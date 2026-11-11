@@ -497,6 +497,15 @@ pub struct SituationalDialogueResponse {
     pub next_node_id: Option<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SituationalDialogueFraming {
+    pub layout: String,
+    pub asset: String,
+    pub x: f64,
+    pub y: f64,
+    pub zoom: f64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SituationalDialogueCharacterPose {
     pub id: String,
@@ -914,6 +923,8 @@ pub struct ActivityItem {
     pub kind: Option<String>,
     #[serde(default, rename = "nodeType")]
     pub node_type: Option<String>,
+    #[serde(default, rename = "situationalDialogueIntroductionVisible", skip_serializing_if = "Option::is_none")]
+    pub situational_dialogue_introduction_visible: Option<bool>,
     #[serde(default, rename = "characterId")]
     pub character_id: Option<String>,
     #[serde(default, rename = "characterName")]
@@ -1161,6 +1172,8 @@ pub struct PaideiaBlock {
     pub section_background_position_y: Option<f64>,
     #[serde(default, rename = "sectionBackgroundRounded")]
     pub section_background_rounded: Option<bool>,
+    #[serde(default, rename = "sectionBackgroundShadow", skip_serializing_if = "Option::is_none")]
+    pub section_background_shadow: Option<String>,
     #[serde(default, rename = "sectionBackgroundWide")]
     pub section_background_wide: Option<bool>,
     #[serde(default, rename = "sectionBackgroundHeight")]
@@ -1185,6 +1198,12 @@ pub struct PaideiaBlock {
     pub activity_items: Vec<ActivityItem>,
     #[serde(default, rename = "situationalDialogueCharacters")]
     pub situational_dialogue_characters: Vec<SituationalDialogueCharacter>,
+    #[serde(default, rename = "situationalDialogueTitleHtml", skip_serializing_if = "Option::is_none")]
+    pub situational_dialogue_title_html: Option<String>,
+    #[serde(default, rename = "situationalDialogueBannerColor", skip_serializing_if = "Option::is_none")]
+    pub situational_dialogue_banner_color: Option<String>,
+    #[serde(default, rename = "situationalDialogueFraming", skip_serializing_if = "Vec::is_empty")]
+    pub situational_dialogue_framing: Vec<SituationalDialogueFraming>,
     #[serde(default, rename = "attachmentFiles")]
     pub attachment_files: Vec<AttachmentFile>,
     #[serde(default)]

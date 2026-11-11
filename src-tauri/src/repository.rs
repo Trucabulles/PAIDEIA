@@ -222,6 +222,7 @@ fn migrate_legacy_rise_heading_blocks(course: &mut PaideiaCourse) -> bool {
         block.section_background_wide = None;
         block.section_background_height = None;
         block.section_background_rounded = None;
+        block.section_background_shadow = None;
         block.section_background_position_y = None;
         migrated = true;
     }

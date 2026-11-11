@@ -107,6 +107,23 @@ const project = {
 const semanticTypographyProject = structuredClone(project);
 semanticTypographyProject.course.modules[0].chapters[0].pages[0].blocks.find((block) => block.id === "text-a").contentHtml = '<h2 style="font-size:30px;color:#E53935">Titre</h2><p style="font-size:14px;color:#1D7DDC"><strong>Texte courant</strong></p>';
 const semanticTypographyIntent = expectReady("Passe la taille de la police de toutes les activités Texte à 18 px", ["set-text-activity-font-size"]);
+const dialogueProject = structuredClone(project);
+const dialogueBlocks = dialogueProject.course.modules[0].chapters[0].pages[0].blocks;
+dialogueBlocks.push({ id: "scenario-a", type: "situational-dialogue", title: "Scénario A" });
+for (const [phrase, kind, property, expected] of [
+  ["Change la couleur du bandeau des mises en situation en rouge", "set-situational-dialogue-color", "situationalDialogueBannerColor", "#E53935"],
+  ["Change la couleur des boutons Continuer des mises en situation en rouge", "set-situational-dialogue-color", "situationalDialogueButtonsColor", "#E53935"],
+  ["Active l’ombre portée des mises en situation", "set-activity-frame-shadow", "sectionBackgroundShadow", "true"]
+]) {
+  const { intent } = expectReady(phrase, [kind]);
+  const { targets } = engine.previewDesignerAction(dialogueProject, intent);
+  assert.deepEqual(targets.map(({ blockId, property, previousUnset, value }) => [blockId, property, previousUnset, value]), [["scenario-a", property, true, expected]]);
+}
+const dialogueColorQuestion = engine.parseDesignerConversationTurn("Change la couleur du bandeau des mises en situation");
+assert.equal(dialogueColorQuestion.question, "situational-dialogue-color");
+const dialogueColorAnswer = engine.parseDesignerConversationTurn("rouge", dialogueColorQuestion.draft);
+assert.equal(dialogueColorAnswer.intent.operations[0].part, "banner");
+
 const semanticTypographyTarget = engine.previewDesignerAction(semanticTypographyProject, semanticTypographyIntent.intent).targets.find((target) => target.blockId === "text-a");
 assert.match(semanticTypographyTarget.value, /<h2 style="font-size:30px;color:#E53935">Titre<\/h2>/u, "La taille et la couleur des titres doivent être conservées");
 assert.match(semanticTypographyTarget.value, /<p style="color:#1D7DDC;font-size:18px">/u, "Seule la taille du texte courant doit être normalisée");
@@ -663,11 +680,11 @@ for (const [query, expectedId] of [
 const characterHelp = resolveDesignerHelp("Aide personnages");
 assert.ok(characterHelp?.relatedTopics?.length, "Character help must offer genuinely related follow-up topics");
 assert.ok(
-  characterHelp.relatedTopics.every((topic) => /(?:mise-en-situation|ressources-banques-et-assistant)/u.test(topic.id)),
+  characterHelp.relatedTopics.every((topic) => topic.id.includes("mise-en-situation") || topic.id === "documentation:ressources-banques-et-glossaire-2"),
   "Character help follow-ups must stay within character resources and the associated activity"
 );
 assert.ok(
-  characterHelp.relatedTopics.every((topic) => !/ffmpeg|whisper|questions|glossaire/u.test(topic.id)),
+  characterHelp.relatedTopics.every((topic) => !/ffmpeg|whisper|questions|glossaire/iu.test(topic.title)),
   "Character help must exclude unrelated modules and resource banks"
 );
 assert.deepEqual(
@@ -675,7 +692,7 @@ assert.deepEqual(
   [
     "documentation:activite-mise-en-situation-3",
     "documentation:activite-mise-en-situation-7",
-    "documentation:ressources-banques-et-assistant-2"
+    "documentation:ressources-banques-et-glossaire-2"
   ],
   "Generic help vocabulary must not pull unrelated troubleshooting sections into character results"
 );

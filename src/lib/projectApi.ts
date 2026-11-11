@@ -25,6 +25,7 @@ import type {
   QuestionBankResource,
   ReferenceBankResource,
   SituationalDialogueCharacter,
+  SituationalDialogueFraming,
   GlossaryAssistantResource,
   UpdateBlockInput,
   UpdateChapterInput,
@@ -863,6 +864,15 @@ export async function updateBlock(input: UpdateBlockInput): Promise<PaideiaWorks
   return await invokeCommand<PaideiaWorkspaceState>("update_block", {
     ...input
   });
+}
+
+export async function updateSituationalDialogueFraming(
+  projectPath: string,
+  pageId: string,
+  blockId: string,
+  framing: SituationalDialogueFraming
+): Promise<PaideiaWorkspaceState> {
+  return invokeCommand("update_situational_dialogue_framing", { projectPath, pageId, blockId, framing });
 }
 
 export async function applyDesignerBlockChanges(

@@ -18,6 +18,23 @@
   align-items: end;
 }
 
+.introductionCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+}
+
+.introductionCheckbox > input[type="checkbox"] {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent, #123a7a);
+}
+
 .poseSelect {
   display: grid;
   gap: 6px;

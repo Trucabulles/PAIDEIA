@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "PAIDEIA",
-  "version": "1.1.26310",
+  "version": "1.1.26315",
   "identifier": "com.paideia.app",
   "build": {
     "frontendDist": "../dist",

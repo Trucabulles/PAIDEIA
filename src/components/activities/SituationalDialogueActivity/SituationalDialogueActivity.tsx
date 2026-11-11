@@ -1,20 +1,24 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { DialogueCharacter } from "./DialogueCharacter";
 import { SelectionRadio } from "../../SelectionRadio";
 import type { ActivityItem, SituationalDialogueCharacter, SituationalDialogueResponse } from "../../../types/project";
 import type { SituationalDialogueActivityProps } from "./types";
 import { useI18n } from "../../../i18n/react";
 import "./SituationalDialogueActivity.css";
+import "./dialogueBanner.css";
+import { normalizeHexColor, resolveContrastingTextColor } from "../../../app/textContrast";
+import { dialogueTitleHtml } from "./SituationalDialogueAppearance";
 import styles from "./SituationalDialogueActivity.module.css";
 
 type SituationalDialogueLayoutStyle = CSSProperties & {
-  "--situational-dialogue-stable-min-height"?: string;
+  "--dialogue-reference-height"?: string;
   "--situational-dialogue-bleed-left"?: string;
   "--situational-dialogue-bleed-width"?: string;
 };
 
 function hasNodeContent(node: ActivityItem | null | undefined) {
-  return Boolean((node?.contentHtml ?? "").replace(/<[^>]*>/g, "").trim());
+  return /<img\b/i.test(node?.contentHtml ?? "") || Boolean((node?.contentHtml ?? "").replace(/<[^>]*>|&nbsp;|&#160;/gi, "").trim());
 }
 
 function isPlaceholderCharacterName(value?: string | null) {
@@ -41,7 +45,10 @@ function findSituationalDialogueCharacter(characters: SituationalDialogueCharact
 
 export function SituationalDialogueActivity({
   authoringMode = false,
-  displayTitle,
+  bannerTitleHtml,
+  bannerBackgroundColor,
+  layout,
+  buttonBackgroundColor,
   displaySummary,
   items,
   activeNode,
@@ -49,7 +56,9 @@ export function SituationalDialogueActivity({
   responses,
   pendingResponse,
   selectedResponse,
-  characterImage,
+  resolveCharacterImage,
+  characterFraming,
+  onCharacterFramingChange,
   situationalDialogueCharacters,
   hasCustomBackground,
   hasBackgroundImage,
@@ -75,6 +84,7 @@ export function SituationalDialogueActivity({
   const backgroundPositionRef = useRef(normalizedBackgroundPosition);
   const backgroundDragRef = useRef<{ pointerId: number; startY: number; startPosition: number; height: number } | null>(null);
   const [stableStageHeight, setStableStageHeight] = useState(0);
+  const panoramic = layout === "responses-below";
   const canPositionBackground = authoringMode && hasBackgroundImage && Boolean(onBackgroundPositionChange);
   const blockClassName = [
     styles.block,
@@ -85,17 +95,21 @@ export function SituationalDialogueActivity({
   ]
     .filter(Boolean)
     .join(" ");
-  const stageClassName = [
-    styles.stage,
-    characterImage ? styles.hasCharacter : styles.noCharacter
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const buttonColor = normalizeHexColor(buttonBackgroundColor);
+  const bannerColor = normalizeHexColor(bannerBackgroundColor);
   const SituationalDialogueStyle = {
+    ...(buttonColor ? {
+      "--dialogue-action-bg": buttonColor,
+      "--dialogue-action-text": resolveContrastingTextColor("#ffffff", buttonColor) === "#FFFFFF" ? "#fff" : "#000"
+    } : {}),
+    ...(bannerColor ? {
+      "--dialogue-banner-background": bannerColor,
+      "--dialogue-banner-text": resolveContrastingTextColor("#000000", bannerColor)
+    } : {}),
     ...style,
     "--situational-dialogue-bg-position-y": `${backgroundPosition}%`,
     ...(stableStageHeight > 0
-      ? { "--situational-dialogue-stable-min-height": `${stableStageHeight}px` }
+      ? { "--dialogue-reference-height": `${stableStageHeight}px` }
       : {})
   } as SituationalDialogueLayoutStyle;
 
@@ -171,9 +185,6 @@ export function SituationalDialogueActivity({
         .map((node) => Math.ceil(node.getBoundingClientRect().height))
         .filter((height) => height > 0);
       const nextHeight = Math.max(0, ...heights);
-      if (!nextHeight) {
-        return;
-      }
       setStableStageHeight((current) => (Math.abs(current - nextHeight) > 1 ? nextHeight : current));
     };
 
@@ -192,7 +203,7 @@ export function SituationalDialogueActivity({
       observer.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [characterImage, displaySummary, displayTitle, items, normalizeHtml, situationalDialogueCharacters]);
+  }, [displaySummary, bannerTitleHtml, layout, items, normalizeHtml, resolveCharacterImage]);
 
   const goToNextNode = (response?: SituationalDialogueResponse | null) => {
     const explicitTarget = response?.nextNodeId
@@ -222,32 +233,46 @@ export function SituationalDialogueActivity({
     onPendingResponseChange("");
   };
 
-  const activeCharacter = findSituationalDialogueCharacter(situationalDialogueCharacters, activeNode);
-  const nodeCharacterLabel = (activeNode?.characterName ?? "").trim();
-  const characterLabel =
-    nodeCharacterLabel && !isPlaceholderCharacterName(nodeCharacterLabel)
-      ? nodeCharacterLabel
-      : activeCharacter?.name && !isPlaceholderCharacterName(activeCharacter.name)
-        ? activeCharacter.name.trim()
-        : "";
-  const characterRole = activeNode?.characterRole?.trim() || activeCharacter?.role?.trim() || "";
-  const characterAltText = activeCharacter?.description?.trim() ?? "";
-  const showCharacterCaption = activeCharacter?.showNameRole ?? true;
-  const hasCharacterCaption = showCharacterCaption && Boolean(characterLabel || characterRole);
+  const renderCharacter = (node: ActivityItem, image: string, imageRef: string | null, measure: boolean) => {
+    const character = findSituationalDialogueCharacter(situationalDialogueCharacters, node);
+    const asset = imageRef?.trim().replace(/^(?:\.\/)+/, "").replace(/^(?:assets\/)+/, "").replace(/\\/g, "/");
+    const adjustableLayout = layout === "responses-below" || layout === "compact-portrait" ? layout : null;
+    const framing = characterFraming?.find(value => value.layout === adjustableLayout && value.asset === asset);
+    return (
+      <DialogueCharacter
+        key={layout + ":" + asset}
+        src={image}
+        alt={character?.description?.trim() ?? ""}
+        layout={layout}
+        framing={framing}
+        onCommit={authoringMode && !measure && adjustableLayout && asset && onCharacterFramingChange
+          ? (value) => onCharacterFramingChange({ ...value, layout: adjustableLayout, asset })
+          : undefined}
+        onStart={() => {
+          backgroundDragRef.current = null;
+          setBackgroundPositioning(false);
+        }}
+      />
+    );
+  };
 
-  const renderCharacter = () =>
-    characterImage ? (
-      <figure className={styles.character}>
-        <span aria-hidden="true" className={styles.characterBackdrop} />
-        <img alt={characterAltText} src={characterImage} />
-        {hasCharacterCaption ? (
-          <figcaption>
-            {characterLabel ? <strong>{characterLabel}</strong> : null}
-            {characterRole ? <span>{characterRole}</span> : null}
-          </figcaption>
-        ) : null}
-      </figure>
-    ) : null;
+  const renderCaption = (node: ActivityItem) => {
+    const activeCharacter = findSituationalDialogueCharacter(situationalDialogueCharacters, node);
+    const nodeCharacterLabel = (node.characterName ?? "").trim();
+    const characterLabel =
+      nodeCharacterLabel && !isPlaceholderCharacterName(nodeCharacterLabel)
+        ? nodeCharacterLabel
+        : activeCharacter?.name && !isPlaceholderCharacterName(activeCharacter.name)
+          ? activeCharacter.name.trim()
+          : "";
+    const characterRole = node.characterRole?.trim() || activeCharacter?.role?.trim() || "";
+    const hasCharacterCaption = activeCharacter?.showNameRole !== false && Boolean(characterLabel || characterRole);
+
+    return hasCharacterCaption ? <div className={styles.caption}>
+      {characterLabel ? <strong>{characterLabel}</strong> : null}
+      {characterRole ? <span>{characterRole}</span> : null}
+    </div> : null;
+  };
 
   const renderDecision = (
     node: ActivityItem,
@@ -257,7 +282,7 @@ export function SituationalDialogueActivity({
     if (node.nodeType === "introduction") {
       return (
         <div className={`${styles.actions} ${styles.feedbackActions} ${styles.startActions}`}>
-          <button className="primary-pill" onClick={() => goToNextNode()} type="button">
+          <button className={`primary-pill ${styles.primaryAction}`} onClick={() => goToNextNode()} type="button">
             {t("common.start")}
           </button>
         </div>
@@ -267,7 +292,7 @@ export function SituationalDialogueActivity({
     if (node.nodeType === "conclusion") {
       return (
         <div className={`${styles.actions} ${styles.feedbackActions} ${styles.startActions}`}>
-          <button className="primary-pill" onClick={restart} type="button">
+          <button className={`primary-pill ${styles.primaryAction}`} onClick={restart} type="button">
             {t("common.restart", undefined, "Recommencer")}
           </button>
         </div>
@@ -275,39 +300,45 @@ export function SituationalDialogueActivity({
     }
 
     if (responseState) {
+      const incorrect = responseState.action === "tryAgain";
       return (
-        <div className={styles.feedback} data-response-action={responseState.action ?? "continue"}>
-          <div className={styles.feedbackHead}>
-            <span className={styles.feedbackBadge}>
-              {responseState.action === "tryAgain" ? t("situationalDialogue.toCorrect", undefined, "À corriger") : t("situationalDialogue.toRemember", undefined, "À retenir")}
+        <div data-dialogue-result>
+          <div className={styles.choice} data-dialogue-confirmed-answer>
+            <div dangerouslySetInnerHTML={{ __html: normalizeHtml(responseState.label || "") }} />
+            <span data-dialogue-verdict={incorrect ? "incorrect" : "correct"} aria-hidden="true">
+              {incorrect ? "✕" : "✓"}
             </span>
           </div>
-          <p className={styles.feedbackSummary}>
-            {responseState.action === "tryAgain" ? "" : ""}
-          </p>
-          <div
-            className="rich-content"
-            dangerouslySetInnerHTML={{
-              __html: normalizeHtml(responseState.feedbackHtml || "<p></p>")
-            }}
-          />
-          <div className={`${styles.actions} ${styles.feedbackActions}`}>
-            {responseState.action === "tryAgain" ? (
-              <button
-                className="ghost-pill"
-                onClick={() => {
-                  onSelectedResponseChange("");
-                  onPendingResponseChange("");
-                }}
-                type="button"
-              >
-                {t("situationalDialogue.tryAgain", undefined, "Essayer encore")}
-              </button>
-            ) : (
-              <button className="primary-pill" onClick={() => goToNextNode(responseState)} type="button">
-                {t("common.continue", undefined, "Continuer")}
-              </button>
-            )}
+          <div className={styles.feedback} data-dialogue-feedback data-response-action={responseState.action ?? "continue"}>
+            <div className={styles.feedbackHead}>
+              <span className={styles.feedbackBadge}>
+                {responseState.action === "tryAgain" ? t("situationalDialogue.toCorrect", undefined, "À corriger") : t("situationalDialogue.toRemember", undefined, "À retenir")}
+              </span>
+            </div>
+            <div
+              className="rich-content"
+              dangerouslySetInnerHTML={{
+                __html: normalizeHtml(responseState.feedbackHtml || "<p></p>")
+              }}
+            />
+            <div className={`${styles.actions} ${styles.feedbackActions}`}>
+              {responseState.action === "tryAgain" ? (
+                <button
+                  className="ghost-pill"
+                  onClick={() => {
+                    onSelectedResponseChange("");
+                    onPendingResponseChange("");
+                  }}
+                  type="button"
+                >
+                  {t("situationalDialogue.tryAgain", undefined, "Essayer encore")}
+                </button>
+              ) : (
+                <button className={`primary-pill ${styles.primaryAction}`} onClick={() => goToNextNode(responseState)} type="button">
+                  {t("common.continue", undefined, "Continuer")}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       );
@@ -315,7 +346,7 @@ export function SituationalDialogueActivity({
 
     if (nodeResponses.length) {
       return (
-        <div className={styles.choiceGroup}>
+        <div className={styles.choiceGroup} data-dialogue-choices>
           <div className={styles.choiceList}>
             {nodeResponses.map((response) => {
               const isPending = pendingResponse?.id === response.id;
@@ -336,24 +367,13 @@ export function SituationalDialogueActivity({
                   >
                     <span dangerouslySetInnerHTML={{ __html: normalizeHtml(response.label || "") }} />
                   </button>
-                  <span
-                    aria-hidden="true"
-                    className={styles.choiceValidate}
-                    onClick={() => {
-                      if (isPending) {
-                        onSelectedResponseChange(response.id);
-                      }
-                    }}
-                  >
-                    ✓
-                  </span>
                 </div>
               );
             })}
           </div>
           <div className={styles.choiceActions}>
             <button
-              className="primary-pill"
+              className={`primary-pill ${styles.primaryAction}`}
               disabled={!pendingResponse}
               onClick={() => {
                 if (pendingResponse) {
@@ -371,7 +391,7 @@ export function SituationalDialogueActivity({
 
     return (
       <div className={styles.actions}>
-        <button className="primary-pill" onClick={() => goToNextNode(null)} type="button">
+        <button className={`primary-pill ${styles.primaryAction}`} onClick={() => goToNextNode(null)} type="button">
           {t("common.continue", undefined, "Continuer")}
         </button>
       </div>
@@ -384,10 +404,7 @@ export function SituationalDialogueActivity({
     responseState: SituationalDialogueResponse | null,
     measure = false
   ) => {
-    const shouldShowContentCard =
-      node.nodeType === "introduction" || node.nodeType === "conclusion"
-        ? hasNodeContent(node)
-        : true;
+    const shouldShowContentCard = node.nodeType !== "conclusion" || hasNodeContent(node);
     const rightClassName = [
       styles.right,
       shouldShowContentCard ? "" : styles.noCardGap
@@ -395,27 +412,52 @@ export function SituationalDialogueActivity({
       .filter(Boolean)
       .join(" ");
 
+    const { image, imageRef } = resolveCharacterImage(node, responseState);
+    const character = image ? renderCharacter(node, image, imageRef, measure) : null;
+    const stageClassName = `${styles.stage} ${character ? styles.hasCharacter : styles.noCharacter}`;
+    const card = shouldShowContentCard ? (
+      <div className={styles.card} data-dialogue-card>
+        {renderCaption(node)}
+        <div
+          className={`rich-content ${styles.content}`}
+          dangerouslySetInnerHTML={{ __html: normalizeHtml(node.contentHtml || "<p></p>") }}
+        />
+      </div>
+    ) : null;
+    const decision = <div className={styles.decision} data-dialogue-action-area data-dialogue-decisions={panoramic || undefined}>
+      {renderDecision(node, nodeResponses, responseState)}
+    </div>;
+
     return (
-      <article className={stageClassName} data-situational-dialogue-measure-stage={measure ? "true" : undefined}>
-        {renderCharacter()}
-        <div className={rightClassName}>
-          {shouldShowContentCard ? (
-          <div className={styles.card}>
-            <div
-              className={`rich-content ${styles.content}`}
-              dangerouslySetInnerHTML={{
-                __html: normalizeHtml(node.contentHtml || "<p></p>")
-              }}
-            />
-          </div>
-          ) : null}
-          <div className={styles.decision}>{renderDecision(node, nodeResponses, responseState)}</div>
-        </div>
+      <article
+        className={stageClassName}
+        data-dialogue-stage
+        data-dialogue-endpoint={node.nodeType === "introduction" || node.nodeType === "conclusion" || undefined}
+        data-situational-dialogue-measure-stage={measure ? "true" : undefined}
+      >
+        {panoramic ? (
+          <>
+            <div data-dialogue-scene>
+              <span aria-hidden="true" data-dialogue-decor />
+              {character}
+              {card}
+            </div>
+            {decision}
+          </>
+        ) : (
+          <>
+            {character}
+            <div className={rightClassName} data-dialogue-content>{card}{decision}</div>
+          </>
+        )}
       </article>
     );
   };
 
   const measurementStates = items.flatMap((item) => {
+    if (item.nodeType === "introduction" || item.nodeType === "conclusion") {
+      return [];
+    }
     const itemResponses = item.responses ?? [];
     return [
       { item, response: null },
@@ -426,9 +468,10 @@ export function SituationalDialogueActivity({
   return (
     <div
       className={`${blockClassName}${backgroundPositioning ? ` ${styles.backgroundPositioningRoot}` : ""}`}
+      data-dialogue-layout={layout}
       onDoubleClick={canPositionBackground ? (event) => {
         const target = event.target as HTMLElement;
-        if (target.closest("button, a, input, label, textarea, select, summary, [contenteditable='true'], [role='button'], [role='radio']")) {
+        if (target.closest("[data-dialogue-character-positionable], [data-dialogue-decisions], [data-dialogue-banner], button, a, input, label, textarea, select, summary, [contenteditable='true'], [role='button'], [role='radio']")) {
           return;
         }
         event.preventDefault();
@@ -440,12 +483,13 @@ export function SituationalDialogueActivity({
       } : undefined}
       onPointerDown={backgroundPositioning ? (event) => {
         const target = event.target as HTMLElement;
-        if (target.closest("button, a, input, label, textarea, select, summary, [contenteditable='true'], [role='button'], [role='radio']")) {
+        if (target.closest("[data-dialogue-character-positionable], [data-dialogue-decisions], [data-dialogue-banner], button, a, input, label, textarea, select, summary, [contenteditable='true'], [role='button'], [role='radio']")) {
           backgroundDragRef.current = null;
           setBackgroundPositioning(false);
           return;
         }
-        const height = Math.max(1, event.currentTarget.getBoundingClientRect().height);
+        const surface = event.currentTarget.querySelector("[data-dialogue-scene]") ?? event.currentTarget;
+        const height = Math.max(1, surface.getBoundingClientRect().height);
         event.currentTarget.setPointerCapture(event.pointerId);
         backgroundDragRef.current = {
           pointerId: event.pointerId,
@@ -474,19 +518,30 @@ export function SituationalDialogueActivity({
       ref={blockRef}
       style={SituationalDialogueStyle}
     >
-      <span aria-hidden="true" className={styles.backgroundLayer} />
-      {displayTitle ? <h3 className="export-block-title">{displayTitle}</h3> : null}
+      {!panoramic && <span aria-hidden="true" className={styles.backgroundLayer} />}
+      <header data-dialogue-banner data-dialogue-banner-custom={Boolean(bannerColor) || undefined}>
+        {bannerTitleHtml ? <h3 dangerouslySetInnerHTML={{ __html: dialogueTitleHtml(bannerTitleHtml) }} /> : null}
+        <div className={styles.progress} role="status">
+          <span>{Math.max(0, activeNodeIndex + 1)} / {items.length}</span>
+          <span className={styles.progressDots} data-dialogue-dots aria-hidden="true">
+            {items.map((item, index) => <i key={item.id} data-reached={index <= activeNodeIndex} />)}
+          </span>
+        </div>
+      </header>
       {displaySummary ? <p className="export-block-copy">{displaySummary}</p> : null}
       {activeNode ? renderStage(activeNode, responses, selectedResponse) : (
         <p className="export-block-copy">{t("situationalDialogue.emptyEditor", undefined, "Ajoutez une situation dans l’éditeur.")}</p>
       )}
-      <div aria-hidden="true" className={styles.measurement} ref={measurementRef}>
+      {measurementStates.length > 0 ? <div aria-hidden="true" className={styles.measurement} ref={(root) => {
+        measurementRef.current = root;
+        if (root) root.inert = true;
+      }}>
         {measurementStates.map(({ item, response }, index) => (
           <div key={`${item.id}-${response?.id ?? "default"}-${index}`}>
             {renderStage(item, item.responses ?? [], response, true)}
           </div>
         ))}
-      </div>
+      </div> : null}
     </div>
   );
 }

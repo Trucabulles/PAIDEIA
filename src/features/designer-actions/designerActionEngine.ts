@@ -80,6 +80,9 @@ function matchesAppearanceTarget(block: PaideiaBlock, title: string, target: App
 }
 
 function frameAppearanceStorage(block: PaideiaBlock, property: "background-color" | "rounded" | "shadow") {
+  if (block.type === "situational-dialogue" && property === "shadow") {
+    return { property: "sectionBackgroundShadow" as const, value: String(block.sectionBackgroundShadow === "on"), unset: block.sectionBackgroundShadow !== "on" && block.sectionBackgroundShadow !== "off", label: "Ombre portée" };
+  }
   if (block.type === "matching") {
     if (property === "background-color") return { property: "matchingLabelBackgroundColor" as const, value: block.matching?.labelAppearance.backgroundColor ?? "#FFFFFF", unset: false, label: "Fond des étiquettes" };
     if (property === "rounded") return { property: "matchingLabelRounded" as const, value: String(block.matching?.labelAppearance.rounded ?? true), unset: false, label: "Coins des étiquettes" };
@@ -442,7 +445,7 @@ function completeDraftParameter(command: string, draft: DesignerConversationDraf
     if (confirmed === false) return { status: "cancelled" };
     if (confirmed !== true) return incomplete(draft);
   }
-  if (current === "lesson-text-color" || current === "video-caption-color" || current === "activity-background-color" || current === "activity-frame-background-color" || current === "activity-frame-border-color" || current === "activity-frame-accent-color" || current === "divider-color" || current === "section-marker-text-color" || current === "header-background-color" || current === "header-text-color" || current === "continue-button-background-color" || current === "continue-button-text-color") {
+  if (current === "situational-dialogue-color" || current === "lesson-text-color" || current === "video-caption-color" || current === "activity-background-color" || current === "activity-frame-background-color" || current === "activity-frame-border-color" || current === "activity-frame-accent-color" || current === "divider-color" || current === "section-marker-text-color" || current === "header-background-color" || current === "header-text-color" || current === "continue-button-background-color" || current === "continue-button-text-color") {
     const color = extractSingleColor(
       command,
       current === "video-caption-color" ? "#FFFFFF" : current === "lesson-text-color" ? "#222222" : "#FFFFFF",
@@ -452,7 +455,11 @@ function completeDraftParameter(command: string, draft: DesignerConversationDraf
     if (!color) return incomplete(draft);
     if (current === "lesson-text-color") operations = upsertOperation(operations, { kind: "set-lesson-text-color", color });
     else if (current === "video-caption-color") operations = upsertOperation(operations, { kind: "set-video-caption-color", color });
-    else if (current === "activity-background-color") {
+    else if (current === "situational-dialogue-color") {
+      const pending = operations.find((operation) => operation.kind === "set-situational-dialogue-color");
+      if (!pending) return incomplete(draft);
+      operations = upsertOperation(operations, { ...pending, color });
+    } else if (current === "activity-background-color") {
       const pending = operations.find((operation): operation is Extract<DesignerActionOperation, { kind: "set-activity-background-color" }> => operation.kind === "set-activity-background-color");
       if (!pending) return incomplete(draft);
       operations = upsertOperation(operations, { ...pending, color });
@@ -1264,6 +1271,12 @@ function operationTarget(operation: DesignerActionOperation, block: PaideiaBlock
       if (!matchesAppearanceTarget(block, title, operation) || !supportsActivityFrameAppearance(block.type, "border-color")) return null;
       return { property: "panelBorderColor", previousValue: block.panelBorderColor ?? "", previousUnset: block.panelBorderColor == null, value: operation.color, blockTitle: `${title} · Couleur du trait` };
     }
+    case "set-situational-dialogue-color": {
+      if (block.type !== "situational-dialogue" || !matchesAppearanceTarget(block, title, operation)) return null;
+      const banner = operation.part === "banner";
+      const previousValue = banner ? block.situationalDialogueBannerColor : block.buttonBackgroundColor;
+      return { property: banner ? "situationalDialogueBannerColor" : "situationalDialogueButtonsColor", previousValue: previousValue ?? "", previousUnset: previousValue == null, value: operation.color, blockTitle: `${title} · ${banner ? "Couleur du bandeau" : "Couleur des boutons et de l’étiquette"}` };
+    }
     case "set-activity-frame-accent-color": {
       if (!matchesAppearanceTarget(block, title, operation) || !supportsActivityFrameAppearance(block.type, "accent-color")) return null;
       const storage = activityAccentStorageProperty(block.type);
@@ -1290,7 +1303,7 @@ function operationTarget(operation: DesignerActionOperation, block: PaideiaBlock
       if (!matchesAppearanceTarget(block, title, operation) || !supportsActivityFrameAppearance(block.type, "shadow")) return null;
       const storage = frameAppearanceStorage(block, "shadow");
       const previousValue = storage.value === "true";
-      return { property: storage.property, previousValue: storage.value, previousUnset: storage.unset, value: String(operation.enabled), blockTitle: `${title} · ${storage.label}`, previousDisplayValue: booleanLabel(previousValue), displayValue: booleanLabel(operation.enabled) };
+      return { property: storage.property, previousValue: storage.value, previousUnset: storage.unset, value: String(operation.enabled), blockTitle: `${title} · ${storage.label}`, previousDisplayValue: storage.property === "sectionBackgroundShadow" && storage.unset ? "Selon la leçon" : booleanLabel(previousValue), displayValue: booleanLabel(operation.enabled) };
     }
     case "set-divider-color": {
       if (!matchesAppearanceTarget(block, title, operation) || !["divider", "section-marker"].includes(block.type)) return null;
@@ -1659,6 +1672,12 @@ export function previewDesignerAction(project: PaideiaProject, intent: DesignerA
             const storage = activityAccentStorageProperty(block.type);
             const previousValue = storage === "buttonTextColor" ? block.buttonTextColor ?? "" : storage === "buttonBackgroundColor" ? block.buttonBackgroundColor ?? "" : block.panelBorderColor ?? "";
             resetValues.push({ property: "activityAccentColor", previousValue, previousUnset: previousValue === "", value: "", unset: true, blockTitle: `${title} · Couleur d’accent` });
+          }
+          if (block.type === "situational-dialogue") {
+            resetValues.push(
+              { property: "situationalDialogueBannerColor", previousValue: block.situationalDialogueBannerColor ?? "", previousUnset: block.situationalDialogueBannerColor == null, value: "", unset: true, blockTitle: title + " · Couleur du bandeau" },
+              { property: "situationalDialogueButtonsColor", previousValue: block.buttonBackgroundColor ?? "", previousUnset: block.buttonBackgroundColor == null, value: "", unset: true, blockTitle: title + " · Couleur des boutons et de l’étiquette" }
+            );
           }
           for (const resolved of resetValues) {
             const target: DesignerActionTarget = { pageId: page.id, blockId: block.id, chapterTitle: designerDisplayText(chapter.title), pageTitle: designerDisplayText(page.title), ...resolved };

@@ -153,6 +153,7 @@ export type ActivityItem = {
   title: string;
   kind?: "intro" | "step" | "summary" | "result-success" | "result-failure";
   nodeType?: string | null;
+  situationalDialogueIntroductionVisible?: boolean;
   characterId?: string | null;
   characterName?: string | null;
   characterRole?: string | null;
@@ -500,6 +501,9 @@ export type ReferenceBankResource = {
 export type NoteIconId = "info-circle" | "no-entry" | "exclamation-circle" | "prohibition" | "warning-triangle" | "check-circle" | "check";
 
 export type PaideiaBlock = {
+  situationalDialogueTitleHtml?: string | null;
+  situationalDialogueBannerColor?: string | null;
+  situationalDialogueFraming?: SituationalDialogueFraming[];
   id: string;
   type: string;
   family?: string | null;
@@ -575,6 +579,7 @@ export type PaideiaBlock = {
   sectionBackgroundBlur?: number | null;
   sectionBackgroundPositionY?: number | null;
   sectionBackgroundRounded?: boolean | null;
+  sectionBackgroundShadow?: "inherit" | "on" | "off" | null;
   sectionBackgroundWide?: boolean | null;
   sectionBackgroundHeight?: "minimum" | "medium" | "large" | null;
   dividerColor?: string | null;
@@ -817,6 +822,7 @@ export type CreatePageInput = {
 };
 
 export type CreateBlockInput = {
+  situationalDialogueBannerColor?: string | null;
   projectPath: string;
   pageId: string;
   targetIndex?: number | null;
@@ -885,6 +891,7 @@ export type CreateBlockInput = {
   sectionBackgroundBlur?: number | null;
   sectionBackgroundPositionY?: number | null;
   sectionBackgroundRounded?: boolean | null;
+  sectionBackgroundShadow?: "inherit" | "on" | "off" | null;
   sectionBackgroundWide?: boolean | null;
   sectionBackgroundHeight?: "minimum" | "medium" | "large" | null;
   dividerColor?: string | null;
@@ -910,7 +917,17 @@ export type CreateBlockInput = {
   subtitleRefs?: string[];
 };
 
+export type SituationalDialogueFraming = {
+  layout: "responses-below" | "compact-portrait";
+  asset: string;
+  x: number;
+  y: number;
+  zoom: number;
+};
+
 export type UpdateBlockInput = {
+  situationalDialogueTitleHtml?: string;
+  situationalDialogueBannerColor?: string | null;
   projectPath: string;
   pageId: string;
   blockId: string;
@@ -980,6 +997,7 @@ export type UpdateBlockInput = {
   sectionBackgroundBlur?: number | null;
   sectionBackgroundPositionY?: number | null;
   sectionBackgroundRounded?: boolean | null;
+  sectionBackgroundShadow?: "inherit" | "on" | "off" | null;
   sectionBackgroundWide?: boolean | null;
   sectionBackgroundHeight?: "minimum" | "medium" | "large" | null;
   dividerColor?: string | null;
@@ -1088,6 +1106,9 @@ export type DesignerBlockChange = {
     | "slidesActivityBackgroundColor"
     | "slidesActivityRounded"
     | "slidesActivityShadow"
+    | "sectionBackgroundShadow"
+    | "situationalDialogueBannerColor"
+    | "situationalDialogueButtonsColor"
     | "cardSortCardRounded"
     | "dividerColor"
     | "dividerWidth"

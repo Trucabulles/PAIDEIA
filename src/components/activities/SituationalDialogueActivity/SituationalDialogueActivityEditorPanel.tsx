@@ -18,6 +18,7 @@ import type {
 
 type SituationalDialogueActivityEditorPanelProps = {
   block: PaideiaBlock;
+  titleEditor: ReactNode;
   characterBankProps: SituationalDialogueCharacterBankEditorProps;
   collapsedItemIds: string[];
   imageAccept: string;
@@ -41,6 +42,7 @@ type SituationalDialogueActivityEditorPanelProps = {
 
 export function SituationalDialogueActivityEditorPanel({
   block,
+  titleEditor,
   characterBankProps,
   collapsedItemIds,
   imageAccept,
@@ -66,6 +68,7 @@ export function SituationalDialogueActivityEditorPanel({
       <div className="interactive-editor-header">
         <span className="editor-label">{t("activity.situational-dialogue")}</span>
       </div>
+      {titleEditor}
       <SituationalDialogueCharacterBankEditor {...characterBankProps} />
       <div className="activity-item-editor-list">
         <SituationalDialogueItemListEditor

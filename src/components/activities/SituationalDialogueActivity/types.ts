@@ -3,6 +3,7 @@ import type {
   ActivityItem,
   SituationalDialogueCharacter,
   SituationalDialogueCharacterPose,
+  SituationalDialogueFraming,
   SituationalDialogueResponse
 } from "../../../types/project";
 
@@ -33,7 +34,10 @@ export type SituationalDialogueRichTextFieldRenderOptions = {
 
 export type SituationalDialogueActivityProps = {
   authoringMode?: boolean;
-  displayTitle: string;
+  bannerTitleHtml: string;
+  bannerBackgroundColor?: string | null;
+  layout: string;
+  buttonBackgroundColor?: string | null;
   displaySummary: string;
   items: ActivityItem[];
   activeNode: ActivityItem | null;
@@ -41,7 +45,12 @@ export type SituationalDialogueActivityProps = {
   responses: SituationalDialogueResponse[];
   pendingResponse: SituationalDialogueResponse | null;
   selectedResponse: SituationalDialogueResponse | null;
-  characterImage: string | null;
+  resolveCharacterImage: (node: ActivityItem, response: SituationalDialogueResponse | null) => {
+    image: string | null;
+    imageRef: string | null;
+  };
+  characterFraming?: SituationalDialogueFraming[];
+  onCharacterFramingChange?: (framing: SituationalDialogueFraming) => void;
   situationalDialogueCharacters: SituationalDialogueCharacter[];
   hasSituationalDialogueCardContent: boolean;
   hasCustomBackground: boolean;

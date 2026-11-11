@@ -16,7 +16,7 @@ export const ACTIVITY_FRAME_APPEARANCE_TYPES: Record<ActivityFrameAppearanceProp
   "border-width": [...FULL_FRAME_TYPES, "flip-cards"],
   "border-style": [...FULL_FRAME_TYPES, "flip-cards"],
   rounded: [...FULL_FRAME_TYPES, "attachment", "matching", "find-elements", "slides", "card-sort"],
-  shadow: [...FULL_FRAME_TYPES, "find-elements", "slides"]
+  shadow: [...FULL_FRAME_TYPES, "find-elements", "slides", "situational-dialogue"]
 };
 
 export function supportsActivityFrameAppearance(blockType: string, property: ActivityFrameAppearanceProperty) {

@@ -829,6 +829,25 @@
     },
     {
       "id": "activite-mise-en-situation-10",
+      "title": "Utilisation par l’apprenant",
+      "aliases": [
+        "Activité Mise en situation",
+        "jouer la situation",
+        "répondre au scénario"
+      ],
+      "keywords": [
+        "choisir",
+        "réponse",
+        "corriger",
+        "recommencer"
+      ],
+      "activities": [],
+      "groupId": "activite-mise-en-situation",
+      "content": "L’apprenant suit le scénario étape par étape :\n\n1. il lit l’introduction et clique sur Commencer ;\n2. il lit la situation ou le dialogue ;\n3. il sélectionne une réponse ;\n4. il clique sur Valider ;\n5. il lit le feedback ;\n6. il clique sur Continuer ou Essayer encore selon le résultat.\n\nUne réponse sélectionnée est signalée par un tick vert. Le bouton Valider\nreste inactif tant qu’aucune réponse n’est sélectionnée.\n\nLe feedback reste visible avant le passage à la suite. Une réponse configurée\navec Essayer encore ne fait donc pas avancer le parcours ; elle permet de\nrelire la situation et de choisir une autre proposition.",
+      "markdown": "L’apprenant suit le scénario étape par étape :\r\n\r\n1. il lit l’introduction et clique sur `Commencer` ;\r\n2. il lit la situation ou le dialogue ;\r\n3. il sélectionne une réponse ;\r\n4. il clique sur `Valider` ;\r\n5. il lit le feedback ;\r\n6. il clique sur `Continuer` ou `Essayer encore` selon le résultat.\r\n\r\nUne réponse sélectionnée est signalée par un tick vert. Le bouton `Valider`\r\nreste inactif tant qu’aucune réponse n’est sélectionnée.\r\n\r\nLe feedback reste visible avant le passage à la suite. Une réponse configurée\r\navec `Essayer encore` ne fait donc pas avancer le parcours ; elle permet de\r\nrelire la situation et de choisir une autre proposition."
+    },
+    {
+      "id": "activite-mise-en-situation-11",
       "title": "Conseils de conception",
       "aliases": [
         "Activité Mise en situation"
@@ -840,7 +859,7 @@
       "markdown": "- Donnez un objectif clair dès l’introduction.\r\n- Gardez une situation assez courte pour que le choix soit compréhensible.\r\n- Rédigez des réponses de longueur comparable.\r\n- Expliquez le résultat dans chaque feedback plutôt que de vous limiter à\r\n  `Correct` ou `Incorrect`.\r\n- Utilisez des poses cohérentes avec l’état de la scène.\r\n- Décrivez les personnages lorsque leur apparence apporte une information\r\n  utile.\r\n- Vérifiez le parcours dans l’aperçu LMS avant de distribuer la leçon."
     },
     {
-      "id": "activite-mise-en-situation-11",
+      "id": "activite-mise-en-situation-12",
       "title": "Aperçu, SCORM et PDF",
       "aliases": [
         "Activité Mise en situation"
@@ -852,7 +871,7 @@
       "markdown": "Le personnage, le décor, les bulles, les choix et les feedbacks doivent être\r\nvérifiés dans l’éditeur, l’aperçu LMS et le SCORM.\r\n\r\nDans le PDF de relecture, une pose du personnage est représentée avec\r\nl’introduction, les séquences, les choix, les feedbacks et la conclusion. Les\r\ncontenus longs peuvent se poursuivre sur plusieurs pages."
     },
     {
-      "id": "activite-mise-en-situation-12",
+      "id": "activite-mise-en-situation-13",
       "title": "En cas de problème",
       "aliases": [
         "Activité Mise en situation"
@@ -884,8 +903,8 @@
       "keywords": [],
       "activities": [],
       "groupId": "activite-mise-en-situation",
-      "content": "Dans la Banque de personnages, vous pouvez utiliser un personnage proposé par\nPAIDEIA, importer un personnage disponible dans la banque ou ajouter un\npersonnage personnel.\n\nPour chaque personnage, vous pouvez renseigner :\n\n- son nom ;\n- son rôle ou son métier ;\n- une description utile pour l’accessibilité ;\n- l’affichage ou non du nom et du rôle sous son image.\n\nUne pose correspond à une image du personnage dans un état donné. Les états\npeuvent notamment être Introduction, Question / situation, Neutre,\nRéponse positive, Réponse négative ou Conclusion.\n\nPour ajouter une pose personnelle, utilisez Ajouter une pose question ou\nAjouter une pose réponse, puis choisissez son état et importez son image.\nLes formats PNG, JPEG et WebP sont acceptés.\n\nVous pouvez modifier le libellé d’une pose, remplacer son image ou la supprimer.\nLa suppression d’un personnage supprime également les poses qui lui sont\nassociées, après confirmation.",
-      "markdown": "Dans la `Banque de personnages`, vous pouvez utiliser un personnage proposé par\r\nPAIDEIA, importer un personnage disponible dans la banque ou ajouter un\r\npersonnage personnel.\r\n\r\nPour chaque personnage, vous pouvez renseigner :\r\n\r\n- son nom ;\r\n- son rôle ou son métier ;\r\n- une description utile pour l’accessibilité ;\r\n- l’affichage ou non du nom et du rôle sous son image.\r\n\r\nUne pose correspond à une image du personnage dans un état donné. Les états\r\npeuvent notamment être `Introduction`, `Question / situation`, `Neutre`,\r\n`Réponse positive`, `Réponse négative` ou `Conclusion`.\r\n\r\nPour ajouter une pose personnelle, utilisez `Ajouter une pose question` ou\r\n`Ajouter une pose réponse`, puis choisissez son état et importez son image.\r\nLes formats PNG, JPEG et WebP sont acceptés.\r\n\r\nVous pouvez modifier le libellé d’une pose, remplacer son image ou la supprimer.\r\nLa suppression d’un personnage supprime également les poses qui lui sont\r\nassociées, après confirmation."
+      "content": "Dans la Banque de personnages, vous pouvez utiliser un personnage proposé par\nPAIDEIA, importer un personnage disponible dans la banque ou ajouter un\npersonnage personnel. Noor et Véronique sont disponibles dans la banque par défaut.\n\nPour chaque personnage, vous pouvez renseigner :\n\n- son nom ;\n- son rôle ou son métier ;\n- une description utile pour l’accessibilité ;\n- l’affichage du nom, du rôle ou des deux dans le cartouche au bord de la bulle.\n\nLe cartouche apparaît si la bulle est affichée et que le nom ou le rôle est renseigné.\n\nUne pose correspond à une image du personnage dans un état donné. Les états\npeuvent notamment être Introduction, Question / situation, Neutre,\nRéponse positive, Réponse négative ou Conclusion.\n\nPour ajouter une pose personnelle, utilisez Ajouter une pose question ou\nAjouter une pose réponse, puis choisissez son état et importez son image.\nLes formats PNG, JPEG et WebP sont acceptés.\n\nVous pouvez modifier le libellé d’une pose, remplacer son image ou la supprimer.\nLa suppression d’un personnage supprime également les poses qui lui sont\nassociées, après confirmation.",
+      "markdown": "Dans la `Banque de personnages`, vous pouvez utiliser un personnage proposé par\r\nPAIDEIA, importer un personnage disponible dans la banque ou ajouter un\r\npersonnage personnel. Noor et Véronique sont disponibles dans la banque par défaut.\r\n\r\nPour chaque personnage, vous pouvez renseigner :\r\n\r\n- son nom ;\r\n- son rôle ou son métier ;\r\n- une description utile pour l’accessibilité ;\r\n- l’affichage du nom, du rôle ou des deux dans le cartouche au bord de la bulle.\r\n\r\nLe cartouche apparaît si la bulle est affichée et que le nom ou le rôle est renseigné.\r\n\r\nUne pose correspond à une image du personnage dans un état donné. Les états\r\npeuvent notamment être `Introduction`, `Question / situation`, `Neutre`,\r\n`Réponse positive`, `Réponse négative` ou `Conclusion`.\r\n\r\nPour ajouter une pose personnelle, utilisez `Ajouter une pose question` ou\r\n`Ajouter une pose réponse`, puis choisissez son état et importez son image.\r\nLes formats PNG, JPEG et WebP sont acceptés.\r\n\r\nVous pouvez modifier le libellé d’une pose, remplacer son image ou la supprimer.\r\nLa suppression d’un personnage supprime également les poses qui lui sont\r\nassociées, après confirmation."
     },
     {
       "id": "activite-mise-en-situation-4",
@@ -937,6 +956,30 @@
     },
     {
       "id": "activite-mise-en-situation-8",
+      "title": "Choisir un modèle et personnaliser le rendu",
+      "aliases": [
+        "Activité Mise en situation",
+        "mise en page",
+        "thème de scénario",
+        "portrait compact",
+        "réponses en bas",
+        "cadrage du personnage"
+      ],
+      "keywords": [
+        "panoramique",
+        "bandeau",
+        "couleur",
+        "pose",
+        "zoom",
+        "pleine largeur"
+      ],
+      "activities": [],
+      "groupId": "activite-mise-en-situation",
+      "content": "Dans Apparence, choisissez un modèle à l’aide des vignettes.\n\n- Classique place le personnage en pied à gauche, avec la bulle et les réponses à droite.\n- Réponses en bas cadre le personnage à la taille. Le décor s’arrête au bord de la scène et les réponses apparaissent dessous, sur un fond neutre. Les cartes s’empilent si la largeur manque.\n- Portrait compact affiche un portrait rond à côté de la bulle, puis les réponses empilées.\n\nChanger de modèle conserve le contenu et les embranchements. Une nouvelle activité commence en largeur normale. Dans Activité, le champ Titre du bandeau, au-dessus de la banque de personnages, utilise la barre de mise en forme habituelle et reste sur une seule ligne. Le compteur et les points incluent l’introduction et la conclusion.\n\nDans Apparence, réglez séparément la couleur du bandeau et celle des boutons et du cartouche. Le texte et les icônes s’adaptent au contraste du fond. Couleur par défaut rétablit les couleurs du thème.\n\nPour ajuster le cadrage en Réponses en bas ou Portrait compact, double-cliquez sur le personnage dans l’éditeur, puis faites glisser l’image horizontalement ou verticalement. En Portrait compact, utilisez aussi la molette pour zoomer ou dézoomer. Le réglage est mémorisé pour la pose et le modèle.",
+      "markdown": "Dans **Apparence**, choisissez un modèle à l’aide des vignettes.\r\n\r\n- **Classique** place le personnage en pied à gauche, avec la bulle et les réponses à droite.\r\n- **Réponses en bas** cadre le personnage à la taille. Le décor s’arrête au bord de la scène et les réponses apparaissent dessous, sur un fond neutre. Les cartes s’empilent si la largeur manque.\r\n- **Portrait compact** affiche un portrait rond à côté de la bulle, puis les réponses empilées.\r\n\r\nChanger de modèle conserve le contenu et les embranchements. Une nouvelle activité commence en largeur normale. Dans **Activité**, le champ **Titre du bandeau**, au-dessus de la banque de personnages, utilise la barre de mise en forme habituelle et reste sur une seule ligne. Le compteur et les points incluent l’introduction et la conclusion.\r\n\r\nDans **Apparence**, réglez séparément la couleur du bandeau et celle des boutons et du cartouche. Le texte et les icônes s’adaptent au contraste du fond. **Couleur par défaut** rétablit les couleurs du thème.\r\n\r\nPour ajuster le cadrage en **Réponses en bas** ou **Portrait compact**, double-cliquez sur le personnage dans l’éditeur, puis faites glisser l’image horizontalement ou verticalement. En **Portrait compact**, utilisez aussi la molette pour zoomer ou dézoomer. Le réglage est mémorisé pour la pose et le modèle."
+    },
+    {
+      "id": "activite-mise-en-situation-9",
       "title": "Personnaliser l’arrière-plan",
       "aliases": [
         "Activité Mise en situation"
@@ -946,25 +989,6 @@
       "groupId": "activite-mise-en-situation",
       "content": "Dans l’onglet Apparence, vous pouvez régler :\n\n- la couleur de fond ;\n- une image de fond ;\n- le voile ;\n- le flou ;\n- le mode Fond large ;\n- les coins arrondis.\n\nAvec une couleur de fond, PAIDEIA peut afficher un décor graphique derrière le\npersonnage. Lorsqu’une image de fond est utilisée, ce décor est masqué afin de\nlaisser l’image s’exprimer pleinement.\n\nPour ajuster la position verticale d’une image de fond, double-cliquez sur la\nscène puis faites-la glisser. Un clic extérieur, la touche Échap ou un second\ndouble-clic termine le réglage.\n\nLe déplacement du fond ne modifie ni la position du personnage, ni la largeur\ndes bulles, ni celle des boutons.",
       "markdown": "Dans l’onglet `Apparence`, vous pouvez régler :\r\n\r\n- la couleur de fond ;\r\n- une image de fond ;\r\n- le voile ;\r\n- le flou ;\r\n- le mode `Fond large` ;\r\n- les coins arrondis.\r\n\r\nAvec une couleur de fond, PAIDEIA peut afficher un décor graphique derrière le\r\npersonnage. Lorsqu’une image de fond est utilisée, ce décor est masqué afin de\r\nlaisser l’image s’exprimer pleinement.\r\n\r\nPour ajuster la position verticale d’une image de fond, double-cliquez sur la\r\nscène puis faites-la glisser. Un clic extérieur, la touche `Échap` ou un second\r\ndouble-clic termine le réglage.\r\n\r\nLe déplacement du fond ne modifie ni la position du personnage, ni la largeur\r\ndes bulles, ni celle des boutons."
-    },
-    {
-      "id": "activite-mise-en-situation-9",
-      "title": "Utilisation par l’apprenant",
-      "aliases": [
-        "Activité Mise en situation",
-        "jouer la situation",
-        "répondre au scénario"
-      ],
-      "keywords": [
-        "choisir",
-        "réponse",
-        "corriger",
-        "recommencer"
-      ],
-      "activities": [],
-      "groupId": "activite-mise-en-situation",
-      "content": "L’apprenant suit le scénario étape par étape :\n\n1. il lit l’introduction et clique sur Commencer ;\n2. il lit la situation ou le dialogue ;\n3. il sélectionne une réponse ;\n4. il clique sur Valider ;\n5. il lit le feedback ;\n6. il clique sur Continuer ou Essayer encore selon le résultat.\n\nUne réponse sélectionnée est signalée par un tick vert. Le bouton Valider\nreste inactif tant qu’aucune réponse n’est sélectionnée.\n\nLe feedback reste visible avant le passage à la suite. Une réponse configurée\navec Essayer encore ne fait donc pas avancer le parcours ; elle permet de\nrelire la situation et de choisir une autre proposition.",
-      "markdown": "L’apprenant suit le scénario étape par étape :\r\n\r\n1. il lit l’introduction et clique sur `Commencer` ;\r\n2. il lit la situation ou le dialogue ;\r\n3. il sélectionne une réponse ;\r\n4. il clique sur `Valider` ;\r\n5. il lit le feedback ;\r\n6. il clique sur `Continuer` ou `Essayer encore` selon le résultat.\r\n\r\nUne réponse sélectionnée est signalée par un tick vert. Le bouton `Valider`\r\nreste inactif tant qu’aucune réponse n’est sélectionnée.\r\n\r\nLe feedback reste visible avant le passage à la suite. Une réponse configurée\r\navec `Essayer encore` ne fait donc pas avancer le parcours ; elle permet de\r\nrelire la situation et de choisir une autre proposition."
     },
     {
       "id": "activite-note-1",
@@ -1551,6 +1575,27 @@
     },
     {
       "id": "arion-aidant-de-paideia-10",
+      "title": "Aller à une activité par son identifiant",
+      "aliases": [
+        "Arion — Aidant de PAIDEIA",
+        "ouvrir une activité par ID",
+        "aller à un ID",
+        "ouvrir l’identifiant d’une activité",
+        "naviguer depuis le PDF de relecture"
+      ],
+      "keywords": [
+        "activité",
+        "identifiant unique",
+        "navigation",
+        "relecture"
+      ],
+      "activities": [],
+      "groupId": "arion-aidant-de-paideia",
+      "content": "Dans la leçon ouverte, saisissez « Ouvre l’ID abc12345 » ou « Va à abc12345 » dans Arion en remplaçant l’exemple par l’identifiant de l’activité. Vous pouvez le retrouver dans le PDF de relecture. PAIDEIA ouvre le chapitre correspondant et se place sur l’activité, comme depuis une observation.\n\nCette commande est disponible en français.",
+      "markdown": "Dans la leçon ouverte, saisissez « Ouvre l’ID abc12345 » ou « Va à abc12345 » dans Arion en remplaçant l’exemple par l’identifiant de l’activité. Vous pouvez le retrouver dans le PDF de relecture. PAIDEIA ouvre le chapitre correspondant et se place sur l’activité, comme depuis une observation.\r\n\r\nCette commande est disponible en français."
+    },
+    {
+      "id": "arion-aidant-de-paideia-11",
       "title": "Échanges simples avec Arion",
       "aliases": [
         "Arion — Aidant de PAIDEIA"
@@ -1562,7 +1607,7 @@
       "markdown": "Arion comprend également les échanges courants : salutations, remerciements,\r\nprésentation, prise de congé et fin de conversation. Plusieurs réponses\r\npeuvent être utilisées afin que l’échange ne donne pas l’impression d’une\r\nréponse répétée mécaniquement.\r\n\r\nCes échanges ne modifient jamais la leçon.\r\n\r\nIls restent disponibles sur tous les écrans et peuvent s'insérer dans une\r\nconversation en cours. Par exemple, un remerciement pendant qu'Arion attend une\r\ncouleur reçoit une réponse sociale sans supprimer la question ni les éléments\r\ndéjà compris. Pendant cet échange, les choix guidés et la prévisualisation de la\r\ndemande interrompue sont temporairement masqués afin de conserver un fil naturel.\r\nIls ne réapparaissent que lorsque vous reprenez la demande ; les suggestions\r\nd'aide ne sont proposées que si vous sollicitez effectivement l'aide d'Arion."
     },
     {
-      "id": "arion-aidant-de-paideia-11",
+      "id": "arion-aidant-de-paideia-12",
       "title": "En cas de demande non reconnue",
       "aliases": [
         "Arion — Aidant de PAIDEIA"
@@ -1574,7 +1619,7 @@
       "markdown": "Si Arion ne comprend pas suffisamment la demande, il vous invite à la préciser\r\nou vous indique le type d’information manquante. Reformulez en ajoutant :\r\n\r\n- le type d’activité (`vidéo`, `Texte`, etc.) ;\r\n- la propriété à modifier (`hauteur`, `couleur`, `police`, etc.) ;\r\n- la valeur souhaitée ;\r\n- la portée (`ce chapitre` ou `toute la leçon`).\r\n\r\nLa formulation de cette invitation peut varier afin de conserver un échange\r\nnaturel ; Arion évite de répéter immédiatement la même réponse.\r\n\r\nArion ne prétend pas avoir exécuté une action qu’il ne reconnaît pas. Pour une\r\nmodification qui n’est pas proposée, utilisez directement l’éditeur de\r\nl’activité concernée."
     },
     {
-      "id": "arion-aidant-de-paideia-12",
+      "id": "arion-aidant-de-paideia-13",
       "title": "Résumé du fonctionnement",
       "aliases": [
         "Arion — Aidant de PAIDEIA"

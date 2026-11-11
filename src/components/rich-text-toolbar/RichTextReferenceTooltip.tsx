@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import type { PaideiaProject } from "../../types/project";
 import { collectRichTextBookmarks, RICH_REFERENCE_ATTR, RICH_REFERENCE_TARGET_ATTR } from "./richTextBookmarks";
 import { useI18n } from "../../i18n/react";
+import "./referenceScroll.css";
 
 type ActiveReference = {
   id: string;
@@ -18,6 +19,12 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
   const [active, setActive] = useState<ActiveReference | null>(null);
   const activeRef = useRef<ActiveReference | null>(null);
   const tooltipRef = useRef<HTMLElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const updateScrollHint = () => {
+    const scroll = scrollRef.current;
+    setHasMore(Boolean(scroll && scroll.scrollHeight - scroll.clientHeight - scroll.scrollTop > 2));
+  };
   const triggerRef = useRef<HTMLElement | null>(null);
   const pinnedTriggerRef = useRef<HTMLElement | null>(null);
   const TOOLTIP_ID = "paideia-rich-reference-tooltip-active";
@@ -40,6 +47,9 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
   })() : null);
 
   useEffect(() => {
+    let closeTimer: number | undefined;
+    const cancelScheduledClose = () => window.clearTimeout(closeTimer);
+
     const nodeFromTarget = (target: EventTarget | null) =>
       target && typeof target === "object" && "nodeType" in target ? target as Node : null;
 
@@ -58,6 +68,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     };
 
     const show = (trigger: HTMLElement) => {
+      cancelScheduledClose();
       const id = trigger.getAttribute(RICH_REFERENCE_TARGET_ATTR) ?? "";
       const rect = trigger.getBoundingClientRect();
       const ownerDocument = trigger.ownerDocument;
@@ -75,6 +86,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     };
 
     const hide = (trigger?: HTMLElement | null, preservePin = false) => {
+      cancelScheduledClose();
       const currentTrigger = triggerRef.current;
       if (trigger && currentTrigger && trigger !== currentTrigger) return;
       clearTriggerAria(trigger ?? currentTrigger);
@@ -82,6 +94,11 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
       activeRef.current = null;
       setActive(null);
       if (!preservePin) pinnedTriggerRef.current = null;
+    };
+
+    const scheduleClose = (trigger?: HTMLElement) => {
+      cancelScheduledClose();
+      closeTimer = window.setTimeout(() => hide(trigger), 160);
     };
 
     const pin = (trigger: HTMLElement) => {
@@ -104,8 +121,13 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     const over = (event: PointerEvent) => {
       if (pinnedTriggerRef.current) return;
       if (event.pointerType === "touch" || event.pointerType === "pen") return;
+      if (isInsideTooltip(event.target)) {
+        cancelScheduledClose();
+        return;
+      }
       const trigger = triggerFor(event.target);
-      if (trigger) show(trigger);
+      if (trigger && triggerRef.current !== trigger) show(trigger);
+      else if (trigger) cancelScheduledClose();
     };
 
     const out = (event: PointerEvent) => {
@@ -116,13 +138,13 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
       const relatedTrigger = triggerFor(event.relatedTarget);
       if (trigger) {
         if (relatedTrigger === trigger || isInsideTooltip(event.relatedTarget)) return;
-        hide(trigger);
+        scheduleClose(trigger);
         return;
       }
 
       if (isInsideTooltip(event.target)) {
         if (isInsideTooltip(event.relatedTarget) || relatedTrigger === triggerRef.current) return;
-        hide();
+        scheduleClose();
       }
     };
 
@@ -224,7 +246,8 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     const view = active.ownerDocument.defaultView ?? window;
 
     const naturalWidth = tooltip.offsetWidth;
-    const naturalHeight = tooltip.scrollHeight;
+    const scroll = scrollRef.current;
+    const naturalHeight = tooltip.offsetHeight + (scroll ? scroll.scrollHeight - scroll.clientHeight : 0);
     const availableBelow = Math.max(0, view.innerHeight - rect.bottom - GAP - VIEWPORT_MARGIN);
     const availableAbove = Math.max(0, rect.top - GAP - VIEWPORT_MARGIN);
 
@@ -277,13 +300,23 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
         maxHeight: undefined
       } : current);
     };
+    const content = scrollRef.current;
+    const observer = content && typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateScrollHint) : null;
+    if (content) {
+      observer?.observe(content);
+      if (content.firstElementChild) observer?.observe(content.firstElementChild);
+    }
     view.addEventListener("resize", reposition);
-    view.addEventListener("scroll", reposition, true);
+    const onScroll = (event: Event) => { if (event.target !== content) reposition(); };
+    view.addEventListener("scroll", onScroll, true);
     return () => {
       view.removeEventListener("resize", reposition);
-      view.removeEventListener("scroll", reposition, true);
+      view.removeEventListener("scroll", onScroll, true);
+      observer?.disconnect();
     };
   }, [active?.id, active?.ownerDocument]);
+
+  useLayoutEffect(updateScrollHint, [active?.id, active?.maxHeight, bookmark?.html]);
 
   if (!active) return null;
 
@@ -297,12 +330,16 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
         left: active.x,
         top: active.y,
         maxHeight: active.maxHeight,
-        overflowY: active.maxHeight ? "auto" : undefined
+        padding: 0
       }}
     >
-      {bookmark
-        ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: bookmark.html }} />
-        : <p>{t("richText.brokenReference", undefined, "Renvoi cassé : balise introuvable.")}</p>}
+      <div key={active.id} className="paideia-reference-scroll" ref={scrollRef} onScroll={updateScrollHint}
+        tabIndex={active.maxHeight ? 0 : undefined}>
+        {bookmark
+          ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: bookmark.html }} />
+          : <p>{t("richText.brokenReference", undefined, "Renvoi cassé : balise introuvable.")}</p>}
+      </div>
+      <span className="paideia-reference-scroll-hint" hidden={!hasMore} aria-hidden="true" />
     </aside>
   );
 

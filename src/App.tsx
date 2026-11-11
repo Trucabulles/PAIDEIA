@@ -119,6 +119,8 @@ import {
   hasInlineRichTextEditor,
   hasRichTextEditor
 } from "./components/authoring";
+import { parseArionActivityJump } from "./features/designer-actions/arionActivityJump";
+import { dialogueTitleHtml } from "./components/activities/SituationalDialogueActivity/SituationalDialogueAppearance";
 import { RichTextToolbar, type RichTextListMarker, type RichTextToolbarProfile } from "./components/rich-text-toolbar/RichTextToolbar";
 import { RichTextBookmarkDialog } from "./components/rich-text-toolbar/RichTextBookmarkDialog";
 import { RichTextReferenceTooltip } from "./components/rich-text-toolbar/RichTextReferenceTooltip";
@@ -359,6 +361,7 @@ import {
   selectBundledProjectFont,
   selectUserProjectFont,
   updateBlock,
+  updateSituationalDialogueFraming,
   updateChapter,
   updateProjectLanguage,
   updateProjectMetadata,
@@ -1210,6 +1213,9 @@ function visibleBlockSummary(block: PaideiaBlock) {
 
 function normalizedMediaLayout(block: PaideiaBlock) {
   const layout = block.mediaLayout ?? "";
+  if (block.type === "situational-dialogue") {
+    return ["responses-below", "compact-portrait"].includes(layout) ? layout : "classic";
+  }
   if (block.type === "course-exit") {
     return normalizeCourseExitLayout(layout);
   }
@@ -1656,6 +1662,7 @@ function normalizeHtmlForInlineCompare(value: string | null | undefined) {
 }
 
 function InlineRichTextField({
+  ariaLabel,
   className = "rich-content",
   commitOnInput = true,
   commitOnUnmount = false,
@@ -1669,10 +1676,12 @@ function InlineRichTextField({
   onBeforeRichInput,
   onKeyDownOverride,
   onLiveInput,
+  normalizeSingleLine,
   placeholder = "",
   preserveBlockStyleOnEnter = false,
   onRequestClose
 }: {
+  ariaLabel?: string;
   className?: string;
   commitOnInput?: boolean;
   commitOnUnmount?: boolean;
@@ -1686,6 +1695,7 @@ function InlineRichTextField({
   onBeforeRichInput?: (event: FormEvent<HTMLDivElement>, editor: HTMLDivElement) => boolean | void;
   onKeyDownOverride?: (event: ReactKeyboardEvent<HTMLDivElement>, editor: HTMLDivElement) => boolean | void;
   onLiveInput?: (editor: HTMLDivElement, html: string) => void;
+  normalizeSingleLine?: (html: string) => string;
   placeholder?: string;
   preserveBlockStyleOnEnter?: boolean;
   onRequestClose?: () => void;
@@ -1706,8 +1716,10 @@ function InlineRichTextField({
   const mountedRef = useRef(false);
   const [localIsEmpty, setLocalIsEmpty] = useState(() => !stripHtmlForEditor(html).trim());
 
-  const normalizeLocalHtml = (value: string) =>
-    emptyHtml !== undefined && !stripHtmlForEditor(value).trim() ? emptyHtml : value;
+  const normalizeLocalHtml = (value: string) => {
+    const normalized = normalizeSingleLine ? normalizeSingleLine(value) : value;
+    return emptyHtml !== undefined && !stripHtmlForEditor(normalized).trim() ? emptyHtml : normalized;
+  };
   const syncEmptyClass = (editor: HTMLDivElement, value: string) => {
     const nextIsEmpty = !stripHtmlForEditor(value).trim();
     editor.classList.toggle("empty", nextIsEmpty);
@@ -1855,12 +1867,16 @@ function InlineRichTextField({
 
   return (
     <div
+      aria-label={ariaLabel}
+      aria-multiline={normalizeSingleLine ? false : undefined}
+      role={normalizeSingleLine ? "textbox" : undefined}
       className={`${className} inline-rich-text-field ${isActive ? "active" : ""} ${localIsEmpty ? "empty" : ""}`}
       contentEditable
       data-inline-rich-editor="true"
       data-rich-text-field-key={editorKey}
       data-placeholder={placeholder}
       draggable={false}
+      onDrop={normalizeSingleLine ? event => event.preventDefault() : undefined}
       onBlur={(event) => {
         if (closingFromOutsideRef.current) {
           return;
@@ -1899,6 +1915,11 @@ function InlineRichTextField({
       onCopy={copyRichTextSelectionWithoutContainerAppearance}
       onFocus={(event) => onActivate(event.currentTarget, event.currentTarget.innerHTML || localHtmlRef.current)}
       onBeforeInput={(event) => {
+        const inputType = (event.nativeEvent as InputEvent).inputType;
+        if (normalizeSingleLine && (inputType === "insertParagraph" || inputType === "insertLineBreak")) {
+          event.preventDefault();
+          return;
+        }
         const editor = event.currentTarget;
         const handled = onBeforeRichInput?.(event, event.currentTarget);
         if (!handled) {
@@ -1944,21 +1965,22 @@ function InlineRichTextField({
           containsImageClipboardItem(clipboardData.items) ||
           containsImageClipboardItem(clipboardData.files);
 
-        if (!clipboardHtml && !hasBinaryImage) {
+        if (!clipboardHtml && !hasBinaryImage && !normalizeSingleLine) {
           return;
         }
 
         const strippedClipboard = clipboardHtml
           ? stripImagesFromRichTextClipboardHtml(clipboardHtml)
-          : { html: "", removedImageContent: false };
+          : { html: normalizeSingleLine ? escapeHtml(clipboardData.getData("text/plain").replace(/\s+/g, " ")) : "", removedImageContent: false };
         const sanitizedClipboardHtml = normalizePastedRichTextHtml(strippedClipboard.html);
+        const insertedHtml = normalizeSingleLine ? normalizeSingleLine(sanitizedClipboardHtml) : sanitizedClipboardHtml;
 
         // HTML is always inserted through the Rich Text sanitizer. Images are
         // additionally removed here because they must use PAIDEIA's managed
         // RichBar image pipeline instead of a native clipboard source.
         event.preventDefault();
 
-        if (!richTextClipboardHtmlHasMeaningfulContent(sanitizedClipboardHtml)) {
+        if (!richTextClipboardHtmlHasMeaningfulContent(insertedHtml)) {
           return;
         }
 
@@ -1966,7 +1988,7 @@ function InlineRichTextField({
 
         const editor = event.currentTarget;
         editor.focus({ preventScroll: true });
-        document.execCommand("insertHTML", false, sanitizedClipboardHtml);
+        document.execCommand("insertHTML", false, insertedHtml);
 
         // execCommand normally fires the native input event. Keep a fallback for
         // WebView variants where it does not, without committing twice.
@@ -1990,6 +2012,10 @@ function InlineRichTextField({
         }, 0);
       }}
       onKeyDown={(event) => {
+        if (normalizeSingleLine && event.key === "Enter" && !event.nativeEvent.isComposing) {
+          event.preventDefault();
+          return;
+        }
         const handled = onKeyDownOverride?.(event, event.currentTarget);
         if (handled) {
           return;
@@ -2707,7 +2733,7 @@ export default function App() {
   const moduleDraft = "Module principal";
   const [chapterDraft, setChapterDraft] = useState("");
   const pageDraft = "Nouvelle page";
-  const snapshotVersion = "v1.1.26310";
+  const snapshotVersion = "v1.1.26315";
   const [importDestinationRoot, setImportDestinationRoot] = useState("");
   const [isLibraryRootReady, setIsLibraryRootReady] = useState(false);
   const [appLanguage, setAppLanguage] = useState<AppLanguage>(() => detectInitialAppLanguage());
@@ -2781,6 +2807,7 @@ export default function App() {
     sectionBackgroundBlur: 0,
     sectionBackgroundPositionY: 50,
     sectionBackgroundRounded: true,
+    sectionBackgroundShadow: "inherit",
     sectionBackgroundWide: false,
     sectionBackgroundHeight: "medium",
     dividerColor: "#123a7a",
@@ -6419,6 +6446,7 @@ export default function App() {
       sectionBackgroundBlur: block.sectionBackgroundBlur ?? null,
       sectionBackgroundPositionY: block.sectionBackgroundPositionY ?? null,
       sectionBackgroundRounded: block.sectionBackgroundRounded ?? null,
+      sectionBackgroundShadow: block.sectionBackgroundShadow ?? null,
       sectionBackgroundWide: block.sectionBackgroundWide ?? null,
       sectionBackgroundHeight: block.sectionBackgroundHeight ?? null,
       dividerColor: block.dividerColor ?? null,
@@ -6785,6 +6813,7 @@ export default function App() {
         sectionBackgroundBlur: 0,
         sectionBackgroundPositionY: 50,
         sectionBackgroundRounded: true,
+        sectionBackgroundShadow: "inherit",
         sectionBackgroundWide: false,
         sectionBackgroundHeight: "medium",
         dividerColor: "#123a7a",
@@ -6817,6 +6846,8 @@ export default function App() {
       && hasLegacySlidesNavigationDefaults(selectedBlock);
 
     const nextBlockForm: BlockFormState = {
+      situationalDialogueTitleHtml: selectedBlock.situationalDialogueTitleHtml ?? "",
+      situationalDialogueBannerColor: selectedBlock.situationalDialogueBannerColor ?? "",
       title: selectedBlock.title,
       summary: selectedBlock.summary,
       blockType: selectedBlock.type,
@@ -6874,7 +6905,7 @@ export default function App() {
       headerTextOutlineColor: selectedBlock.headerTextOutlineColor ?? "light",
       headerHeight: selectedBlock.headerHeight ?? "240px",
       headerImagePositionY: selectedBlock.headerImagePositionY ?? 50,
-      buttonBackgroundColor: selectedBlock.buttonBackgroundColor ?? defaultButtonBackgroundColor(selectedBlock.type),
+      buttonBackgroundColor: selectedBlock.buttonBackgroundColor ?? (selectedBlock.type === "situational-dialogue" ? "" : defaultButtonBackgroundColor(selectedBlock.type)),
       buttonTextColor:
         (hasLegacySlidesStyle ? null : selectedBlock.buttonTextColor) ??
         (selectedBlock.type === "slides"
@@ -6942,6 +6973,7 @@ export default function App() {
       sectionBackgroundBlur: selectedBlock.sectionBackgroundBlur ?? 0,
       sectionBackgroundPositionY: selectedBlock.sectionBackgroundPositionY ?? 50,
       sectionBackgroundRounded: selectedBlock.sectionBackgroundRounded ?? true,
+      sectionBackgroundShadow: selectedBlock.sectionBackgroundShadow ?? "inherit",
       sectionBackgroundWide: isActivityBackgroundAlwaysWide(selectedBlock.type)
         ? true
         : selectedBlock.sectionBackgroundWide ?? activityBackgroundWideDefault(selectedBlock.type),
@@ -8250,6 +8282,29 @@ export default function App() {
       await arionWindowBridge.dock();
       return;
     }
+    const activityJump = parseArionActivityJump(command);
+    if (activityJump !== null) {
+      const targets = isProjectWorkspaceActive && project
+        ? chapterEntries.flatMap(({ chapter }) => chapter.pages.flatMap(page =>
+            page.blocks.filter(block => block.id === activityJump).map(block => ({ chapter, page, block }))))
+        : [];
+      if (!isProjectWorkspaceActive || !project) {
+        setDesignerAssistantMessage("Ouvrez la leçon du PDF pour accéder à une activité par ID.");
+      } else if (targets.length === 0) {
+        setDesignerAssistantMessage(`L’activité ${activityJump} est introuvable dans cette leçon.`);
+      } else if (targets.length > 1) {
+        setDesignerAssistantMessage(`Plusieurs activités portent l’ID ${activityJump} dans cette leçon.`);
+      } else {
+        const [{ chapter, page, block }] = targets;
+        await secureInlineRichTextBeforeStructuralMutation();
+        setIsInspectorOpen(false);
+        navigateToObservationTarget(resolveObservationTarget({
+          chapterId: chapter.id, pageId: page.id, blockId: block.id, blockLabel: localizedActivityLabel(block.type)
+        }));
+        setDesignerAssistantMessage(`Activité ${activityJump} · ${chapter.title}`);
+      }
+      return;
+    }
     const navigation = command.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’']/g, ' ');
     if (isDesignerCancellationRequest(command) && designerDestructivePlan && designerDestructivePlan.stage !== "completed") {
       cancelDesignerDestructiveAction();
@@ -9363,9 +9418,11 @@ export default function App() {
         : "left"
       : blockForm.contentAlign;
     const nextUsesButtonStyle = ["continue", "course-exit", "links-resources"].includes(nextBlockType);
-    const nextButtonBackgroundColor = blockTypeOverride && nextUsesButtonStyle
-      ? defaultButtonBackgroundColor(nextBlockType)
-      : blockForm.buttonBackgroundColor;
+    const nextButtonBackgroundColor = nextBlockType === "situational-dialogue"
+      ? ""
+      : blockTypeOverride && nextUsesButtonStyle
+        ? defaultButtonBackgroundColor(nextBlockType)
+        : blockForm.buttonBackgroundColor;
     const nextButtonTextColor = nextBlockType === "slides"
       ? SLIDES_NAVIGATION_DEFAULTS.textColor
       : blockTypeOverride && nextUsesButtonStyle
@@ -9640,6 +9697,7 @@ export default function App() {
         sectionBackgroundBlur: 0,
         sectionBackgroundPositionY: 50,
         sectionBackgroundRounded: true,
+        sectionBackgroundShadow: "inherit",
         sectionBackgroundWide: activityBackgroundWideDefault(nextBlockType),
         sectionBackgroundHeight: "medium",
         dividerColor: usesFreshBlockDefaults ? "#123a7a" : blockForm.dividerColor,
@@ -9842,6 +9900,7 @@ export default function App() {
       pageId: activePage.id,
       targetIndex,
       blockType: block.type,
+      situationalDialogueBannerColor: block.situationalDialogueBannerColor,
       title: block.title,
       summary: block.summary,
       contentHtml: block.contentHtml ?? null,
@@ -9895,6 +9954,7 @@ export default function App() {
       sectionBackgroundBlur: block.sectionBackgroundBlur ?? null,
       sectionBackgroundPositionY: block.sectionBackgroundPositionY ?? null,
       sectionBackgroundRounded: block.sectionBackgroundRounded ?? null,
+      sectionBackgroundShadow: block.sectionBackgroundShadow ?? null,
       sectionBackgroundWide: block.sectionBackgroundWide ?? null,
       sectionBackgroundHeight: block.sectionBackgroundHeight ?? null,
       dividerColor: block.dividerColor ?? null,
@@ -10228,6 +10288,7 @@ export default function App() {
       sectionBackgroundBlur: block.sectionBackgroundBlur ?? null,
       sectionBackgroundPositionY: block.sectionBackgroundPositionY ?? null,
       sectionBackgroundRounded: block.sectionBackgroundRounded ?? null,
+      sectionBackgroundShadow: block.sectionBackgroundShadow ?? null,
       sectionBackgroundWide: block.sectionBackgroundWide ?? null,
       sectionBackgroundHeight: block.sectionBackgroundHeight ?? null,
       dividerColor: block.dividerColor ?? null,
@@ -10262,6 +10323,13 @@ export default function App() {
     const savedBlockId = selectedBlock.id;
     const currentBlockType = selectedBlock.type;
     const currentForm = blockFormRef.current;
+    const titleSession = inlineRichTextSessionRef.current;
+    const titleEditor = richEditorRef.current;
+    const liveDialogueTitle = titleSession?.blockId === savedBlockId
+      && titleSession.itemField === "situationalDialogueTitleHtml"
+      && titleEditor?.isConnected
+      ? dialogueTitleHtml(titleEditor.innerHTML)
+      : undefined;
     const isHeaderBlock = currentBlockType === "header";
     const isButtonBlock = ["continue", "course-exit"].includes(currentBlockType);
     const liveContentHtml = currentMainRichEditorHtmlForSave(currentBlockType);
@@ -10331,6 +10399,12 @@ export default function App() {
         pageId: activePage.id,
         blockId: selectedBlock.id,
         blockType: currentBlockType,
+        situationalDialogueTitleHtml: currentBlockType === "situational-dialogue"
+          ? liveDialogueTitle ?? blockFormRef.current.situationalDialogueTitleHtml ?? ""
+          : undefined,
+        situationalDialogueBannerColor: currentBlockType === "situational-dialogue"
+          ? appearanceValueForSave("situationalDialogueBannerColor", persistedSelectedBlock.situationalDialogueBannerColor)
+          : undefined,
         title: nextTitle,
         summary: nextSummary,
         contentHtml: currentBlockType === "image" ? null : currentBlockType === "note"
@@ -10487,6 +10561,7 @@ export default function App() {
         sectionBackgroundRounded: canUseSectionBackground
           ? appearanceValueForSave("sectionBackgroundRounded", persistedSelectedBlock.sectionBackgroundRounded)
           : true,
+        sectionBackgroundShadow: currentBlockType === "situational-dialogue" ? currentForm.sectionBackgroundShadow : undefined,
         sectionBackgroundWide: canUseSectionBackground
           ? isActivityBackgroundAlwaysWide(currentBlockType)
             || appearanceValueForSave("sectionBackgroundWide", persistedSelectedBlock.sectionBackgroundWide)
@@ -11354,6 +11429,22 @@ export default function App() {
     }
   }
 
+  function glossaryAssistantProjectPaths() {
+    return [...new Set([
+      ...libraryProjectsWithCollections.map(entry => entry.archivePath),
+      ...(project && currentProjectPath !== getDefaultProjectPath() ? [currentProjectPath] : [])
+    ])];
+  }
+
+  async function refreshProjectGlossaryAssistants() {
+    if (!project || currentProjectPath === getDefaultProjectPath()) return;
+
+    const { project: savedProject } = await loadWorkspaceStateForProject(currentProjectPath);
+    setWorkspaceState(current => current?.project.id === savedProject.id
+      ? { ...current, project: { ...current.project, glossaryAssistants: savedProject.glossaryAssistants } }
+      : current);
+  }
+
   async function handleSaveGlossaryAssistantResources(bankIds?: string[], metadataOnlyIds: string[] = []) {
     if (resourceAssistantSaveFeedbackTimeoutRef.current !== null) {
       window.clearTimeout(resourceAssistantSaveFeedbackTimeoutRef.current);
@@ -11363,7 +11454,7 @@ export default function App() {
     setResourceAssistantSaveFeedbackState("saving");
     try {
     await runAction("save-user-glossary-assistants", async () => {
-      const projectPathsToSync = libraryProjectsWithCollections.map((entry) => entry.archivePath);
+      const projectPathsToSync = glossaryAssistantProjectPaths();
       const claimedProjectPaths = new Set<string>();
       const normalizedAssistants = userGlossaryAssistantsRef.current.map((assistant) => {
         const projectPaths = (assistant.projectPaths ?? []).filter((projectPath) => {
@@ -11388,27 +11479,7 @@ export default function App() {
       });
       userGlossaryAssistantsRef.current = savedAssistants;
       setUserGlossaryAssistants(savedAssistants);
-      const currentProjectAssistants = (await Promise.all(savedAssistants
-        .filter((assistant) => (assistant.projectPaths ?? []).includes(currentProjectPath))
-        .map(assistant => loadResourceBank("assistants", assistant))))
-        .map((assistant) => ({
-          ...assistant,
-          assistantEnabled: true,
-          projectPaths: [],
-          collectionIds: [],
-          lessonIds: []
-        }));
-      setWorkspaceState((current) =>
-        current
-          ? {
-              ...current,
-              project: {
-                ...current.project,
-                glossaryAssistants: currentProjectAssistants
-              }
-            }
-          : current
-      );
+      await refreshProjectGlossaryAssistants();
     });
       setResourceAssistantSaveFeedbackState("saved");
       resourceAssistantSaveFeedbackTimeoutRef.current = window.setTimeout(() => {
@@ -16855,6 +16926,9 @@ export default function App() {
       ...currentSession,
       currentHtml: html
     };
+    if (currentSession.itemField === "situationalDialogueTitleHtml") {
+      blockFormRef.current = { ...blockFormRef.current, situationalDialogueTitleHtml: dialogueTitleHtml(html) };
+    }
   }
 
   function enforceCourseCoverTitleEditorBounds(editor: HTMLDivElement) {
@@ -18326,15 +18400,15 @@ export default function App() {
     return optionalHtmlOrNull(normalized) ?? "";
   }
 
-  function handleQuoteAuthorEditorRichTextActivate(
+  function activateLabeledRichTextField(
     editor: HTMLDivElement,
     block: PaideiaBlock,
     html: string,
-    profile: RichTextToolbarProfile
+    profile: RichTextToolbarProfile,
+    field: "quoteAuthorHtml" | "situationalDialogueTitleHtml"
   ) {
     richEditorRef.current = editor;
     const currentSession = inlineRichTextSessionRef.current;
-    const field = "quoteAuthorHtml";
     const sessionKey = richToolbarSessionKey(block.id, null, field);
     const isNewSession =
       !currentSession ||
@@ -18360,21 +18434,30 @@ export default function App() {
     saveRealRichEditorSelection();
   }
 
-  function handleQuoteAuthorEditorRichTextCommit(blockId: string, html: string) {
+  function commitLabeledRichTextField(
+    blockId: string,
+    field: "quoteAuthorHtml" | "situationalDialogueTitleHtml",
+    html: string
+  ) {
     if (!isCurrentBlockForm(blockId)) return;
-    const normalizedHtml = normalizeQuoteAuthorEditorValue(html);
+    const normalizedHtml = field === "situationalDialogueTitleHtml"
+      ? dialogueTitleHtml(html)
+      : normalizeQuoteAuthorEditorValue(html);
+    if (field === "situationalDialogueTitleHtml") {
+      blockFormRef.current = { ...blockFormRef.current, situationalDialogueTitleHtml: normalizedHtml };
+    }
     setBlockForm((current) => {
-      if (normalizeHtmlForInlineCompare(current.quoteAuthorHtml) === normalizeHtmlForInlineCompare(normalizedHtml)) {
+      if (normalizeHtmlForInlineCompare(current[field] ?? "") === normalizeHtmlForInlineCompare(normalizedHtml)) {
         return current;
       }
       return {
         ...current,
-        quoteAuthorHtml: normalizedHtml
+        [field]: normalizedHtml
       };
     });
 
     const updatedSession = inlineRichTextSessionRef.current;
-    if (updatedSession?.blockId === blockId && updatedSession.itemId === null && updatedSession.itemField === "quoteAuthorHtml") {
+    if (updatedSession?.blockId === blockId && updatedSession.itemId === null && updatedSession.itemField === field) {
       setInlineRichTextSession({
         ...updatedSession,
         currentHtml: normalizedHtml,
@@ -18391,23 +18474,32 @@ export default function App() {
     }, 0);
   }
 
-  function renderQuoteAuthorEditorRichTextFieldForBlock(block: PaideiaBlock, html: string) {
+  function renderLabeledInlineRichTextField(
+    block: PaideiaBlock,
+    html: string,
+    field: "quoteAuthorHtml" | "situationalDialogueTitleHtml"
+  ) {
+    const isBannerTitle = field === "situationalDialogueTitleHtml";
     const profile: RichTextToolbarProfile = "full";
-    const field = "quoteAuthorHtml";
+    const label = isBannerTitle ? t("situationalDialogue.bannerTitle") : t("quote.authorSource");
     const isActive =
       inlineRichTextEdit?.blockId === block.id &&
       inlineRichTextEdit.itemId === null &&
       inlineRichTextEdit.itemField === field;
-    const normalizedHtml = html?.trim() || "<p></p>";
+    const normalizedHtml = isBannerTitle ? dialogueTitleHtml(html) : html?.trim() || "<p></p>";
+    const wrapperClass = isBannerTitle ? "activity-item-editor-rich-wrapper situational-dialogue-inline-wrapper" : "quote-author-inline-wrapper";
 
     return (
-      <div className={`inline-rich-text-wrapper quote-author-inline-wrapper ${isActive ? "active" : ""}`}>
-        <span className="editor-label">{t("quote.authorSource")}</span>
+      <div className={`inline-rich-text-wrapper ${wrapperClass} ${isActive ? "active" : ""}`}>
+        <span className="editor-label">{label}</span>
         {isActive ? (
           <RichTextToolbar
             showOutline
             className={inlineRichToolbarClassName()}
-            displayMode="expanded"
+            displayMode={isBannerTitle ? "collapsible" : "expanded"}
+            showInlineImage={!isBannerTitle}
+            showLink={!isBannerTitle}
+            showListControls={!isBannerTitle}
             onBeforeCommand={saveRichEditorSelection}
             onCaseTransform={applyCaseTransform}
             onClearFormatting={clearRichEditorFormatting}
@@ -18429,20 +18521,24 @@ export default function App() {
             textColor={textColor}
           />
         ) : null}
-        <InlineRichTextField key={richTextFieldKey(currentProjectPath, block.id, null, "quoteAuthorHtml")} editorKey={richTextFieldKey(currentProjectPath, block.id, null, "quoteAuthorHtml")}
+        <InlineRichTextField
+          key={richTextFieldKey(currentProjectPath, block.id, null, field)}
+          editorKey={richTextFieldKey(currentProjectPath, block.id, null, field)}
+          ariaLabel={isBannerTitle ? label : undefined}
           commitOnInput={false}
-          className="quote-author-editor"
+          className={isBannerTitle ? "activity-item-rich-editor compact dialogue-banner-title-editor" : "quote-author-editor"}
           html={normalizedHtml}
           isActive={isActive}
+          normalizeSingleLine={isBannerTitle ? dialogueTitleHtml : undefined}
           onActivate={(editor, initialHtml) =>
-            handleQuoteAuthorEditorRichTextActivate(editor, block, initialHtml, profile)
+            activateLabeledRichTextField(editor, block, initialHtml, profile, field)
           }
           onBeforeRichInput={handleRichEditorBeforeInput}
-          onCommit={(nextHtml) => handleQuoteAuthorEditorRichTextCommit(block.id, nextHtml)}
-          onInput={(nextHtml) => updateInlineRichTextCurrentHtml(nextHtml)}
+          onCommit={(nextHtml) => commitLabeledRichTextField(block.id, field, nextHtml)}
+          onInput={updateInlineRichTextCurrentHtml}
           onLiveInput={handleRichEditorLiveInput}
           onRequestClose={() => setInlineRichTextSession(null)}
-          placeholder={t("quote.authorSource")}
+          placeholder={isBannerTitle ? "" : label}
         />
       </div>
     );
@@ -21183,6 +21279,7 @@ export default function App() {
           blockFormRef,
           busyAction,
           courseBackgroundColor: normalizeCourseAppearance(project?.courseAppearance).backgroundColor,
+          courseShadows: normalizeCourseAppearance(project?.courseAppearance).shadows,
           courseTextColor: resolvedCourseTextColor(project?.courseAppearance),
           currentProjectPath,
           htmlCodeScrollTop,
@@ -21283,7 +21380,8 @@ export default function App() {
           renderInlineSituationalDialogueItemFieldForBlock,
           renderPointOfInterestMarkerRichTextFieldForBlock,
           renderQuizRichTextField,
-          renderQuoteAuthorEditorRichTextFieldForBlock,
+          renderQuoteAuthorEditorRichTextFieldForBlock: (block, html) => renderLabeledInlineRichTextField(block, html, "quoteAuthorHtml"),
+          renderDialogueBannerTitleField: (block, html) => renderLabeledInlineRichTextField(block, html, "situationalDialogueTitleHtml"),
           renderCourseExitRichTextFieldForBlock,
           renderTabsEditorRichTextFieldForBlock,
           richEditorRef,
@@ -21409,17 +21507,17 @@ export default function App() {
     }
     const isPanelOpen = previewAssistantOpen || activePreviewAssistant.alwaysVisible;
     const fallback = activePreviewAssistant.fallbackResponses[0] || "Je ne trouve pas ce terme dans ce glossaire.";
+    let legacyBankAvatarSrc: string | null = null;
     const assistantAvatarSrc = (() => {
       const avatarRef = activePreviewAssistant.avatarRef?.trim();
       if (!avatarRef) {
         return "";
       }
-      if (avatarRef.replace(/\\/g, "/").startsWith("avatars/") && userGlossaryAssistantBankPath) {
-        return isTauriRuntimeAvailable()
-          ? convertFileSrc(`${userGlossaryAssistantBankPath.replace(/\\/g, "/")}/${avatarRef.replace(/\\/g, "/")}`)
-          : "";
+      const asset = avatarRef.replace(/\\/g, "/").replace(/^(?:\.\/)?(?:assets\/)?/, "");
+      if (/^avatars\/[^/]+$/.test(asset) && userGlossaryAssistantBankPath) {
+        legacyBankAvatarSrc = buildLibraryImageUrl(`${userGlossaryAssistantBankPath}/${asset}`);
       }
-      return buildAssetUrl(currentProjectPath, avatarRef);
+      return buildAssetUrl(currentProjectPath, asset) ?? "";
     })();
 
     function submitAssistantSearch(event: FormEvent<HTMLFormElement>) {
@@ -21477,7 +21575,11 @@ export default function App() {
         {isPanelOpen ? (
           <section className="preview-assistant-panel" aria-label={activePreviewAssistant.name}>
             <form className="preview-assistant-search" onSubmit={submitAssistantSearch}>
-              {assistantAvatarSrc ? <img alt="" src={assistantAvatarSrc} /> : null}
+              {assistantAvatarSrc ? <img key={assistantAvatarSrc} alt="" src={assistantAvatarSrc} onError={event => {
+                const image = event.currentTarget;
+                if (legacyBankAvatarSrc && image.getAttribute("src") !== legacyBankAvatarSrc) image.src = legacyBankAvatarSrc;
+                else image.hidden = true;
+              }} /> : null}
               <div className="preview-assistant-input-wrap">
                 <input
                   onChange={(event) => setPreviewAssistantQuery(event.target.value)}
@@ -22317,33 +22419,13 @@ export default function App() {
           }
           onDeleteAssistant={(assistantId) =>
             runAction("delete-user-glossary-assistant", async () => {
-              const projectPathsToSync = libraryProjectsWithCollections.map((entry) => entry.archivePath);
+              const projectPathsToSync = glossaryAssistantProjectPaths();
               await saveUserGlossaryAssistants(userGlossaryAssistantsRef.current.filter(bank => bank.id === assistantId), []);
               await deleteUserGlossaryAssistant(assistantId, projectPathsToSync);
               const savedAssistants = userGlossaryAssistantsRef.current.filter(bank => bank.id !== assistantId);
               userGlossaryAssistantsRef.current = savedAssistants;
               setUserGlossaryAssistants(savedAssistants);
-              const currentProjectAssistants = (await Promise.all(savedAssistants
-                .filter((assistant) => (assistant.projectPaths ?? []).includes(currentProjectPath))
-                .map(assistant => loadResourceBank("assistants", assistant))))
-                .map((assistant) => ({
-                  ...assistant,
-                  assistantEnabled: true,
-                  projectPaths: [],
-                  collectionIds: [],
-                  lessonIds: []
-                }));
-              setWorkspaceState((current) =>
-                current
-                  ? {
-                      ...current,
-                      project: {
-                        ...current.project,
-                        glossaryAssistants: currentProjectAssistants
-                      }
-                    }
-                  : current
-              );
+              await refreshProjectGlossaryAssistants();
             })
           }
           onExportXlsx={(fileName, fileBytes) =>
@@ -23512,6 +23594,9 @@ export default function App() {
                     ? unclampedActivityPadding
                     : Math.min(maximumActivityPadding, unclampedActivityPadding);
                   const pendingBlock = isPreviewMode ? block : blockWithPendingInlineText(block, currentProjectPath, pendingInlineTexts);
+                  const hasSectionSurface = block.type !== "situational-dialogue"
+                    && supportsActivityBackground(block.type)
+                    && hasBlockSectionStyle(block);
                   const renderedBlock = block.type === "header" && blockHeaderHeightDrafts[block.id]
                     ? { ...pendingBlock, headerHeight: blockHeaderHeightDrafts[block.id] }
                     : pendingBlock;
@@ -23615,7 +23700,7 @@ export default function App() {
                       </div>
                     ) : null}
                     <article
-                      className={`linear-block block-type-${block.type} ${block.type === "situational-dialogue" ? "situational-dialogue-block-shell" : ""} ${block.type === "image-text" ? imageTextActivityShellClassName : ""} ${(block.type === "image" && ["image-full", "page-width"].includes(normalizedMediaLayout(block))) || (block.type === "html-custom" && normalizedMediaLayout(block) === "full-width") ? "full-width-image-block-shell" : ""} ${block.type !== "situational-dialogue" && supportsActivityBackground(block.type) && hasBlockSectionStyle(block) ? "has-section-style" : ""} ${block.type !== "situational-dialogue" && supportsActivityBackground(block.type) && hasBlockSectionStyle(block) && blockSectionIsWide(block) ? "activity-background-wide" : ""} ${block.type === "rich-text" ? "rich-text-content-inset" : ""} ${block.id === selectedBlock?.id ? "selected" : ""} ${
+                      className={`linear-block block-type-${block.type} ${block.type === "situational-dialogue" ? "situational-dialogue-block-shell" : ""} ${block.type === "image-text" ? imageTextActivityShellClassName : ""} ${(block.type === "image" && ["image-full", "page-width"].includes(normalizedMediaLayout(block))) || (block.type === "html-custom" && normalizedMediaLayout(block) === "full-width") ? "full-width-image-block-shell" : ""} ${hasSectionSurface ? "has-section-style" : ""} ${hasSectionSurface && blockSectionIsWide(block) ? "activity-background-wide" : ""} ${block.type === "rich-text" ? "rich-text-content-inset" : ""} ${block.id === selectedBlock?.id ? "selected" : ""} ${
                         block.type === "situational-dialogue" &&
                         block.sectionBackgroundWide &&
                         !(isInspectorOpen && selectedBlock?.id === block.id)
@@ -23627,16 +23712,12 @@ export default function App() {
                       data-block-id={block.id}
                       tabIndex={isPreviewMode ? -1 : undefined}
                       style={
-                        block.type !== "situational-dialogue" &&
-                        supportsActivityBackground(block.type) &&
-                        hasBlockSectionStyle(block)
+                        hasSectionSurface
                           ? blockSectionStyle(block, currentProjectPath)
                           : undefined
                       }
                     >
-                      {block.type !== "situational-dialogue" &&
-                      supportsActivityBackground(block.type) &&
-                      hasBlockSectionStyle(block) ? (
+                      {hasSectionSurface ? (
                         <ActivitySectionBackgroundLayer
                           wide={blockSectionIsWide(block)}
                         />
@@ -23783,6 +23864,18 @@ export default function App() {
                               if (!updateInput) return;
                               const nextState = await updateBlock(updateInput);
                               setWorkspaceState(nextState);
+                            }}
+                            onSituationalDialogueCharacterFramingChange={async (blockId, framing) => {
+                              const path = currentProjectPath;
+                              const pageId = activePage?.id;
+                              if (!path || !pageId || isPreviewMode) return;
+                              try {
+                                const nextState = await updateSituationalDialogueFraming(path, pageId, blockId, framing);
+                                setWorkspaceState(current => current?.project.id === nextState.project.id ? nextState : current);
+                                markProjectDirty(path);
+                              } catch (error) {
+                                await message(String(error), { kind: "error", title: "PAIDEIA" });
+                              }
                             }}
                             onActivityComplete={markPreviewBlockComplete}
                             onContinue={revealAfterContinue}

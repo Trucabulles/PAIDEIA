@@ -22,6 +22,7 @@ export type ActivityBackgroundAppearanceLabels = {
   removeImage: string;
   reset: string;
   roundedCorners: string;
+  shadow: string;
   strong: string;
   title: string;
   wideBackground: string;
@@ -37,6 +38,7 @@ export type ActivityBackgroundAppearanceValue = {
   overlay: number;
   darkOverlay: boolean;
   rounded: boolean;
+  shadow: boolean;
   wide: boolean;
 };
 
@@ -55,6 +57,7 @@ export type ActivityBackgroundAppearanceProps = {
   showHeight?: boolean;
   showImage?: boolean;
   showRounded?: boolean;
+  showShadow?: boolean;
   showWide?: boolean;
   value: ActivityBackgroundAppearanceValue;
 };
@@ -83,6 +86,7 @@ export function ActivityBackgroundAppearance({
   showHeight = true,
   showImage = true,
   showRounded = true,
+  showShadow = false,
   showWide = true,
   value
 }: ActivityBackgroundAppearanceProps) {
@@ -200,6 +204,14 @@ export function ActivityBackgroundAppearance({
             {labels.roundedCorners}
           </AuthoringCheckbox>
         ) : null}
+
+        {showShadow ? <AuthoringCheckbox
+          checked={value.shadow}
+          compact
+          onChange={(event) => onChange({ shadow: event.target.checked })}
+        >
+          {labels.shadow}
+        </AuthoringCheckbox> : null}
 
         {showHeight ? (
           <label className="activity-background-appearance__control">

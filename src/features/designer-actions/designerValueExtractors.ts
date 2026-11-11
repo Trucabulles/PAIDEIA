@@ -333,7 +333,8 @@ export function extractAppearanceActivityTarget(normalized: string): ExtractedAp
       ...(excludedActivityTypes?.length ? { excludedActivityTypes } : {})
     };
   }
-  const activityType = activityTypeFromCollectiveTarget(normalized);
+  const activityType = activityTypeFromCollectiveTarget(normalized)
+    ?? (/\b(?:les|des)\s+mises en situation\b/.test(normalized) ? "situational-dialogue" : null);
   if (activityType) return { target: "type", activityType, ...(excludedActivityTypes?.length ? { excludedActivityTypes } : {}) };
   if (targetsAllActivities) return { target: "all" };
   return null;

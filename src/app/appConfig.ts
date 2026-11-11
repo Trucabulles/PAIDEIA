@@ -1,6 +1,6 @@
 import type { ChapterScormTracking } from "../types/project";
 
-export const APP_VERSION = "1.1.26310";
+export const APP_VERSION = "1.1.26315";
 export const APP_BUILD_COMMIT = import.meta.env.VITE_PAIDEIA_GIT_COMMIT || "indisponible";
 
 export const PROJECT_TABS_KEY = "paideia.openProjectTabs";

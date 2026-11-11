@@ -66,7 +66,7 @@ export function supportsActivityBackgroundProperty(blockType: string, property: 
 }
 
 export function activityBackgroundWideDefault(blockType: string) {
-  return supportsActivityBackground(blockType);
+  return blockType !== "situational-dialogue" && supportsActivityBackground(blockType);
 }
 
 export function isActivityBackgroundAlwaysWide(blockType: string) {

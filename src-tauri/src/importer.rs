@@ -1930,7 +1930,8 @@ fn map_rise_item_to_block_with_id(
                 None
             },
             section_background_rounded: None,
-            section_background_wide: supports_activity_background.then_some(true),
+            section_background_shadow: None,
+            section_background_wide: supports_activity_background.then_some(native_type != "situational-dialogue"),
             section_background_height: if native_type == "rich-text"
                 && (section_background_color.is_some() || has_section_background_image)
             {
@@ -2045,6 +2046,9 @@ fn map_rise_item_to_block_with_id(
             image360_hotspots: Vec::new(),
             activity_items,
             situational_dialogue_characters,
+            situational_dialogue_title_html: None,
+            situational_dialogue_banner_color: None,
+            situational_dialogue_framing: Vec::new(),
             attachment_files,
             quiz: quiz_data,
             find_elements: None,
@@ -2211,6 +2215,7 @@ fn build_rise_quiz_mapped_block(
             section_background_blur: None,
             section_background_position_y: None,
             section_background_rounded: None,
+            section_background_shadow: None,
             section_background_wide: None,
             section_background_height: None,
             divider_color: None,
@@ -2223,6 +2228,9 @@ fn build_rise_quiz_mapped_block(
             image360_hotspots: Vec::new(),
             activity_items: Vec::new(),
             situational_dialogue_characters: Vec::new(),
+            situational_dialogue_title_html: None,
+            situational_dialogue_banner_color: None,
+            situational_dialogue_framing: Vec::new(),
             attachment_files: Vec::new(),
             quiz: Some(extracted.quiz),
             find_elements: None,
@@ -2671,6 +2679,7 @@ fn extract_rise_card_sort_activity(
                 id: format!("card_sort_item_{}_{:02}", id_prefix, index + 1),
                 title: strip_html(&content).trim().to_string(),
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3298,6 +3307,7 @@ fn extract_flashcard_activity_items(
                 resource_open_mode: None,
                 resource_valid: None,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3376,6 +3386,7 @@ fn extract_timeline_activity_items(items: &[Value]) -> Vec<ActivityItem> {
                 resource_open_mode: None,
                 resource_valid: None,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3461,6 +3472,7 @@ fn extract_tabs_activity_items(
                 resource_open_mode: None,
                 resource_valid: None,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3520,6 +3532,7 @@ fn extract_tabs_activity_items(
             resource_open_mode: None,
             resource_valid: None,
             kind: None,
+            situational_dialogue_introduction_visible: None,
             node_type: None,
             character_id: None,
             character_name: None,
@@ -3606,6 +3619,7 @@ fn extract_rise_accordion_activity_items(
                 resource_open_mode: None,
                 resource_valid: None,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3692,6 +3706,7 @@ fn extract_rise_image_grid_activity_items(
                 resource_open_mode: None,
                 resource_valid: None,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -3815,6 +3830,7 @@ fn extract_situational_dialogue_activity_items(
                 id: node_id,
                 title,
                 kind: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: Some(if slide_index == 0 {
                     "introduction".to_string()
                 } else if slide_index + 1 == slides.len() {
@@ -4051,6 +4067,7 @@ fn extract_slides_activity_items(
                 resource_raw_destination: None,
                 resource_open_mode: None,
                 resource_valid: None,
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -4425,6 +4442,7 @@ fn extract_rise_resource_actions(items: &[Value], settings: Option<&Value>) -> V
                 resource_open_mode: Some("new-tab".to_string()),
                 resource_valid: Some(valid),
                 kind: Some("step".to_string()),
+                situational_dialogue_introduction_visible: None,
                 node_type: None,
                 character_id: None,
                 character_name: None,
@@ -7966,6 +7984,7 @@ mod tests {
                                 section_background_blur: None,
                                 section_background_position_y: None,
                                 section_background_rounded: None,
+                                section_background_shadow: None,
                                 section_background_wide: None,
                                 section_background_height: None,
                                 divider_color: None,
@@ -7978,6 +7997,9 @@ mod tests {
                                 image360_hotspots: Vec::new(),
                                 activity_items: Vec::new(),
                                 situational_dialogue_characters: Vec::new(),
+                                situational_dialogue_title_html: None,
+                                situational_dialogue_banner_color: None,
+                                situational_dialogue_framing: Vec::new(),
                                 attachment_files: Vec::new(),
                                 quiz: None,
                                 find_elements: None,
@@ -8070,6 +8092,7 @@ mod tests {
                                 section_background_blur: None,
                                 section_background_position_y: None,
                                 section_background_rounded: None,
+                                section_background_shadow: None,
                                 section_background_wide: None,
                                 section_background_height: None,
                                 divider_color: None,
@@ -8085,6 +8108,7 @@ mod tests {
                                         id: "accordion_item_rich".to_string(),
                                         title: "<p><span style=\"color:#f08a00\">Panneau riche</span></p>".to_string(),
                                         kind: Some("step".to_string()),
+                                        situational_dialogue_introduction_visible: None,
                                         node_type: None,
                                         character_id: None,
                                         character_name: None,
@@ -8145,6 +8169,7 @@ mod tests {
                                         id: "accordion_item_empty_title".to_string(),
                                         title: String::new(),
                                         kind: Some("step".to_string()),
+                                        situational_dialogue_introduction_visible: None,
                                         node_type: None,
                                         character_id: None,
                                         character_name: None,
@@ -8197,6 +8222,9 @@ mod tests {
                                     },
                                 ],
                                 situational_dialogue_characters: Vec::new(),
+                                situational_dialogue_title_html: None,
+                                situational_dialogue_banner_color: None,
+                                situational_dialogue_framing: Vec::new(),
                                 attachment_files: Vec::new(),
                                 quiz: None,
                                 find_elements: None,
@@ -9813,7 +9841,7 @@ mod tests {
     }
 
     #[test]
-    fn rise_scenario_does_not_import_an_activity_background() {
+    fn rise_scenario_uses_normal_width_without_an_activity_background() {
         let item = serde_json::json!({
             "family": "interactive-fullscreen",
             "variant": "scenario",
@@ -9838,7 +9866,7 @@ mod tests {
         assert_eq!(mapped.block.block_type, "situational-dialogue");
         assert_eq!(mapped.block.section_background_image_ref, None);
         assert_eq!(mapped.block.section_background_opacity, None);
-        assert_eq!(mapped.block.section_background_wide, Some(true));
+        assert_eq!(mapped.block.section_background_wide, Some(false));
     }
 
     #[test]

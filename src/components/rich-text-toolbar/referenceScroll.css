@@ -1,0 +1,39 @@
+.paideia-rich-reference-tooltip {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+
+.paideia-reference-scroll {
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: 14px 16px;
+}
+
+.paideia-reference-scroll::-webkit-scrollbar { display: none; }
+.paideia-reference-scroll:focus-visible { outline: 2px solid #365f9b; outline-offset: -3px; }
+
+.paideia-reference-scroll-hint {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  place-items: end center;
+  height: 34px;
+  padding-bottom: 7px;
+  background: linear-gradient(transparent, white 85%);
+  pointer-events: none;
+}
+
+.paideia-reference-scroll-hint::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+
+.paideia-rich-reference-tooltip[hidden], .paideia-reference-scroll-hint[hidden] { display: none; }

@@ -36,6 +36,7 @@ export type DesignerSlotId =
   | "activity-frame-target"
   | "activity-frame-background-color"
   | "activity-frame-border-color"
+  | "situational-dialogue-color"
   | "activity-frame-accent-color"
   | "activity-frame-border-width"
   | "activity-frame-border-style"
@@ -105,6 +106,7 @@ export const DESIGNER_SLOT_REGISTRY: Record<DesignerSlotId, {
   "activity-frame-target": { questionKey: "designerActions.questionActivityFrameTarget", fallback: "Quelles activités souhaitez-vous modifier ?" },
   "activity-frame-background-color": { questionKey: "designerActions.questionActivityFrameBackgroundColor", fallback: "Quelle couleur de fond souhaitez-vous appliquer à l’apparence des activités ?", control: "color" },
   "activity-frame-border-color": { questionKey: "designerActions.questionActivityFrameBorderColor", fallback: "Quelle couleur de trait souhaitez-vous utiliser ?", control: "color" },
+  "situational-dialogue-color": { questionKey: "designerActions.questionSituationalDialogueColor", fallback: "Quelle couleur souhaitez-vous appliquer ?", control: "color" },
   "activity-frame-accent-color": { questionKey: "designerActions.questionActivityFrameAccentColor", fallback: "Quelle couleur d’accent souhaitez-vous utiliser ?", control: "color" },
   "activity-frame-border-width": { questionKey: "designerActions.questionActivityFrameBorderWidth", fallback: "Quelle épaisseur souhaitez-vous utiliser : fine, normale, épaisse ou très épaisse ?", answerSuggestions: ["Fine", "Normale", "Épaisse", "Très épaisse"] },
   "activity-frame-border-style": { questionKey: "designerActions.questionActivityFrameBorderStyle", fallback: "Quel type de trait souhaitez-vous utiliser : aucun, plein, tirets ou pointillés ?", answerSuggestions: ["Aucun", "Plein", "Tirets", "Pointillés"] },

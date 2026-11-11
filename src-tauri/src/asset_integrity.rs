@@ -1,7 +1,7 @@
 use crate::models::PaideiaProject;
 use serde_json::Value;
 use std::collections::HashSet;
-use std::fs;
+use std::fs::{self, File};
 use std::io::ErrorKind;
 use std::path::{Component, Path};
 
@@ -92,6 +92,7 @@ fn collect_refs(value: &Value, refs: &mut HashSet<String>) {
 fn clear_missing_refs(
     value: &mut Value,
     missing: &HashSet<String>,
+    legacy_avatars: &HashSet<String>,
     location: &str,
     removed: &mut Vec<MissingMedia>,
 ) {
@@ -144,6 +145,7 @@ fn clear_missing_refs(
                         .as_str()
                         .and_then(local_asset_ref)
                         .filter(|value| missing.contains(value))
+                        .filter(|value| key != "avatarRef" || !legacy_avatars.contains(value))
                     {
                         clear_front_name |= key == "frontImageAssetRef";
                         clear_back_name |= key == "backImageAssetRef";
@@ -202,7 +204,7 @@ fn clear_missing_refs(
                 }
             }
             for child in fields.values_mut() {
-                clear_missing_refs(child, missing, location, removed);
+                clear_missing_refs(child, missing, legacy_avatars, location, removed);
             }
         }
         Value::Array(items) => {
@@ -216,11 +218,41 @@ fn clear_missing_refs(
                     Some(label) => format!("{location} / {label}"),
                     None => format!("{location} / {}", index + 1),
                 };
-                clear_missing_refs(item, missing, &next_location, removed);
+                clear_missing_refs(item, missing, legacy_avatars, &next_location, removed);
             }
         }
         _ => {}
     }
+}
+
+fn restore_legacy_avatar(root: &Path, assets: &Path, reference: &str, source: &Path) -> std::io::Result<()> {
+    if root.join(".paideia-collaboration-readonly").is_file() {
+        return Ok(());
+    }
+    let root = root.canonicalize()?;
+    fs::create_dir_all(assets)?;
+    let assets = assets.canonicalize()?;
+    if !assets.starts_with(&root) {
+        return Ok(());
+    }
+    let directory = assets.join("avatars");
+    fs::create_dir_all(&directory)?;
+    let directory = directory.canonicalize()?;
+    if !directory.starts_with(&assets) {
+        return Ok(());
+    }
+    let Some(name) = Path::new(reference).file_name() else {
+        return Ok(());
+    };
+    let target = directory.join(name);
+    let mut source = File::open(source)?;
+    let mut target_file = File::create_new(&target)?;
+    if let Err(error) = std::io::copy(&mut source, &mut target_file) {
+        drop(target_file);
+        let _ = fs::remove_file(target);
+        return Err(error);
+    }
+    Ok(())
 }
 
 /// Only a confirmed missing file is cleared. An inaccessible asset directory or
@@ -254,8 +286,23 @@ pub fn clear_confirmed_missing_media(
     if missing.is_empty() {
         return Ok(Vec::new());
     }
+    let legacy_avatars = project
+        .glossary_assistants
+        .iter()
+        .filter_map(|assistant| assistant.avatar_ref.as_deref().and_then(local_asset_ref))
+        .filter(|reference| missing.contains(reference))
+        .filter(|reference| {
+            let Some(source) = crate::distribution::legacy_glossary_avatar(reference) else {
+                return false;
+            };
+            // Keep the reference even if the lesson is read-only. The preview
+            // and SCORM exporter can still resolve the avatar from the bank.
+            let _ = restore_legacy_avatar(root, &assets, reference, &source);
+            true
+        })
+        .collect();
     let mut removed = Vec::new();
-    clear_missing_refs(&mut value, &missing, "Leçon", &mut removed);
+    clear_missing_refs(&mut value, &missing, &legacy_avatars, "Leçon", &mut removed);
     *project = serde_json::from_value(value).map_err(|error| error.to_string())?;
     Ok(removed)
 }
