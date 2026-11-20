@@ -1,2 +1,2 @@
 export { CharacterResourceManager } from "./CharacterResourceManager";
-export type { UserCharacterDraft } from "./CharacterResourceManager";
+export type { UserCharacterDraft, PendingCharacterPose } from "./CharacterResourceManager";

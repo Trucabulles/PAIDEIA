@@ -154,7 +154,7 @@ import {
 } from "./components/rich-text-toolbar/richInlineImage";
 import { focusPositionAfterRichInlineImage, getRichInlineImageWrap, normalizeRichInlineImageParagraph, setRichInlineImageWrap } from "./components/rich-text-toolbar/richInlineImageWrap";
 import { AssistantResourceManager } from "./components/resources/AssistantResource";
-import { CharacterResourceManager, type UserCharacterDraft } from "./components/resources/CharacterResource";
+import { CharacterResourceManager, type UserCharacterDraft, type PendingCharacterPose } from "./components/resources/CharacterResource";
 import { QuestionBankManager } from "./components/resources/QuestionBank";
 import { ResourcesScreen, type ResourceSection } from "./components/resources/ResourcesScreen";
 import { CatalogSortControl } from "./components/resources/ResourceCatalogControls";
@@ -2944,6 +2944,18 @@ export default function App() {
   const [userSituationalDialogueCharacterBankPath, setUserSituationalDialogueCharacterBankPath] = useState("");
   const [resourceSection, setResourceSection] = useState<ResourceSection>("characters");
   const [selectedResourceCharacterId, setSelectedResourceCharacterId] = useState("");
+  const [pendingCharacterPoses, setPendingCharacterPoses] = useState<PendingCharacterPose[]>([]);
+  const [resourceCharacterSaveError, setResourceCharacterSaveError] = useState("");
+  const resourceCharacterSavingRef = useRef(false);
+  const pendingCharacterPosesRef = useRef<PendingCharacterPose[]>([]);
+  useEffect(() => {
+    const retained = new Set(pendingCharacterPoses.map((pose) => pose.url));
+    pendingCharacterPosesRef.current.forEach((pose) => {
+      if (!retained.has(pose.url)) URL.revokeObjectURL(pose.url);
+    });
+    pendingCharacterPosesRef.current = pendingCharacterPoses;
+  }, [pendingCharacterPoses]);
+  useEffect(() => () => pendingCharacterPosesRef.current.forEach((pose) => URL.revokeObjectURL(pose.url)), []);
   const [resourceCharacterDraft, setResourceCharacterDraft] = useState<UserCharacterDraft>({
     id: "",
     name: "",
@@ -11005,6 +11017,9 @@ export default function App() {
   }
 
   function handleNewResourceCharacterDraft() {
+    if (resourceCharacterSavingRef.current) return;
+    setPendingCharacterPoses([]);
+    setResourceCharacterSaveError("");
     setSelectedResourceCharacterId("");
     setResourceCharacterDraft({
       id: "",
@@ -11015,6 +11030,9 @@ export default function App() {
   }
 
   async function handleNewResourceCharacter() {
+    if (resourceCharacterSavingRef.current) return;
+    setPendingCharacterPoses([]);
+    setResourceCharacterSaveError("");
     setSelectedResourceCharacterId(USER_CHARACTER_DRAFT_ID);
     setResourceCharacterDraft({
       id: "",
@@ -11025,6 +11043,9 @@ export default function App() {
   }
 
   async function handleSaveResourceCharacter() {
+    if (resourceCharacterSavingRef.current || !resourceCharacterDraft.name.trim()) return;
+    resourceCharacterSavingRef.current = true;
+    setResourceCharacterSaveError("");
     if (resourceCharacterSaveFeedbackTimeoutRef.current !== null) {
       window.clearTimeout(resourceCharacterSaveFeedbackTimeoutRef.current);
       resourceCharacterSaveFeedbackTimeoutRef.current = null;
@@ -11038,7 +11059,6 @@ export default function App() {
         role: resourceCharacterDraft.role || null,
         description: resourceCharacterDraft.description || null
       });
-      await refreshUserSituationalDialogueCharacterBank();
       setSelectedResourceCharacterId(saved.id);
       setResourceCharacterDraft({
         id: saved.id,
@@ -11046,14 +11066,23 @@ export default function App() {
         role: saved.role ?? "",
         description: saved.description ?? ""
       });
+      for (const pose of pendingCharacterPoses) {
+        const payload = await uploadUserSituationalDialogueCharacterPose(saved.id, pose.state, pose.file, pose.makeDefault);
+        setUsersituationalDialogueCharacters(Array.isArray(payload) ? payload : []);
+        setPendingCharacterPoses((current) => current.filter((candidate) => candidate.id !== pose.id));
+      }
+      await refreshUserSituationalDialogueCharacterBank();
       setResourceCharacterSaveFeedbackState("saved");
       resourceCharacterSaveFeedbackTimeoutRef.current = window.setTimeout(() => {
         setResourceCharacterSaveFeedbackState("idle");
         resourceCharacterSaveFeedbackTimeoutRef.current = null;
       }, 1800);
     } catch (error) {
+      setResourceCharacterSaveError(error instanceof Error ? error.message : String(error));
       setResourceCharacterSaveFeedbackState("error");
       throw error;
+    } finally {
+      resourceCharacterSavingRef.current = false;
     }
   }
 
@@ -11501,6 +11530,12 @@ export default function App() {
   }
 
   async function handleUploadUserCharacterPose(state: string, file: File | null, makeDefault: boolean) {
+    if (resourceCharacterSavingRef.current || !file) return;
+    if (!resourceCharacterDraft.id || pendingCharacterPoses.length) {
+      const pose: PendingCharacterPose = { id: crypto.randomUUID(), state, file, url: URL.createObjectURL(file), makeDefault };
+      setPendingCharacterPoses((current) => [...current, pose]);
+      return;
+    }
     const characterId = resourceCharacterDraft.id || selectedResourceCharacterId;
     if (!characterId || !file) {
       return;
@@ -15815,6 +15850,18 @@ export default function App() {
     setRichBookmarkDialog({ mode: "create", initialLabel: range.toString().replace(/\s+/g, " ").trim().slice(0, 80) });
   }
 
+  function richTextReferenceOverlapsBookmark(editor: HTMLElement, range: Range) {
+    const overlaps = Array.from(editor.querySelectorAll("[data-paideia-bookmark-id]")).some((node) => range.intersectsNode(node));
+    if (overlaps) {
+      setImportDialog({
+        status: "error",
+        doneTitle: t("common.operationImpossible", undefined, "Operation unavailable"),
+        message: t("richText.referenceOverlapsBookmark", undefined, "A reference cannot be added to text that already contains a bookmark. Select separate text.")
+      });
+    }
+    return overlaps;
+  }
+
   function openInsertRichTextReference() {
     const editor = richEditorRef.current;
     const range = getNonCollapsedRichEditorCommandRange();
@@ -15829,6 +15876,7 @@ export default function App() {
       return;
     }
 
+    if (richTextReferenceOverlapsBookmark(editor, range)) return;
     const selectedTerm = normalizeReferenceTerm(range.toString());
     const bookmarks = availableRichTextBookmarks();
     const matchingIndex = bookmarks.findIndex((bookmark) => normalizeReferenceTerm(bookmark.label) === selectedTerm);
@@ -15876,7 +15924,12 @@ export default function App() {
   function applyRichTextReference(bookmarkId: string) {
     const editor = richEditorRef.current;
     const range = savedRangeRef.current?.cloneRange() ?? null;
-    if (!editor || !validRichTextMarkerRange(editor, range)) return setRichBookmarkDialog(null);
+    if (!editor || !range) return setRichBookmarkDialog(null);
+    if (richTextReferenceOverlapsBookmark(editor, range)) {
+      setRichBookmarkDialog(null);
+      return;
+    }
+    if (!validRichTextMarkerRange(editor, range)) return setRichBookmarkDialog(null);
     const bookmark = availableRichTextBookmarks().find((item) => item.id === bookmarkId);
     finishRichTextMarkerInsertion(insertRichTextReference(
       editor,
@@ -22036,6 +22089,8 @@ export default function App() {
       <CharacterResourceManager
         characters={usersituationalDialogueCharacters}
         draft={resourceCharacterDraft}
+        pendingPoses={pendingCharacterPoses}
+        saveError={resourceCharacterSaveError}
         formatCount={formatCount}
         onAddCharacter={() => void handleNewResourceCharacter()}
         onBackToTiles={handleNewResourceCharacterDraft}
@@ -22044,11 +22099,17 @@ export default function App() {
         }
         onDuplicateCharacter={handleDuplicateResourceCharacter}
         onDraftChange={(patch) => setResourceCharacterDraft((current) => ({ ...current, ...patch }))}
+        onRemovePendingPose={(id) => setPendingCharacterPoses((current) => current.filter((pose) => pose.id !== id))}
         onExportCharacters={handleExportResourceCharacters}
         onImportCharacters={handleImportResourceCharacters}
         onRenameCharacter={handleRenameResourceCharacter}
         onSaveCharacter={handleSaveResourceCharacter}
-        onSelectCharacter={setSelectedResourceCharacterId}
+        onSelectCharacter={(id) => {
+          if (resourceCharacterSavingRef.current) return;
+          setPendingCharacterPoses([]);
+          setResourceCharacterSaveError("");
+          setSelectedResourceCharacterId(id);
+        }}
         onSetDefaultPose={(characterId, state, assetRef) =>
           void handleSetUserCharacterDefaultPose(characterId, state, assetRef)
         }

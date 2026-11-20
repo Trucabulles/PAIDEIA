@@ -3,6 +3,13 @@
   color: #17284d;
 }
 
+.character-resource-manager fieldset.resource-character-workbench {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 /* ---------- Barre d'actions : même contrat que Banque de questions / Assistant ---------- */
 .character-resource-manager .resource-character-topbar {
   display: flex;
@@ -14,6 +21,7 @@
 }
 
 .character-resource-manager .resource-character-save-area {
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;

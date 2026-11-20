@@ -72,6 +72,20 @@ function freshEditor() {
 }
 
 try {
+  await test("marker selection rejects a bookmark or reference surrounding the selected text", async () => {
+    const markers = await vite.ssrLoadModule("/src/components/rich-text-toolbar/richTextBookmarks.ts");
+    const editor = freshEditor();
+    editor.innerHTML = '<p>Texte <span data-paideia-bookmark-id="target"><strong>Balise</strong></span> puis <span data-paideia-reference-id="ref"><em>Renvoi</em></span>.</p>';
+    for (const selector of ['strong', 'em']) {
+      const range = document.createRange();
+      range.selectNodeContents(editor.querySelector(selector));
+      assert.equal(range.cloneContents().querySelector('[data-paideia-bookmark-id],[data-paideia-reference-id]'), null);
+      assert.equal(markers.validRichTextMarkerRange(editor, range), false);
+    }
+    const range = document.createRange();
+    range.selectNodeContents(editor.querySelector('p').firstChild);
+    assert.equal(markers.validRichTextMarkerRange(editor, range), true);
+  });
   await test("reference cleanup covers partial, overflowing and whole-editor selections without touching targets", async () => {
     const markers = await vite.ssrLoadModule("/src/components/rich-text-toolbar/richTextBookmarks.ts");
     const editor = freshEditor();
@@ -167,7 +181,7 @@ try {
     }
   });
   await test("paragraph picker closes outside and on Escape without consuming another command", async () => {
-    const source = await readFile(path.join(root, "src/components/rich-text-toolbar/RichTextToolbar.tsx"), "utf8");
+    const source = (await readFile(path.join(root, "src/components/rich-text-toolbar/RichTextToolbar.tsx"), "utf8")).replace(/\r\n/g, "\n");
     const start = source.indexOf("useEffect(() => {\n    const closeOutside");
     assert(start >= 0);
     const effect = source.slice(start, source.indexOf("}, []);", start) + 7);

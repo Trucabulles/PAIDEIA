@@ -13,6 +13,14 @@ export type UserCharacterDraft = {
   description: string;
 };
 
+export type PendingCharacterPose = {
+  id: string;
+  state: string;
+  file: File;
+  url: string;
+  makeDefault: boolean;
+};
+
 type UserCharacterPoseState = {
   key: string;
   labelKey: string;
@@ -22,6 +30,8 @@ type UserCharacterPoseState = {
 type CharacterResourceManagerProps = {
   characters: DefaultSituationalDialogueCharacterDefinition[];
   draft: UserCharacterDraft;
+  pendingPoses: PendingCharacterPose[];
+  saveError: string;
   saveFeedbackState: "idle" | "saving" | "saved" | "error";
   selectedCharacterId: string;
   formatCount: (count: number, singular: string, plural: string) => string;
@@ -30,6 +40,7 @@ type CharacterResourceManagerProps = {
   onDeleteCharacterRequest: (character: DefaultSituationalDialogueCharacterDefinition) => void;
   onDuplicateCharacter: (characterId: string) => Promise<void>;
   onDraftChange: (patch: Partial<UserCharacterDraft>) => void;
+  onRemovePendingPose: (id: string) => void;
   onExportCharacters: (characterIds: string[]) => Promise<void>;
   onImportCharacters: () => Promise<void>;
   onRenameCharacter: (characterId: string, name: string) => Promise<void>;
@@ -131,6 +142,8 @@ function ImportIcon() {
 export function CharacterResourceManager({
   characters,
   draft,
+  pendingPoses,
+  saveError,
   saveFeedbackState,
   selectedCharacterId,
   formatCount,
@@ -139,6 +152,7 @@ export function CharacterResourceManager({
   onDeleteCharacterRequest,
   onDuplicateCharacter,
   onDraftChange,
+  onRemovePendingPose,
   onExportCharacters,
   onImportCharacters,
   onRenameCharacter,
@@ -182,7 +196,7 @@ export function CharacterResourceManager({
     }
   }
   useEscapeNavigation(Boolean(selectedCharacterId), onBackToTiles);
-  const canUploadPose = Boolean(draft.id || selectedCharacterId);
+  const canUploadPose = Boolean(selectedCharacterId) && saveFeedbackState !== "saving";
   const selectedPreviewUrl = selectedCharacter ? resolvePreviewUrl(selectedCharacter) : null;
   const saveButtonStateClass =
     saveFeedbackState === "saving"
@@ -399,7 +413,7 @@ export function CharacterResourceManager({
   return (
     <section className="character-resource-manager resource-bank-panel">
       <div className="resource-character-topbar">
-        <button className="character-resource-button character-resource-back-button" onClick={onBackToTiles} type="button">
+        <button className="character-resource-button character-resource-back-button" disabled={saveFeedbackState === "saving"} onClick={onBackToTiles} type="button">
           <span className="character-resource-button-icon"><BackIcon /></span>
           <span>
             {t("resources.backToTiles", undefined, "Retour aux tuiles")}
@@ -428,7 +442,8 @@ export function CharacterResourceManager({
         </div>
       </div>
 
-      <div className="resource-character-workbench">
+      {saveError ? <p role="alert">{saveError}</p> : null}
+      <fieldset className="resource-character-workbench" disabled={saveFeedbackState === "saving"}>
         <div className="resource-character-editor">
           <section className="resource-character-identity-card">
             <div className="resource-character-identity-preview">
@@ -474,19 +489,21 @@ export function CharacterResourceManager({
             {USER_CHARACTER_POSE_STATES.map((state) => {
               const poses = selectedCharacter?.poses.filter((pose) => pose.state === state.key) ?? [];
               const defaultPose = poses[0] ?? null;
-              const defaultPoseUrl = resolvePoseUrl(defaultPose?.assetRef);
+              const pending = pendingPoses.filter((pose) => pose.state === state.key);
+              const pendingDefault = [...pending].reverse().find((pose) => pose.makeDefault) ?? (!defaultPose ? pending[0] : undefined);
+              const defaultPoseUrl = pendingDefault?.url ?? resolvePoseUrl(defaultPose?.assetRef);
               return (
                 <div className="resource-pose-row" key={state.key}>
                   <div className="resource-pose-row-title">
                     <strong>{t(state.labelKey, undefined, state.fallback)}</strong>
-                    <span>{poses.length ? formatCount(poses.length, "image", "images") : t("resources.noImage", undefined, "Aucune image")}</span>
+                    <span>{poses.length + pending.length ? formatCount(poses.length + pending.length, "image", "images") : t("resources.noImage", undefined, "Aucune image")}</span>
                   </div>
                   <div className="resource-pose-main">
                     <div className="resource-pose-default-preview">
                       {defaultPoseUrl ? <img alt="" src={defaultPoseUrl} /> : <span>{t("resources.noImage", undefined, "Aucune image")}</span>}
                     </div>
                     <div className="resource-pose-details">
-                      {poses.length > 1 ? (
+                      {poses.length > 1 && !pending.length ? (
                         <label className="resource-pose-default-select">
                           <span>{t("resources.defaultPose", undefined, "Pose par défaut")}</span>
                           <select
@@ -504,8 +521,12 @@ export function CharacterResourceManager({
                         </label>
                       ) : null}
                       <span className="resource-pose-file-name">
-                        {defaultPose ? defaultPose.label : t("resources.noDefaultPose", undefined, "Aucune pose par défaut")}
+                        {pendingDefault?.file.name ?? defaultPose?.label ?? t("resources.noDefaultPose", undefined, "Aucune pose par défaut")}
                       </span>
+                      {pending.length ? <ul>{pending.map((pose) => <li key={pose.id}>
+                        {pose.file.name}{" "}
+                        <button type="button" className="ghost-pill compact" aria-label={`${t("common.delete")} ${pose.file.name}`} onClick={() => onRemovePendingPose(pose.id)}>×</button>
+                      </li>)}</ul> : null}
                     </div>
                     <div className="resource-pose-actions">
                       <label className={`ghost-pill compact resource-pose-upload-button ${canUploadPose ? "" : "disabled"}`}>
@@ -513,7 +534,10 @@ export function CharacterResourceManager({
                         <input
                           accept="image/png,image/jpeg,image/webp"
                           disabled={!canUploadPose}
-                          onChange={(event) => onUploadPose(state.key, event.target.files?.[0] ?? null, true)}
+                          onChange={(event) => {
+                            onUploadPose(state.key, event.currentTarget.files?.[0] ?? null, true);
+                            event.currentTarget.value = "";
+                          }}
                           type="file"
                         />
                       </label>
@@ -522,7 +546,10 @@ export function CharacterResourceManager({
                         <input
                           accept="image/png,image/jpeg,image/webp"
                           disabled={!canUploadPose}
-                          onChange={(event) => onUploadPose(state.key, event.target.files?.[0] ?? null, false)}
+                          onChange={(event) => {
+                            onUploadPose(state.key, event.currentTarget.files?.[0] ?? null, false);
+                            event.currentTarget.value = "";
+                          }}
                           type="file"
                         />
                       </label>
@@ -533,11 +560,8 @@ export function CharacterResourceManager({
             })}
           </div>
 
-          {!canUploadPose ? (
-            <div className="library-rail-empty">{t("resources.saveCharacterBeforeImages", undefined, "Enregistrez le personnage avant d'ajouter ses images.")}</div>
-          ) : null}
         </div>
-      </div>
+      </fieldset>
     </section>
   );
 }

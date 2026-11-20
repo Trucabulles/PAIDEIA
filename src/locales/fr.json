@@ -1461,6 +1461,7 @@
   "lesson.courseImage": "Image de cours",
   "lesson.startLesson": "Commencer la leçon",
   "richText.bookmark": "Balise",
+  "richText.referenceOverlapsBookmark": "Un renvoi ne peut pas être ajouté sur un texte portant déjà une balise. Sélectionnez un texte distinct.",
   "richText.brokenReference": "Renvoi cassé : balise introuvable.",
   "app.logoAlt": "PAIDEIA — Créer, transmettre, comprendre",
   "assistant.multipleDefinitions": "Plusieurs définitions correspondent à votre recherche. Veuillez choisir l’une d’entre elles.",

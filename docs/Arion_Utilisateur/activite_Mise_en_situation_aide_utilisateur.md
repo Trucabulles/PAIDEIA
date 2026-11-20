@@ -129,7 +129,7 @@ Changer de modèle conserve le contenu et les embranchements. Une nouvelle activ
 
 Dans **Apparence**, réglez séparément la couleur du bandeau et celle des boutons et du cartouche. Le texte et les icônes s’adaptent au contraste du fond. **Couleur par défaut** rétablit les couleurs du thème.
 
-Pour ajuster le cadrage en **Réponses en bas** ou **Portrait compact**, double-cliquez sur le personnage dans l’éditeur, puis faites glisser l’image horizontalement ou verticalement. En **Portrait compact**, utilisez aussi la molette pour zoomer ou dézoomer. Le réglage est mémorisé pour la pose et le modèle.
+Pour ajuster le cadrage en **Réponses en bas** ou **Portrait compact**, double-cliquez sur le personnage dans l’éditeur, puis faites glisser l’image horizontalement ou verticalement. Dans ces deux modèles, utilisez la molette, le pincement du trackpad ou **Ctrl + / Ctrl −** pour zoomer ou dézoomer pendant l’ajustement. Le réglage est mémorisé pour la pose et le modèle. Appuyez sur **Échap** pour terminer l’ajustement.
 
 ## Personnaliser l’arrière-plan
 

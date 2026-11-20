@@ -8830,11 +8830,7 @@ pub fn update_situational_dialogue_framing(
     framing.asset = validate_scorm_asset_ref(&framing.asset)?;
     framing.x = framing.x.clamp(-50.0, 50.0);
     framing.y = framing.y.clamp(-50.0, 50.0);
-    framing.zoom = if framing.layout == "compact-portrait" {
-        framing.zoom.clamp(0.65, 1.6)
-    } else {
-        1.0
-    };
+    framing.zoom = framing.zoom.clamp(0.65, 1.6);
 
     let mut project = load_project_from_path(&project_path)?;
     let block = project
@@ -16561,7 +16557,7 @@ fn build_scorm_runtime() -> String {
   function restoreLocation(){var lesson=chapterFromLocation(progress.location);if(!lesson&&isComplete()){var list=Array.prototype.slice.call(document.querySelectorAll(".chapter"));lesson=list.length?list[list.length-1]:null;}if(lesson){var id=lesson.getAttribute("id");if(id)window.location.hash=id;progress.location=chapterLocation(lesson)||progress.location;}}
     window.addEventListener("load",function(){call("LMSInitialize");try{totalTimeMs=readTotalTime();var raw=get("cmi.suspend_data");if(raw){var parsed=JSON.parse(raw);if(Array.isArray(parsed.c))parsed.c.forEach(function(id){progress.completed[id]=1;});if(Array.isArray(parsed.q))parsed.q.forEach(function(id){progress.startedQuizzes[id]=1;});if(parsed.l&&parsed.l!=="complete")progress.location=parsed.l;else if(Array.isArray(parsed.c)&&parsed.c.length){var lastId=parsed.c[parsed.c.length-1];var activity=document.querySelector('[data-paideia-activity="'+lastId+'"]');progress.location=chapterLocation(activity&&activity.closest(".chapter"));}}}catch(e){}restoreLocation();prepareImageTextMedia(document);setupLegacyRichInlineImages(document);setupAuthoredTextBreakOpportunities(document);setupNavigationButtonLabels(document);setupResponsiveRichTables(document);setupRichTextLineLeading(document);setupContentProtection(document);setupEmbeddedContentProtection();setupImageZoom();setupRichReferences();setupPointOfInterestBlocks();setupImage360();syncContinueBreaks();persist(false);});
   window.addEventListener("beforeunload",function(){persist(true);});
-})();"##.replace("__PAIDEIA_RICH_REFERENCES__", include_str!("scorm_rich_references.js")).replace("__PAIDEIA_IMAGE_TEXT_MEDIA__", &include_str!("../../src/components/activities/ImageTextActivity/ImageTextActivity.media.js").replace("export function", "function"))
+})();"##.replace("__PAIDEIA_RICH_REFERENCES__", include_str!("scorm/scorm_rich_references.js")).replace("__PAIDEIA_IMAGE_TEXT_MEDIA__", &include_str!("../../src/components/activities/ImageTextActivity/ImageTextActivity.media.js").replace("export function", "function"))
 }
 
 fn ensure_no_unresolved_scorm_placeholders(asset_name: &str, content: &str) -> Result<(), String> {
@@ -17597,10 +17593,10 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
     let progress_nav = build_scorm_chapter_progress_nav(project, &chapters);
     let assistant_markup = build_scorm_assistant_markup(project, project_root);
     let dialogue_styles = concat!(
-        include_str!("scorm_situational_dialogue.css"),
+        include_str!("scorm/scorm_situational_dialogue.css"),
         include_str!("../../src/components/activities/SituationalDialogueActivity/dialogueBanner.css")
     );
-    let reference_runtime = include_str!("scorm_rich_references.js");
+    let reference_runtime = include_str!("scorm/scorm_rich_references.js");
     let reference_styles = include_str!("../../src/components/rich-text-toolbar/referenceScroll.css");
     let chapter_links = chapters
         .iter()
@@ -21157,7 +21153,7 @@ fn build_scorm_index(project: &PaideiaProject, project_root: Option<&Path>) -> S
             var asset = (pose && pose.assetRef) || img.getAttribute("data-dialogue-asset");
             var framing = dialogueFraming.find(function(value) {{ return value && value.asset === asset; }});
             img.style.translate = framing ? framing.x + "% " + framing.y + "%" : "";
-            img.style.scale = framing && layout === "compact-portrait" ? String(framing.zoom) : "";
+            img.style.scale = framing ? String(framing.zoom) : "";
           }}
           if (pose && img.getAttribute("src") !== pose.src) {{
             img.src = pose.src;
@@ -32541,6 +32537,80 @@ mod html_package_tests {
         assert!(html.contains(r#"data-paideia-bookmark-id="bookmark-copy""#));
         assert!(html.contains(r#"data-paideia-reference-id="reference-copy""#));
         assert!(html.contains(r#"data-paideia-bookmark-target="bookmark-copy""#));
+    }
+
+    #[test]
+    fn situational_dialogue_zoom_is_persisted_for_both_cropped_layouts() {
+        let root = temporary_assets_dir("dialogue-zoom-persistence");
+        fs::create_dir_all(root.join("assets/images")).unwrap();
+        fs::copy(
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../public/default-characters/Noor/preview.png"),
+            root.join("assets/images/personnage.png"),
+        ).unwrap();
+        let mut block = sample_quiz_block();
+        block.block_type = "situational-dialogue".to_string();
+        block.quiz = None;
+        block.activity_items = vec![serde_json::from_value(serde_json::json!({
+            "id": "question-1", "title": "Question", "contentHtml": "<p>Question</p>",
+            "assetRefs": ["images/personnage.png"]
+        })).unwrap()];
+        let block_id = block.id.clone();
+        let project = sample_project(vec![sample_chapter("lesson_1", "Chapitre 1", block, None)]);
+        let project_path = root.to_string_lossy().to_string();
+        save_project_to_path(&project_path, &project).unwrap();
+        for layout in ["responses-below", "compact-portrait"] {
+            update_situational_dialogue_framing(
+                project_path.clone(), "lesson_1_page".to_string(), block_id.clone(),
+                crate::models::SituationalDialogueFraming {
+                    layout: layout.to_string(), asset: "images/personnage.png".to_string(),
+                    x: 10.0, y: -5.0, zoom: 1.25,
+                },
+            ).unwrap();
+            let saved = load_project_from_path(&project_path).unwrap();
+            let framing = &saved.course.modules[0].chapters[0].pages[0].blocks[0].situational_dialogue_framing;
+            assert_eq!(framing.iter().find(|value| value.layout == layout).unwrap().zoom, 1.25);
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn scorm_archive_embeds_dialogue_styles_and_reference_runtime_for_all_layouts() {
+        let root = temporary_assets_dir("dialogue-layout-archive");
+        fs::create_dir_all(root.join("assets")).unwrap();
+        for layout in ["classic", "responses-below", "compact-portrait"] {
+            let mut block = sample_quiz_block();
+            block.block_type = "situational-dialogue".to_string();
+            block.quiz = None;
+            block.media_layout = Some(layout.to_string());
+            block.situational_dialogue_framing = vec![crate::models::SituationalDialogueFraming {
+                layout: layout.to_string(), asset: "images/personnage.png".to_string(),
+                x: 10.0, y: -5.0, zoom: 1.25,
+            }];
+            block.activity_items = vec![serde_json::from_value(serde_json::json!({
+                "id": "question-1", "title": "Question", "nodeType": "question",
+                "contentHtml": "<p>Question de vérification</p>",
+                "responses": [{"id": "response-1", "label": "Réponse", "feedbackHtml": "<p>Feedback</p>", "action": "tryAgain"}]
+            })).unwrap()];
+            let project = sample_project(vec![sample_chapter("lesson_1", "Chapitre 1", block, None)]);
+            let destination = root.join(format!("{layout}.zip"));
+            write_scorm_archive(None, &root.to_string_lossy(), &project, &destination).unwrap();
+            let mut archive = ZipArchive::new(fs::File::open(&destination).unwrap()).unwrap();
+            let mut html = String::new();
+            archive.by_name("index.html").unwrap().read_to_string(&mut html).unwrap();
+            assert!(html.contains(include_str!("scorm/scorm_situational_dialogue.css")));
+            assert!(html.contains(include_str!("scorm/scorm_rich_references.js")));
+            assert!(html.contains(&format!("data-dialogue-layout=\"{layout}\"")));
+            assert!(html.contains("img.style.scale = framing ? String(framing.zoom)"));
+            let mut runtime = String::new();
+            archive.by_name("js/runtime.js").unwrap().read_to_string(&mut runtime).unwrap();
+            assert!(runtime.contains(include_str!("scorm/scorm_rich_references.js")));
+            assert!(!runtime.contains("__PAIDEIA_RICH_REFERENCES__"));
+            if let Ok(output) = std::env::var("PAIDEIA_SCORM_REGRESSION_OUTPUT") {
+                fs::create_dir_all(&output).unwrap();
+                fs::copy(&destination, Path::new(&output).join(format!("{layout}.zip"))).unwrap();
+            }
+        }
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]

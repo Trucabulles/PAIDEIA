@@ -108,6 +108,8 @@ function closestElement(node: Node | null) {
 
 export function validRichTextMarkerRange(editor: HTMLElement, range: Range | null) {
   if (!range || range.collapsed || !editor.contains(range.commonAncestorContainer) || !range.toString().trim()) return false;
+  const markerSelector = `[${RICH_BOOKMARK_ATTR}],[${RICH_REFERENCE_ATTR}]`;
+  if (closestElement(range.startContainer)?.closest(markerSelector) || closestElement(range.endContainer)?.closest(markerSelector)) return false;
   const startBlock = closestElement(range.startContainer)?.closest("p,li,h1,h2,h3,h4,h5,blockquote,div");
   const endBlock = closestElement(range.endContainer)?.closest("p,li,h1,h2,h3,h4,h5,blockquote,div");
   if (!startBlock || startBlock !== endBlock) return false;

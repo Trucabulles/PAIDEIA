@@ -80,20 +80,37 @@ export function DialogueCharacter({ src, alt, layout, framing = defaultFraming, 
 
   useEffect(() => {
     const figure = figureRef.current;
-    if (!figure || !positioning || layout !== "compact-portrait") return;
-    function wheel(event: WheelEvent) {
-      if (!event.deltaY || event.ctrlKey || event.metaKey || dragRef.current) return;
-      event.preventDefault();
-      event.stopPropagation();
+    if (!figure || !positioning || (layout !== "compact-portrait" && layout !== "responses-below")) return;
+    function changeZoom(direction: number) {
       const current = draftRef.current;
-      const zoom = clamp(Math.round((current.zoom - Math.sign(event.deltaY) * 0.05) * 100) / 100, 0.65, 1.6);
+      const zoom = clamp(Math.round((current.zoom + direction * 0.05) * 100) / 100, 0.65, 1.6);
       if (zoom === current.zoom) return;
       update({ ...current, zoom });
       window.clearTimeout(pendingZoom.current);
       pendingZoom.current = window.setTimeout(finishZoom, 240);
     }
+    function wheel(event: WheelEvent) {
+      if (!event.deltaY || dragRef.current) return;
+      event.preventDefault();
+      event.stopPropagation();
+      changeZoom(-Math.sign(event.deltaY));
+    }
+    function key(event: KeyboardEvent) {
+      if (!(event.ctrlKey || event.metaKey) || dragRef.current) return;
+      if (event.target instanceof Element && event.target.closest("input,textarea,select,[contenteditable=true]")) return;
+      const increase = event.key === "+" || event.key === "=" || event.code === "NumpadAdd";
+      const decrease = event.key === "-" || event.code === "NumpadSubtract";
+      if (!increase && !decrease) return;
+      event.preventDefault();
+      event.stopPropagation();
+      changeZoom(increase ? 1 : -1);
+    }
     figure.addEventListener("wheel", wheel, { passive: false });
-    return () => figure.removeEventListener("wheel", wheel);
+    document.addEventListener("keydown", key, true);
+    return () => {
+      figure.removeEventListener("wheel", wheel);
+      document.removeEventListener("keydown", key, true);
+    };
   }, [layout, positioning, finishZoom]);
 
   function begin(event: PointerEvent<HTMLElement>) {

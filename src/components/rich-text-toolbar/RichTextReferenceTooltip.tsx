@@ -21,6 +21,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
   const tooltipRef = useRef<HTMLElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [positionRevision, setPositionRevision] = useState(0);
   const updateScrollHint = () => {
     const scroll = scrollRef.current;
     setHasMore(Boolean(scroll && scroll.scrollHeight - scroll.clientHeight - scroll.scrollTop > 2));
@@ -45,6 +46,22 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     const html = trigger?.getAttribute("data-paideia-reference-definition");
     return html ? { label: trigger?.getAttribute("data-paideia-bookmark-label") || "", html } : null;
   })() : null);
+
+  const definitionHtml = useMemo(() => {
+    const template = document.createElement("template");
+    template.innerHTML = bookmark?.html ?? "";
+    template.content.querySelectorAll<HTMLElement>("[data-paideia-reference-id],[data-paideia-bookmark-id]").forEach((node) => {
+      for (const attribute of Array.from(node.attributes)) {
+        if (attribute.name.startsWith("data-paideia-reference-") || attribute.name.startsWith("data-paideia-bookmark-")) node.removeAttribute(attribute.name);
+      }
+      node.removeAttribute("role");
+      node.removeAttribute("tabindex");
+      node.removeAttribute("aria-expanded");
+      node.removeAttribute("aria-describedby");
+      node.classList.remove("paideia-rich-reference", "paideia-rich-bookmark");
+    });
+    return template.innerHTML;
+  }, [bookmark?.html]);
 
   useEffect(() => {
     let closeTimer: number | undefined;
@@ -284,7 +301,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
       if (current.x === nextX && current.y === nextY && current.maxHeight === nextMaxHeight) return current;
       return { ...current, x: nextX, y: nextY, maxHeight: nextMaxHeight };
     });
-  }, [active?.id, active?.x, active?.y, active?.ownerDocument, bookmark?.html]);
+  }, [active?.id, active?.ownerDocument, bookmark?.html, positionRevision]);
 
   useEffect(() => {
     if (!active) return;
@@ -292,13 +309,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
     const reposition = () => {
       const trigger = triggerRef.current;
       if (!trigger) return;
-      const rect = trigger.getBoundingClientRect();
-      setActive((current) => current ? {
-        ...current,
-        x: Math.max(16, rect.left),
-        y: rect.bottom + 8,
-        maxHeight: undefined
-      } : current);
+      setPositionRevision((current) => current + 1);
     };
     const content = scrollRef.current;
     const observer = content && typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateScrollHint) : null;
@@ -336,7 +347,7 @@ export function RichTextReferenceTooltip({ project }: { project: PaideiaProject 
       <div key={active.id} className="paideia-reference-scroll" ref={scrollRef} onScroll={updateScrollHint}
         tabIndex={active.maxHeight ? 0 : undefined}>
         {bookmark
-          ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: bookmark.html }} />
+          ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: definitionHtml }} />
           : <p>{t("richText.brokenReference", undefined, "Renvoi cassé : balise introuvable.")}</p>}
       </div>
       <span className="paideia-reference-scroll-hint" hidden={!hasMore} aria-hidden="true" />

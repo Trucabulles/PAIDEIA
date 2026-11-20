@@ -1242,6 +1242,7 @@
   "lesson.courseImage": "Course image",
   "lesson.startLesson": "Start lesson",
   "richText.bookmark": "Bookmark",
+  "richText.referenceOverlapsBookmark": "A reference cannot be added to text that already contains a bookmark. Select separate text.",
   "richText.brokenReference": "Broken cross-reference: bookmark not found.",
   "app.logoAlt": "PAIDEIA — Create, share, understand",
   "assistant.multipleDefinitions": "Several definitions match your search. Please choose one of them.",
