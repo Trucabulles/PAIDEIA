@@ -1,5 +1,9 @@
 # Changelog PAIDEIA
 
+## 1.1.26326 - 22 novembre 2026
+
+- Correctifs.
+
 ## 1.1.26315 - 11 novembre 2026
 
 - Ajout de deux personnages à la banque par défaut, Noor et Véronique.

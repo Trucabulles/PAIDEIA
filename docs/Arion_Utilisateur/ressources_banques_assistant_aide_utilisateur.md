@@ -42,6 +42,12 @@ Un personnage peut comprendre :
 Les poses peuvent représenter une introduction, une question, une réponse
 positive, une réponse négative, une conclusion ou un état neutre.
 
+### Créer un personnage
+
+Cliquez sur **+**, saisissez son nom, puis préparez les images de ses différentes poses. Les images choisies sont visibles dans le brouillon et peuvent être retirées avant l’enregistrement.
+
+Cliquez sur **Enregistrer**, en haut à droite, pour créer le personnage et enregistrer ses images en une seule opération. Pendant l’enregistrement, les champs et les boutons sont temporairement désactivés. Si une image ne peut pas être enregistrée, le message indique l’échec et les fichiers restants sont conservés dans le brouillon pour une nouvelle tentative.
+
 ### Utiliser un personnage
 
 Dans une activité Mise en situation, choisissez le personnage disponible dans la

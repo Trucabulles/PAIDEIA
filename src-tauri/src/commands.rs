@@ -16186,7 +16186,7 @@ fn build_scorm_course_json(project: &PaideiaProject) -> String {
 fn build_scorm_export_metadata(project: &PaideiaProject) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "generator": "PAIDEIA",
-        "generator_version": "1.1.26315",
+        "generator_version": "1.1.26326",
         "exported_at": Utc::now().to_rfc3339(),
         "source_project_id": project.id,
         "source_project_title": project.title,
@@ -16207,7 +16207,7 @@ fn build_scorm_project_snapshot(project: &PaideiaProject) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "schemaVersion": 2,
         "generator": "PAIDEIA",
-        "generatorVersion": "1.1.26315",
+        "generatorVersion": "1.1.26326",
         "createdWith": "PAIDEIA",
         "exportDate": Utc::now().to_rfc3339(),
         "payloadType": "PaideiaProject",

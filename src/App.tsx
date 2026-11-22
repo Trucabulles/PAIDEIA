@@ -2733,7 +2733,7 @@ export default function App() {
   const moduleDraft = "Module principal";
   const [chapterDraft, setChapterDraft] = useState("");
   const pageDraft = "Nouvelle page";
-  const snapshotVersion = "v1.1.26315";
+  const snapshotVersion = "v1.1.26326";
   const [importDestinationRoot, setImportDestinationRoot] = useState("");
   const [isLibraryRootReady, setIsLibraryRootReady] = useState(false);
   const [appLanguage, setAppLanguage] = useState<AppLanguage>(() => detectInitialAppLanguage());

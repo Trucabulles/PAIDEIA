@@ -2,6 +2,13 @@
 
 Ce fichier consigne les versions produit de PAIDEIA, les dates de mise à jour et les changements principaux.
 
+## Version 1.1.26326
+
+Date de mise à jour : 22 novembre 2026.
+
+- Version produit, interface et générateur SCORM : `1.1.26326`.
+- Version technique npm, Tauri, Cargo et MSI : `1.1.26326`.
+
 ## Version 1.1.26315
 
 Date de mise à jour : 11 novembre 2026.
